@@ -1,10 +1,9 @@
-(ns leiningen.core.test.project.spec
+(ns leiningen.core.test.spec.project
   (:require [clojure.spec           :as spec]
             [clojure.spec.test      :as test]
             [clojure.pprint         :as pprint]
-            [clojure.test           :refer [deftest is]
-            [leiningen.core.project :as project]]))
-(clojure.test/run-tests)
+            [clojure.test           :refer [deftest is]]
+            [leiningen.core.project :as project]))
 
 
 ;;; Helper functions
@@ -21,8 +20,4 @@
 
 (deftest test-artifact-map
   (check (test/check `project/artifact-map)))
-
-
-
-
-(remove-ns 'leiningen.core.test.project.spec)
+(clojure.test/run-tests)

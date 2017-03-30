@@ -1,4 +1,4 @@
-(ns leiningen.core.project.spec
+(ns leiningen.core.spec.project
   (:require [clojure.spec           :as spec]
             [clojure.spec.gen       :as gen]
             [clojure.spec.test      :as test]
@@ -11,7 +11,7 @@
 
 
 (spec/def ::proj/namespaced-string
-  (let [qualified-regexp #"[^ ]+/[^ ]+"]
+  (let [qualified-regexp #"[^\s/]+/[^\s/]+"]
     (spec/with-gen
       (spec/and string? #(re-matches qualified-regexp %))
       #(strgen/string-generator qualified-regexp))))
@@ -36,10 +36,8 @@
 ;;; Function defenitions
 
 (spec/fdef proj/artifact-map
-           :args (spec/cat :lib-name ::lib-name)
+           :args (spec/cat :lib-name ::proj/lib-name)
            :fn  #(let [in (-> % :args :lib-name second)]
                    (str/includes? in (-> % :ret ::proj/artifact-id))
                    (str/includes? in (-> % :ret ::proj/group-id)))
-           :ret  ::lib-map)
-
- (clojure.test/run-tests 'leiningen.core.test.project.spec)
+           :ret  ::proj/lib-name-map)

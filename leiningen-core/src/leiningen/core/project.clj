@@ -62,7 +62,7 @@
 
 (defn artifact-map
   [id]
-  {:artifact-id (artifact-id id)
+  {::artifact-id (artifact-id id)
    :group-id (group-id id)})
 
 (defn exclusion-map
@@ -78,9 +78,9 @@
   "Transform an exclusion map back into a vector of the form:
   [name/group & opts]"
   [exclusion]
-  (if-let [{:keys [artifact-id group-id]} exclusion]
+  (if-let [{:keys [::artifact-id group-id]} exclusion]
     (into [(symbol group-id artifact-id)]
-          (apply concat (dissoc exclusion :artifact-id :group-id)))))
+          (apply concat (dissoc exclusion ::artifact-id :group-id)))))
 
 (defn dependency-map
   "Transform a dependency vector into a map that is easier to combine with
@@ -97,11 +97,11 @@
   "Transform a dependency map back into a vector of the form:
   [name/group \"version\" & opts]"
   [dep]
-  (if-let [{:keys [artifact-id group-id version]} dep]
+  (if-let [{:keys [::artifact-id group-id version]} dep]
     (-> dep
         (update-each-contained [:exclusions] (partial map exclusion-vec))
         (update-each-contained [:exclusions] distinct)
-        (dissoc :artifact-id :group-id :version)
+        (dissoc ::artifact-id :group-id :version)
         (->> (apply concat)
              (into [(symbol group-id artifact-id) version]))
         (with-meta (meta dep)))))
@@ -239,7 +239,7 @@
   "The unique key used to dedupe dependencies."
   [dep]
   (-> (dependency-map dep)
-      (select-keys [:group-id :artifact-id :classifier :extension])))
+      (select-keys [:group-id ::artifact-id :classifier :extension])))
 
 (defn- reduce-dep-step [deps dep]
   (let [k (dep-key dep)]

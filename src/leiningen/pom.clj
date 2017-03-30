@@ -162,7 +162,7 @@
           [:exclusion (map (partial apply xml-tags)
                            {:group-id (or (namespace dep)
                                           (name dep))
-                            :artifact-id (name dep)
+                            ::project/artifact-id (name dep)
                             :classifier classifier
                             :type extension})])]))
 
@@ -173,7 +173,7 @@
      [:dependency
       (map (partial apply xml-tags)
            {:group-id (or (namespace dep) (name dep))
-            :artifact-id (name dep)
+            ::project/artifact-id (name dep)
             :version version
             :optional optional
             :classifier classifier
@@ -314,7 +314,7 @@
   (list* dep version (apply concat (assoc (apply hash-map opts) :scope scope))))
 
 (defn- dep-key [dep]
-  (select-keys (project/dependency-map dep) [:group-id :artifact-id :classifier
+  (select-keys (project/dependency-map dep) [:group-id ::project/artifact-id :classifier
                                              :extension :scope]))
 
 (defmethod xml-tags ::project

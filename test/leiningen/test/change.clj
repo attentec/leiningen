@@ -43,11 +43,11 @@
   (testing "where group-id is implicit"
     (is (= "(defproject reagent \"0.0.1\" :license {})"
            (change-string "(defproject cloact \"0.0.1\" :license {})"
-                          [:artifact-id] "set" "reagent"))))
+                          [:leiningen.core.project/artifact-id] "set" "reagent"))))
   (testing "where group-id is explicit"
     (is (= "(defproject tonsky/datascript \"0.0.1\" :license {})"
            (change-string "(defproject tonsky/datalogscript \"0.0.1\" :license {})"
-                          [:artifact-id] "set" "datascript")))))
+                          [:leiningen.core.project/artifact-id] "set" "datascript")))))
 
 (deftest test-external-function
   (testing "regular function by string identifier"

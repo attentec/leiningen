@@ -161,7 +161,7 @@ well as turning string args into Clojure data; this function handles the rest."
        [:version] (update-version proj f)
        [:name] (update-name proj f)
        [:group-id] (update-name proj #(set-group-id (f (get-group-id %)) %))
-       [:artifact-id] (update-name proj #(set-artifact-id
+       [:leiningen.core.project/artifact-id] (update-name proj #(set-artifact-id
                                           (f (get-artifact-id %)) %))
        ;; moving to the right to move past defproject to get nice key-value
        ;; pairs whitespaces and project name and version are filtered out later

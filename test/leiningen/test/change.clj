@@ -33,11 +33,11 @@
   (testing "renaming an existing group-id"
     (is (= "(defproject core/library \"0.0.1\" :license {})"
            (change-string "(defproject contrib/library \"0.0.1\" :license {})"
-                          [:group-id] "set" "core"))))
+                          [:leiningen.core.project/group-id] "set" "core"))))
   (testing "where group-id was previously implicit"
     (is (= "(defproject core/library \"0.0.1\" :license {})"
            (change-string "(defproject library \"0.0.1\" :license {})"
-                          [:group-id] "set" "core")))))
+                          [:leiningen.core.project/group-id] "set" "core")))))
 
 (deftest test-set-artifact-id
   (testing "where group-id is implicit"

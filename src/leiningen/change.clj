@@ -5,6 +5,7 @@
             [clojure.java.io :as io]
             [leiningen.core.utils :as utils]
             [leiningen.core.main :as main]
+            [leiningen.core.project :as project]
             [net.cgrand.sjacket :as sj]
             [net.cgrand.sjacket.parser :as parser]))
 
@@ -160,8 +161,8 @@ well as turning string args into Clojure data; this function handles the rest."
      (condp = path
        [:version] (update-version proj f)
        [:name] (update-name proj f)
-       [:group-id] (update-name proj #(set-group-id (f (get-group-id %)) %))
-       [:leiningen.core.project/artifact-id] (update-name proj #(set-artifact-id
+       [::project/group-id] (update-name proj #(set-group-id (f (get-group-id %)) %))
+       [::project/artifact-id] (update-name proj #(set-artifact-id
                                           (f (get-artifact-id %)) %))
        ;; moving to the right to move past defproject to get nice key-value
        ;; pairs whitespaces and project name and version are filtered out later

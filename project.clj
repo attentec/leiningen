@@ -7,6 +7,7 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[leiningen-core "2.7.2-SNAPSHOT"]
+                 [org.clojure/clojure "1.9.0-alpha15"]
                  [org.clojure/data.xml "0.0.8"]
                  [commons-io "2.5"]
                  [commons-lang "2.6"]

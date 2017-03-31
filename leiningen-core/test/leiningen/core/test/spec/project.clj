@@ -20,4 +20,3 @@
 
 (deftest test-artifact-map
   (check (test/check `project/artifact-map)))
-(clojure.test/run-tests)

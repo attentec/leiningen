@@ -47,11 +47,15 @@
 
 (spec/def ::proj/version ::non-blank-string)
 
-(spec/def ::proj/artifact
-  (spec/cat
-   :name      ::proj/dependency-name
-   :version   ::proj/version
-   :arguments (spec/* ::proj/dependency-arg)))
+(spec/def ::proj/dependency-vector
+  (spec/cat :name      ::proj/dependency-name
+            :version   ::proj/version
+            :arguments (spec/* ::proj/dependency-arg)))
+
+(spec/def ::proj/dependency-map
+  (spec/keys :req [::proj/artifact-id
+                   ::proj/group-id
+                   ::proj/version]))
 
 
 ;;; Function defenitions
@@ -62,3 +66,11 @@
                    (str/includes? in (-> % :ret ::proj/artifact-id))
                    (str/includes? in (-> % :ret ::proj/group-id)))
            :ret  ::proj/dependency-name-map)
+
+(spec/fdef proj/dependency-map
+           :args ::proj/dependency-vector
+           :ret  ::proj/dependency-map)
+
+(spec/fdef proj/dependency-map
+           :args ::proj/dependency-map
+           :ret  ::proj/dependency-vector)

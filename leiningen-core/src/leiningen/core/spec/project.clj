@@ -76,7 +76,3 @@
 (spec/fdef proj/dependency-vec
            :args (spec/cat :dependency-map ::proj/dependency-map)
            :ret  ::proj/dependency-vector)
-
-
-(spec/exercise-fn `proj/dependency-map)
-(spec/exercise-fn `proj/dependency-vec)

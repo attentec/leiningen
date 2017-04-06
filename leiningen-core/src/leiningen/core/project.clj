@@ -89,7 +89,7 @@
   (if-let [[id version & {:as opts}] (classpath/normalize-dep-vector dep)]
     (-> opts
         (merge (artifact-map id))
-        (assoc :version version)
+        (assoc ::version version)
         (update-each-contained [:exclusions] (partial map exclusion-map))
         (with-meta (meta dep)))))
 
@@ -97,11 +97,11 @@
   "Transform a dependency map back into a vector of the form:
   [name/group \"version\" & opts]"
   [dep]
-  (if-let [{:keys [::artifact-id ::group-id version]} dep]
+  (if-let [{:keys [::artifact-id ::group-id ::version]} dep]
     (-> dep
         (update-each-contained [:exclusions] (partial map exclusion-vec))
         (update-each-contained [:exclusions] distinct)
-        (dissoc ::artifact-id ::group-id :version)
+        (dissoc ::artifact-id ::group-id ::version)
         (->> (apply concat)
              (into [(symbol group-id artifact-id) version]))
         (with-meta (meta dep)))))

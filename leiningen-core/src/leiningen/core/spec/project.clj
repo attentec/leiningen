@@ -32,24 +32,24 @@
   (spec/alt
    :plain-name ::proj/dependency-name
    :vector     (spec/cat :lib-name  ::proj/dependency-name
-                         :arguments (spec/* ::proj/dependency-arg))))
+                         :arguments ::proj/dependency-args)))
 
-(spec/def ::proj/dependency-arg
-  (spec/alt
-   :optional      (spec/cat :key #{:optional}      :val boolean?)
-   :scope         (spec/cat :key #{:scope}         :val ::non-blank-string)
-   :classifier    (spec/cat :key #{:classifier}    :val ::non-blank-string)
-   :native-prefix (spec/cat :key #{:native-prefix} :val ::non-blank-string)
-   :extension     (spec/cat :key #{:extension}     :val ::non-blank-string)
-   :exclusions    (spec/cat :key #{:exclusions}    :val (spec/coll-of ::proj/exclusion
-                                                                      :gen-max 10))))
+(spec/def ::proj/dependency-args
+  (spec/keys* :opt-un [::proj/optional ::proj/scope ::proj/classifier
+                       ::proj/native-prefix ::proj/extension ::proj/exclusions]))
+(spec/def ::proj/optional      boolean?)
+(spec/def ::proj/scope         ::non-blank-string)
+(spec/def ::proj/classifier    ::non-blank-string)
+(spec/def ::proj/native-prefix ::non-blank-string)
+(spec/def ::proj/extension     ::non-blank-string)
+(spec/def ::proj/exclusions    (spec/coll-of ::proj/exclusion :gen-max 3))
 
 (spec/def ::proj/version ::non-blank-string)
 
 (spec/def ::dependency-vector-regex
   (spec/cat :name      ::proj/dependency-name
             :version   ::proj/version
-            :arguments (spec/* ::proj/dependency-arg)))
+            :arguments ::proj/dependency-args))
 
 (spec/def ::proj/dependency-vector
     (spec/with-gen (spec/and vector? ::dependency-vector-regex)
@@ -63,7 +63,7 @@
 ;;; Function defenitions
 
 (spec/fdef proj/artifact-map
-           :args (spec/cat :lib-name ::proj/dependency-name)
+           :args (spec/cat :dep-name ::proj/dependency-name)
            :fn  #(let [in (-> % :args :lib-name second)]
                    (str/includes? in (-> % :ret ::proj/artifact-id))
                    (str/includes? in (-> % :ret ::proj/group-id)))

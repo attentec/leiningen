@@ -3,7 +3,9 @@
             [clojure.spec.test      :as test]
             [clojure.pprint         :as pprint]
             [clojure.test           :refer [deftest is]]
-            [leiningen.core.project :as project]))
+            [leiningen.core.project :as project]
+            ;; Load the specs into the registry
+            [leiningen.core.spec.project :as project-spec]))
 
 
 ;;; Helper functions

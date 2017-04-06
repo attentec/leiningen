@@ -9,7 +9,6 @@
 (spec/def ::non-blank-string
   (spec/and string? #(not (str/blank? %))))
 
-
 (spec/def ::namespaced-string
   (let [qualified-regexp #"[^\s/]+/[^\s/]+"]
     (spec/with-gen
@@ -32,8 +31,8 @@
 (spec/def ::proj/exclusion
   (spec/alt
    :plain-name ::proj/dependency-name
-   :vector (spec/cat :lib-name        ::proj/dependency-name
-                     :dependency-args (spec/coll-of ::proj/dependency-arg :gen-max 2))))
+   :vector     (spec/cat :lib-name  ::proj/dependency-name
+                         :arguments (spec/* ::proj/dependency-arg))))
 
 (spec/def ::proj/dependency-arg
   (spec/alt
@@ -47,16 +46,19 @@
 
 (spec/def ::proj/version ::non-blank-string)
 
-(spec/def ::proj/dependency-vector
+(spec/def ::dependency-vector-regex
   (spec/cat :name      ::proj/dependency-name
             :version   ::proj/version
             :arguments (spec/* ::proj/dependency-arg)))
+
+(spec/def ::proj/dependency-vector
+    (spec/with-gen (spec/and vector? ::dependency-vector-regex)
+                  #(gen/fmap vec (spec/gen ::dependency-vector-regex))))
 
 (spec/def ::proj/dependency-map
   (spec/keys :req [::proj/artifact-id
                    ::proj/group-id
                    ::proj/version]))
-
 
 ;;; Function defenitions
 
@@ -68,9 +70,13 @@
            :ret  ::proj/dependency-name-map)
 
 (spec/fdef proj/dependency-map
-           :args ::proj/dependency-vector
+           :args (spec/cat :dependency-vec ::proj/dependency-vector)
            :ret  ::proj/dependency-map)
 
-(spec/fdef proj/dependency-map
-           :args ::proj/dependency-map
+(spec/fdef proj/dependency-vec
+           :args (spec/cat :dependency-map ::proj/dependency-map)
            :ret  ::proj/dependency-vector)
+
+
+(spec/exercise-fn `proj/dependency-map)
+(spec/exercise-fn `proj/dependency-vec)

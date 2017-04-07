@@ -31,7 +31,7 @@
 (spec/def ::proj/exclusion
   (spec/alt
    :plain-name ::proj/dependency-name
-   :vector     (spec/cat :lib-name  ::proj/dependency-name
+   :vector     (spec/cat :dep-name  ::proj/dependency-name
                          :arguments ::proj/dependency-args)))
 
 (spec/def ::proj/dependency-args
@@ -64,7 +64,7 @@
 
 (spec/fdef proj/artifact-map
            :args (spec/cat :dep-name ::proj/dependency-name)
-           :fn  #(let [in (-> % :args :lib-name second)]
+           :fn  #(let [in (-> % :args :dep-name second)]
                    (str/includes? in (-> % :ret ::proj/artifact-id))
                    (str/includes? in (-> % :ret ::proj/group-id)))
            :ret  ::proj/dependency-name-map)

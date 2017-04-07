@@ -25,8 +25,7 @@
 (spec/def ::proj/artifact-id ::non-blank-string)
 (spec/def ::proj/group-id    ::non-blank-string)
 (spec/def ::proj/dependency-name-map
-  (spec/keys :req [::proj/artifact-id
-                   ::proj/group-id]))
+  (spec/keys :req [::proj/artifact-id ::proj/group-id]))
 
 (spec/def ::proj/exclusion
   (spec/alt
@@ -35,14 +34,16 @@
                          :arguments ::proj/dependency-args)))
 
 (spec/def ::proj/dependency-args
-  (spec/keys* :opt-un [::proj/optional ::proj/scope ::proj/classifier
-                       ::proj/native-prefix ::proj/extension ::proj/exclusions]))
+  (spec/keys*
+   :opt-un [::proj/optional ::proj/scope ::proj/classifier
+            ::proj/native-prefix ::proj/extension ::proj/exclusions]))
+
 (spec/def ::proj/optional      boolean?)
 (spec/def ::proj/scope         ::non-blank-string)
 (spec/def ::proj/classifier    ::non-blank-string)
 (spec/def ::proj/native-prefix ::non-blank-string)
 (spec/def ::proj/extension     ::non-blank-string)
-(spec/def ::proj/exclusions    (spec/coll-of ::proj/exclusion :gen-max 3))
+(spec/def ::proj/exclusions    (spec/coll-of ::proj/exclusion :gen-max 2))
 
 (spec/def ::proj/version ::non-blank-string)
 
@@ -56,9 +57,7 @@
                   #(gen/fmap vec (spec/gen ::dependency-vector-regex))))
 
 (spec/def ::proj/dependency-map
-  (spec/keys :req [::proj/artifact-id
-                   ::proj/group-id
-                   ::proj/version]))
+  (spec/keys :req [::proj/artifact-id ::proj/group-id ::proj/version]))
 
 ;;; Function defenitions
 

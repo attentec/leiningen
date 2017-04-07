@@ -39,4 +39,5 @@
   :source-paths ["leiningen-core/src" "src"]
   ;; work around Clojure bug http://dev.clojure.org/jira/browse/CLJ-1034
   :uberjar-exclusions [#"^data_readers.clj$"]
-  :eval-in :leiningen)
+  :eval-in :leiningen
+  :monkeypatch-clojure-test false)

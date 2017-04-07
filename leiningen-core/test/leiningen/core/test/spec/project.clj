@@ -29,3 +29,6 @@
 
 (deftest test-dependency-vec
   (check (test/check `project/dependency-vec)))
+
+(deftest test-exclusion-map
+  (check (test/check `project/exclusion-map)))

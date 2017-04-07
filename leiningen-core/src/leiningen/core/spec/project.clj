@@ -28,15 +28,17 @@
   (spec/keys :req [::proj/artifact-id ::proj/group-id]))
 
 (spec/def ::proj/exclusion
-  (spec/alt
+  (spec/or
    :plain-name ::proj/dependency-name
-   :vector     (spec/cat :dep-name  ::proj/dependency-name
-                         :arguments ::proj/dependency-args)))
+   :vector     ::proj/exclusion-vector))
 
-(spec/def ::proj/dependency-args
-  (spec/keys*
-   :opt-un [::proj/optional ::proj/scope ::proj/classifier
-            ::proj/native-prefix ::proj/extension ::proj/exclusions]))
+(spec/def ::exclusion-vector-regex
+  (spec/cat :dep-name  ::proj/dependency-name
+            :arguments ::proj/exclusion-args))
+
+(spec/def ::proj/exclusion-vector
+  (spec/with-gen (spec/and vector? ::exclusion-vector-regex)
+    #(gen/fmap vec (spec/gen ::exclusion-vector-regex))))
 
 (spec/def ::proj/optional      boolean?)
 (spec/def ::proj/scope         ::non-blank-string)
@@ -44,6 +46,14 @@
 (spec/def ::proj/native-prefix ::non-blank-string)
 (spec/def ::proj/extension     ::non-blank-string)
 (spec/def ::proj/exclusions    (spec/coll-of ::proj/exclusion :gen-max 2))
+(spec/def ::proj/dependency-args
+  (spec/keys*
+   :opt-un [::proj/optional ::proj/scope ::proj/classifier
+            ::proj/native-prefix ::proj/extension ::proj/exclusions]))
+(spec/def ::proj/exclusion-args
+  (spec/keys*
+   :opt-un [::proj/scope ::proj/classifier
+            ::proj/native-prefix ::proj/extension]))
 
 (spec/def ::proj/version ::non-blank-string)
 
@@ -58,6 +68,10 @@
 
 (spec/def ::proj/dependency-map
   (spec/keys :req [::proj/artifact-id ::proj/group-id ::proj/version]))
+
+(spec/def ::proj/exclusion-map
+  (spec/keys :req [::proj/artifact-id ::proj/group-id]))
+
 
 ;;; Function defenitions
 
@@ -75,3 +89,7 @@
 (spec/fdef proj/dependency-vec
            :args (spec/cat :dependency-map ::proj/dependency-map)
            :ret  ::proj/dependency-vector)
+
+(spec/fdef proj/exclusion-map
+           :args (spec/cat :exclusion ::proj/exclusion)
+           :ret ::proj/exclusion-map)

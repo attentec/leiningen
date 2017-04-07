@@ -32,3 +32,6 @@
 
 (deftest test-exclusion-map
   (check (test/check `project/exclusion-map)))
+
+(deftest test-exclusion-vec
+  (check (test/check `project/exclusion-vec)))

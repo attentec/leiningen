@@ -97,3 +97,7 @@
 (spec/fdef proj/exclusion-map
            :args (spec/cat :exclusion ::proj/exclusion)
            :ret ::proj/exclusion-map)
+
+(spec/fdef proj/exclusion-vec
+           :args (spec/cat :exclusion ::proj/exclusion-map)
+           :ret ::proj/exclusion)

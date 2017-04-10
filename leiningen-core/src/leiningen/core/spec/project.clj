@@ -3,7 +3,6 @@
             [clojure.spec.gen         :as gen]
             [clojure.spec.test        :as test]
             [clojure.string           :as str]
-            [miner.strgen             :as strgen]
             [leiningen.core.project   :as proj]
             [leiningen.core.spec.util :as util]))
 
@@ -11,10 +10,82 @@
   (spec/and string? #(not (str/blank? %))))
 
 (spec/def ::namespaced-string
-  (let [qualified-regexp #"[^\s/]+/[^\s/]+"]
-    (spec/with-gen
-      (spec/and string? #(re-matches qualified-regexp %))
-      #(strgen/string-generator qualified-regexp))))
+  (util/stregex #"[^\s/]+/[^\s/]+"))
+
+(spec/def ::proj/project-map
+  (spec/keys
+   :opt-un
+   [::proj/description
+    ::proj/url
+    ; ::mailing-list
+    ; ::mailing-lists
+    ; ::license
+    ; ::licenses
+    ; ::min-lein-version
+    ::proj/dependencies
+    ; ::managed-dependencies
+    ; ::pedantic?
+    ; ::exclusions
+    ; ::plugins
+    ; ::repositories
+    ; ::plugin-repositories
+    ; ::mirrors
+    ; ::local-repo
+    ; ::update
+    ; ::checksum
+    ; ::offline?
+    ; ::signing
+    ; ::certificates
+    ; ::profiles
+    ; ::hooks
+    ; ::middleware
+    ; ::implicit-middleware
+    ; ::implicit-hooks
+    ; ::main
+    ; ::aliases
+    ; ::release-tasks
+    ; ::prep-tasks
+    ; ::aot
+    ; ::injections
+    ; ::java-agents
+    ; ::javac-options
+    ; ::warn-on-reflection
+    ; ::global-vars
+    ; ::java-cmd
+    ; ::jvm-opts
+    ; ::eval-in
+    ; ::bootclasspath
+    ; ::source-paths
+    ; ::java-source-paths
+    ; ::test-paths
+    ; ::resource-paths
+    ; ::target-path
+    ; ::compile-path
+    ; ::native-path
+    ; ::clean-targets
+    ; ::clean-non-project-classes
+    ; ::checkout-deps-shares
+    ; ::test-selectors
+    ; ::monkeypatch-clojure-test
+    ; ::repl-options
+    ; ::jar-name
+    ; ::uberjar-name
+    ; ::omit-source
+    ; ::jar-exclusions
+    ; ::uberjar-exclusions
+    ; ::auto-clean
+    ; ::uberjar-merge-with
+    ; ::scm
+    ; ::validate
+    ]))
+
+(spec/def ::proj/description ::non-blank-string)
+
+;; Source, diegoperini: https://mathiasbynens.be/demo/url-regex
+(spec/def ::proj/url
+  (util/stregex #"^(https?|ftp)://[^\s/$.?#].[^\s]*$"))
+
+;;; Dependencies
 
 (spec/def ::proj/dependency-name
   (spec/alt
@@ -66,7 +137,14 @@
   (spec/keys :req [::proj/artifact-id ::proj/group-id]))
 
 
-;;; Function defenitions
+(spec/def ::proj/dependencies
+  (spec/coll-of ::proj/dependency-vector :kind vector?))
+
+
+
+;;;; Function defenitions
+
+;;; Dependencies
 
 (spec/fdef proj/artifact-map
            :args (spec/cat :dep-name ::proj/dependency-name)

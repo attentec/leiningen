@@ -1,22 +1,11 @@
 (ns leiningen.core.spec.project
-  (:require [clojure.spec           :as spec]
-            [clojure.spec.gen       :as gen]
-            [clojure.spec.test      :as test]
-            [clojure.string         :as str]
-            [miner.strgen           :as strgen]
-            [leiningen.core.project :as proj]))
-
-(defmacro vcat
-  "Takes key+pred pairs, e.g.
-
-  (vcat :e even? :o odd?)
-
-  Returns a regex op that matches vectors, returning a map containing
-  the keys of each pred and the corresponding value. The attached
-  generator produces vectors."
-  [& key-pred-forms]
-  `(spec/with-gen (spec/and vector? (spec/cat ~@key-pred-forms))
-     #(gen/fmap vec (spec/gen (spec/cat ~@key-pred-forms)))))
+  (:require [clojure.spec             :as spec]
+            [clojure.spec.gen         :as gen]
+            [clojure.spec.test        :as test]
+            [clojure.string           :as str]
+            [miner.strgen             :as strgen]
+            [leiningen.core.project   :as proj]
+            [leiningen.core.spec.util :as util]))
 
 (spec/def ::non-blank-string
   (spec/and string? #(not (str/blank? %))))
@@ -45,8 +34,8 @@
    :vector     ::proj/exclusion-vector))
 
 (spec/def ::proj/exclusion-vector
-  (vcat :dep-name  ::proj/dependency-name
-            :arguments ::proj/exclusion-args))
+  (util/vcat :dep-name  ::proj/dependency-name
+             :arguments ::proj/exclusion-args))
 
 (spec/def ::proj/optional      boolean?)
 (spec/def ::proj/scope         ::non-blank-string)
@@ -66,9 +55,9 @@
 (spec/def ::proj/version ::non-blank-string)
 
 (spec/def ::proj/dependency-vector
-  (vcat :name      ::proj/dependency-name
-            :version   ::proj/version
-            :arguments ::proj/dependency-args))
+  (util/vcat :name      ::proj/dependency-name
+             :version   ::proj/version
+             :arguments ::proj/dependency-args))
 
 (spec/def ::proj/dependency-map
   (spec/keys :req [::proj/artifact-id ::proj/group-id ::proj/version]))

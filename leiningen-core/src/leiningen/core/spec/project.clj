@@ -16,7 +16,7 @@
    ::proj/licenses
    ::proj/min-lein-version
    ::proj/dependencies
-   ; ::proj/managed-dependencies
+   ::proj/managed-dependencies
    ; ::proj/pedantic?
    ; ::proj/exclusions
    ; ::proj/plugins
@@ -181,11 +181,11 @@
 (spec/def ::proj/exclusion-map
   (spec/keys :req [::proj/artifact-id ::proj/group-id]))
 
-
 (spec/def ::proj/dependencies
   (spec/coll-of ::proj/dependency-vector :kind vector?))
 
-
+(spec/def ::proj/managed-dependencies
+  (spec/coll-of ::proj/dependency-vector :kind vector?))
 
 ;;;; Function defenitions
 

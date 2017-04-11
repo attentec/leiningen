@@ -13,70 +13,69 @@
   (util/stregex #"[^\s/]+/[^\s/]+"))
 
 ;;; Whole project map or defproject argument list.
-
 (def project-argument-keys
   [::proj/description
    ::proj/url
-   ::mailing-list
-   ::mailing-lists
-   ; ::license
-   ; ::licenses
-   ; ::min-lein-version
+   ::proj/mailing-list
+   ::proj/mailing-lists
+   ::proj/license
+   ::proj/licenses
+   ; ::proj/min-lein-version
    ::proj/dependencies
-   ; ::managed-dependencies
-   ; ::pedantic?
-   ; ::exclusions
-   ; ::plugins
-   ; ::repositories
-   ; ::plugin-repositories
-   ; ::mirrors
-   ; ::local-repo
-   ; ::update
-   ; ::checksum
-   ; ::offline?
-   ; ::signing
-   ; ::certificates
-   ; ::profiles
-   ; ::hooks
-   ; ::middleware
-   ; ::implicit-middleware
-   ; ::implicit-hooks
-   ; ::main
-   ; ::aliases
-   ; ::release-tasks
-   ; ::prep-tasks
-   ; ::aot
-   ; ::injections
-   ; ::java-agents
-   ; ::javac-options
-   ; ::warn-on-reflection
-   ; ::global-vars
-   ; ::java-cmd
-   ; ::jvm-opts
-   ; ::eval-in
-   ; ::bootclasspath
-   ; ::source-paths
-   ; ::java-source-paths
-   ; ::test-paths
-   ; ::resource-paths
-   ; ::target-path
-   ; ::compile-path
-   ; ::native-path
-   ; ::clean-targets
-   ; ::clean-non-project-classes
-   ; ::checkout-deps-shares
-   ; ::test-selectors
-   ; ::monkeypatch-clojure-test
-   ; ::repl-options
-   ; ::jar-name
-   ; ::uberjar-name
-   ; ::omit-source
-   ; ::jar-exclusions
-   ; ::uberjar-exclusions
-   ; ::auto-clean
-   ; ::uberjar-merge-with
-   ; ::scm
-   ; ::validate
+   ; ::proj/managed-dependencies
+   ; ::proj/pedantic?
+   ; ::proj/exclusions
+   ; ::proj/plugins
+   ; ::proj/repositories
+   ; ::proj/plugin-repositories
+   ; ::proj/mirrors
+   ; ::proj/local-repo
+   ; ::proj/update
+   ; ::proj/checksum
+   ; ::proj/offline?
+   ; ::proj/signing
+   ; ::proj/certificates
+   ; ::proj/profiles
+   ; ::proj/hooks
+   ; ::proj/middleware
+   ; ::proj/implicit-middleware
+   ; ::proj/implicit-hooks
+   ; ::proj/main
+   ; ::proj/aliases
+   ; ::proj/release-tasks
+   ; ::proj/prep-tasks
+   ; ::proj/aot
+   ; ::proj/injections
+   ; ::proj/java-agents
+   ; ::proj/javac-options
+   ; ::proj/warn-on-reflection
+   ; ::proj/global-vars
+   ; ::proj/java-cmd
+   ; ::proj/jvm-opts
+   ; ::proj/eval-in
+   ; ::proj/bootclasspath
+   ; ::proj/source-paths
+   ; ::proj/java-source-paths
+   ; ::proj/test-paths
+   ; ::proj/resource-paths
+   ; ::proj/target-path
+   ; ::proj/compile-path
+   ; ::proj/native-path
+   ; ::proj/clean-targets
+   ; ::proj/clean-non-project-classes
+   ; ::proj/checkout-deps-shares
+   ; ::proj/test-selectors
+   ; ::proj/monkeypatch-clojure-test
+   ; ::proj/repl-options
+   ; ::proj/jar-name
+   ; ::proj/uberjar-name
+   ; ::proj/omit-source
+   ; ::proj/jar-exclusions
+   ; ::proj/uberjar-exclusions
+   ; ::proj/auto-clean
+   ; ::proj/uberjar-merge-with
+   ; ::proj/scm
+   ; ::proj/validate
    ])
 
 (spec/def ::proj/project-args
@@ -88,7 +87,7 @@
                     :req-un [::proj/description])))
 
 
-;;; Simple top level project fields.
+;;;; Keys in project-argument-keys from top to bottom.
 
 (spec/def ::proj/description ::non-blank-string)
 
@@ -105,7 +104,7 @@
 
 (spec/def ::proj/name           ::non-blank-string)
 (spec/def ::proj/archive        ::proj/url)
-(spec/def ::proj/other-archives (spec/coll-of ::proj/url :min-count 1))
+(spec/def ::proj/other-archives (spec/coll-of ::proj/url :min-count 1 :gen-max 3))
 (spec/def ::proj/post           ::proj/email)
 (spec/def ::proj/subscribe      (spec/or ::proj/email ::proj/url))
 (spec/def ::proj/unsubscribe    (spec/or ::proj/email ::proj/url))
@@ -114,8 +113,19 @@
   (spec/keys :opt-un [::proj/name ::proj/archive ::proj/other-archives
                       ::proj/post ::proj/subscribe ::proj/unsubscribe]))
 
-(spec/def ::proj/mailing-lists (spec/coll-of ::mailing-list :min-count 1))
-(spec/exercise ::proj/mailing-list)
+(spec/def ::proj/mailing-lists (spec/coll-of ::mailing-list :min-count 1 :gen-max 3))
+
+
+;; Licenses
+
+(spec/def ::proj/distribution #{:repo :manual})
+(spec/def ::proj/comments     ::non-blank-string)
+
+(spec/def ::proj/license
+  (spec/keys :opt-un [::proj/name ::proj/url ::proj/distribution ::proj/comments]))
+
+(spec/def ::proj/licenses
+  (spec/coll-of ::proj/license :min-count 1 :gen-max 3))
 
 
 ;;; Dependencies

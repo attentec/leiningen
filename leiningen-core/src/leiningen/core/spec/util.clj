@@ -2,6 +2,7 @@
   (:require
    [clojure.spec           :as spec]
    [clojure.spec.gen       :as gen]
+   [clojure.string         :as str]
    [miner.strgen           :as strgen]))
 
 (defmacro vcat
@@ -26,3 +27,10 @@
   `(spec/with-gen
      (spec/and string? #(re-matches ~string-regex %))
      #(strgen/string-generator ~string-regex)))
+
+
+(spec/def ::non-blank-string
+  (spec/and string? #(not (str/blank? %))))
+
+(spec/def ::namespaced-string
+  (stregex #"[^\s/]+/[^\s/]+"))

@@ -6,12 +6,6 @@
             [leiningen.core.project   :as proj]
             [leiningen.core.spec.util :as util]))
 
-(spec/def ::non-blank-string
-  (spec/and string? #(not (str/blank? %))))
-
-(spec/def ::namespaced-string
-  (util/stregex #"[^\s/]+/[^\s/]+"))
-
 ;;; Whole project map or defproject argument list.
 (def project-argument-keys
   [::proj/description
@@ -89,7 +83,7 @@
 
 ;;;; Keys in project-argument-keys from top to bottom.
 
-(spec/def ::proj/description ::non-blank-string)
+(spec/def ::proj/description ::util/non-blank-string)
 
 ;; Source, diegoperini: https://mathiasbynens.be/demo/url-regex
 (spec/def ::proj/url
@@ -102,7 +96,7 @@
 
 ;;; Mailing lists
 
-(spec/def ::proj/name           ::non-blank-string)
+(spec/def ::proj/name           ::util/non-blank-string)
 (spec/def ::proj/archive        ::proj/url)
 (spec/def ::proj/other-archives (spec/coll-of ::proj/url :min-count 1 :gen-max 3))
 (spec/def ::proj/post           ::proj/email)
@@ -113,13 +107,13 @@
   (spec/keys :opt-un [::proj/name ::proj/archive ::proj/other-archives
                       ::proj/post ::proj/subscribe ::proj/unsubscribe]))
 
-(spec/def ::proj/mailing-lists (spec/coll-of ::mailing-list :min-count 1 :gen-max 3))
+(spec/def ::proj/mailing-lists (spec/coll-of ::proj/mailing-list :min-count 1 :gen-max 3))
 
 
 ;;; Licenses
 
 (spec/def ::proj/distribution #{:repo :manual})
-(spec/def ::proj/comments     ::non-blank-string)
+(spec/def ::proj/comments     ::util/non-blank-string)
 
 (spec/def ::proj/license
   (spec/keys :opt-un [::proj/name ::proj/url ::proj/distribution ::proj/comments]))
@@ -130,23 +124,23 @@
 
 ;;; Leiningen version
 
-(spec/def ::proj/semantic-version
-  (util/stregex #"(\d+)\.(\d+)\.(\d+)(-\S+)?(-SNAPSHOT)?"))
+(spec/def ::proj/semantic-version-string
+  (util/stregex #"(\d+)\.(\d+)\.(\d+)(-\w+)?(-SNAPSHOT)?"))
 
-(spec/def ::proj/min-lein-version ::proj/semantic-version)
+(spec/def ::proj/min-lein-version ::proj/semantic-version-string)
 
 
 ;;; Dependencies
 
 (spec/def ::proj/dependency-name
   (spec/alt
-   :namespaced-string ::namespaced-string
-   :bare-string       ::non-blank-string
+   :namespaced-string ::util/namespaced-string
+   :bare-string       ::util/non-blank-string
    :namespaced-symbol qualified-symbol?
    :bare-symbol       simple-symbol?))
 
-(spec/def ::proj/artifact-id ::non-blank-string)
-(spec/def ::proj/group-id    ::non-blank-string)
+(spec/def ::proj/artifact-id ::util/non-blank-string)
+(spec/def ::proj/group-id    ::util/non-blank-string)
 (spec/def ::proj/dependency-name-map
   (spec/keys :req [::proj/artifact-id ::proj/group-id]))
 
@@ -160,10 +154,10 @@
              :arguments ::proj/exclusion-args))
 
 (spec/def ::proj/optional      boolean?)
-(spec/def ::proj/scope         ::non-blank-string)
-(spec/def ::proj/classifier    ::non-blank-string)
-(spec/def ::proj/native-prefix ::non-blank-string)
-(spec/def ::proj/extension     ::non-blank-string)
+(spec/def ::proj/scope         ::util/non-blank-string)
+(spec/def ::proj/classifier    ::util/non-blank-string)
+(spec/def ::proj/native-prefix ::util/non-blank-string)
+(spec/def ::proj/extension     ::util/non-blank-string)
 (spec/def ::proj/exclusions    (spec/coll-of ::proj/exclusion :gen-max 2))
 (spec/def ::proj/dependency-args
   (spec/keys*
@@ -174,7 +168,7 @@
    :opt-un [::proj/scope ::proj/classifier
             ::proj/native-prefix ::proj/extension]))
 
-(spec/def ::proj/version ::non-blank-string)
+(spec/def ::proj/version ::util/non-blank-string)
 
 (spec/def ::proj/dependency-vector
   (util/vcat :name      ::proj/dependency-name

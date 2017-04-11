@@ -12,72 +12,82 @@
 (spec/def ::namespaced-string
   (util/stregex #"[^\s/]+/[^\s/]+"))
 
+;;; Whole project map or defproject argument list.
+
+(def project-argument-keys
+  [::proj/description
+   ::proj/url
+   ; ::mailing-list
+   ; ::mailing-lists
+   ; ::license
+   ; ::licenses
+   ; ::min-lein-version
+   ::proj/dependencies
+   ; ::managed-dependencies
+   ; ::pedantic?
+   ; ::exclusions
+   ; ::plugins
+   ; ::repositories
+   ; ::plugin-repositories
+   ; ::mirrors
+   ; ::local-repo
+   ; ::update
+   ; ::checksum
+   ; ::offline?
+   ; ::signing
+   ; ::certificates
+   ; ::profiles
+   ; ::hooks
+   ; ::middleware
+   ; ::implicit-middleware
+   ; ::implicit-hooks
+   ; ::main
+   ; ::aliases
+   ; ::release-tasks
+   ; ::prep-tasks
+   ; ::aot
+   ; ::injections
+   ; ::java-agents
+   ; ::javac-options
+   ; ::warn-on-reflection
+   ; ::global-vars
+   ; ::java-cmd
+   ; ::jvm-opts
+   ; ::eval-in
+   ; ::bootclasspath
+   ; ::source-paths
+   ; ::java-source-paths
+   ; ::test-paths
+   ; ::resource-paths
+   ; ::target-path
+   ; ::compile-path
+   ; ::native-path
+   ; ::clean-targets
+   ; ::clean-non-project-classes
+   ; ::checkout-deps-shares
+   ; ::test-selectors
+   ; ::monkeypatch-clojure-test
+   ; ::repl-options
+   ; ::jar-name
+   ; ::uberjar-name
+   ; ::omit-source
+   ; ::jar-exclusions
+   ; ::uberjar-exclusions
+   ; ::auto-clean
+   ; ::uberjar-merge-with
+   ; ::scm
+   ; ::validate
+   ])
+
+(spec/def ::proj/project-args
+  (eval `(spec/keys* :opt-un ~project-argument-keys
+                     :req-un [::proj/description])))
+
 (spec/def ::proj/project-map
-  (spec/keys
-   :opt-un
-   [::proj/description
-    ::proj/url
-    ; ::mailing-list
-    ; ::mailing-lists
-    ; ::license
-    ; ::licenses
-    ; ::min-lein-version
-    ::proj/dependencies
-    ; ::managed-dependencies
-    ; ::pedantic?
-    ; ::exclusions
-    ; ::plugins
-    ; ::repositories
-    ; ::plugin-repositories
-    ; ::mirrors
-    ; ::local-repo
-    ; ::update
-    ; ::checksum
-    ; ::offline?
-    ; ::signing
-    ; ::certificates
-    ; ::profiles
-    ; ::hooks
-    ; ::middleware
-    ; ::implicit-middleware
-    ; ::implicit-hooks
-    ; ::main
-    ; ::aliases
-    ; ::release-tasks
-    ; ::prep-tasks
-    ; ::aot
-    ; ::injections
-    ; ::java-agents
-    ; ::javac-options
-    ; ::warn-on-reflection
-    ; ::global-vars
-    ; ::java-cmd
-    ; ::jvm-opts
-    ; ::eval-in
-    ; ::bootclasspath
-    ; ::source-paths
-    ; ::java-source-paths
-    ; ::test-paths
-    ; ::resource-paths
-    ; ::target-path
-    ; ::compile-path
-    ; ::native-path
-    ; ::clean-targets
-    ; ::clean-non-project-classes
-    ; ::checkout-deps-shares
-    ; ::test-selectors
-    ; ::monkeypatch-clojure-test
-    ; ::repl-options
-    ; ::jar-name
-    ; ::uberjar-name
-    ; ::omit-source
-    ; ::jar-exclusions
-    ; ::uberjar-exclusions
-    ; ::auto-clean
-    ; ::uberjar-merge-with
-    ; ::scm
-    ; ::validate
-    ]))
+  (eval `(spec/keys :opt-un ~project-argument-keys
+                    :req-un [::proj/description])))
+
+;;; Top level project fields.
 
 (spec/def ::proj/description ::non-blank-string)
 
@@ -168,3 +178,11 @@
 (spec/fdef proj/exclusion-vec
            :args (spec/cat :exclusion ::proj/exclusion-map)
            :ret ::proj/exclusion)
+
+;;; Big picture
+
+(spec/fdef proj/defproject
+          :args (spec/cat :project-name symbol?
+                          :version      ::proj/version
+                          :arguments    ::proj/project-args)
+          :ret symbol?)

@@ -1,40 +1,28 @@
 (ns leiningen.core.test.spec.project
-  (:require [clojure.spec           :as spec]
-            [clojure.spec.test      :as test]
-            [clojure.pprint         :as pprint]
-            [clojure.test           :refer [deftest is]]
-            [leiningen.core.project :as project]
+  (:require [clojure.spec.test             :as test]
+            [clojure.test                  :refer [deftest]]
+            [leiningen.core.project        :as project]
             ;; Load the specs into the registry
-            [leiningen.core.spec.project :as project-spec]))
-
-
-;;; Helper functions
-
-(defn summarize-results [test-check-result]
-  (map (comp #(pprint/write % :stream nil)
-             test/abbrev-result) test-check-result))
-
-(defn check [test-check-result]
-  (is (nil? (-> test-check-result first :failure))
-      (summarize-results test-check-result)))
+            [leiningen.core.spec.project   :as project-spec]
+            [leiningen.core.test.spec.util :as util]))
 
 
 ;;; Generative tests for functions
 
 (deftest test-artifact-map
-  (check (test/check `project/artifact-map)))
+  (util/check (test/check `project/artifact-map)))
 
 (deftest test-dependency-map
-  (check (test/check `project/dependency-map)))
+  (util/check (test/check `project/dependency-map)))
 
 (deftest test-dependency-vec
-  (check (test/check `project/dependency-vec)))
+  (util/check (test/check `project/dependency-vec)))
 
 (deftest test-exclusion-map
-  (check (test/check `project/exclusion-map)))
+  (util/check (test/check `project/exclusion-map)))
 
 (deftest test-exclusion-vec
-  (check (test/check `project/exclusion-vec)))
+  (util/check (test/check `project/exclusion-vec)))
 
-(deftest test-exclusion-vec
-  (check (test/check `project/defproject)))
+(deftest test-defproject
+  (util/check (test/check `project/defproject)))

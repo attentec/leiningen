@@ -35,3 +35,6 @@
 
 (deftest test-exclusion-vec
   (check (test/check `project/exclusion-vec)))
+
+(deftest test-exclusion-vec
+  (check (test/check `project/defproject)))

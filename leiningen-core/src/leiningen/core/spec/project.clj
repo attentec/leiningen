@@ -17,8 +17,8 @@
 (def project-argument-keys
   [::proj/description
    ::proj/url
-   ; ::mailing-list
-   ; ::mailing-lists
+   ::mailing-list
+   ::mailing-lists
    ; ::license
    ; ::licenses
    ; ::min-lein-version
@@ -87,13 +87,36 @@
   (eval `(spec/keys :opt-un ~project-argument-keys
                     :req-un [::proj/description])))
 
-;;; Top level project fields.
+
+;;; Simple top level project fields.
 
 (spec/def ::proj/description ::non-blank-string)
 
 ;; Source, diegoperini: https://mathiasbynens.be/demo/url-regex
 (spec/def ::proj/url
   (util/stregex #"^(https?|ftp)://[^\s/$.?#].[^\s]*$"))
+
+;; Won't match email adresses like me@google where the company owns a tld.
+(spec/def ::proj/email
+  (util/stregex #"/\S+@\S+\.\S+/"))
+
+
+;;; Mailing lists
+
+(spec/def ::proj/name           ::non-blank-string)
+(spec/def ::proj/archive        ::proj/url)
+(spec/def ::proj/other-archives (spec/coll-of ::proj/url :min-count 1))
+(spec/def ::proj/post           ::proj/email)
+(spec/def ::proj/subscribe      (spec/or ::proj/email ::proj/url))
+(spec/def ::proj/unsubscribe    (spec/or ::proj/email ::proj/url))
+
+(spec/def ::proj/mailing-list
+  (spec/keys :opt-un [::proj/name ::proj/archive ::proj/other-archives
+                      ::proj/post ::proj/subscribe ::proj/unsubscribe]))
+
+(spec/def ::proj/mailing-lists (spec/coll-of ::mailing-list :min-count 1))
+(spec/exercise ::proj/mailing-list)
+
 
 ;;; Dependencies
 

@@ -34,3 +34,6 @@
 
 (spec/def ::namespaced-string
   (stregex #"[^\s/]+/[^\s/]+"))
+
+(spec/def ::natural-number
+  (spec/int-in 0 Integer/MAX_VALUE))

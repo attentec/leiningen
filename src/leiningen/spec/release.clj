@@ -1,16 +1,17 @@
 (ns leiningen.spec.release
-  (:require [clojure.spec             :as spec]
-            [clojure.spec.gen         :as gen]
-            [clojure.spec.test        :as test]
-            [leiningen.release        :as release]
-            [leiningen.core.project   :as proj]
-            [leiningen.core.spec.util :as util]))
+  (:require [clojure.spec                :as spec]
+            [clojure.spec.gen            :as gen]
+            [clojure.spec.test           :as test]
+            [leiningen.release           :as release]
+            [leiningen.core.project      :as proj]
+            [leiningen.core.spec.project :as proj-spec]
+            [leiningen.core.spec.util    :as util]))
 
 
-(spec/def ::release/major     number?)
-(spec/def ::release/minor     number?)
-(spec/def ::release/patch     number?)
-(spec/def ::release/qualifier string?)
+(spec/def ::release/major     ::util/natural-number)
+(spec/def ::release/minor     ::util/natural-number)
+(spec/def ::release/patch     ::util/natural-number)
+(spec/def ::release/qualifier ::util/non-blank-string)
 (spec/def ::release/snapshot  #{"SNAPSHOT"})
 
 (spec/def ::release/semantic-version-map

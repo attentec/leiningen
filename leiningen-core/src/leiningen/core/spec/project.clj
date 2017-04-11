@@ -20,7 +20,7 @@
    ::proj/mailing-lists
    ::proj/license
    ::proj/licenses
-   ; ::proj/min-lein-version
+   ::proj/min-lein-version
    ::proj/dependencies
    ; ::proj/managed-dependencies
    ; ::proj/pedantic?
@@ -116,7 +116,7 @@
 (spec/def ::proj/mailing-lists (spec/coll-of ::mailing-list :min-count 1 :gen-max 3))
 
 
-;; Licenses
+;;; Licenses
 
 (spec/def ::proj/distribution #{:repo :manual})
 (spec/def ::proj/comments     ::non-blank-string)
@@ -126,6 +126,14 @@
 
 (spec/def ::proj/licenses
   (spec/coll-of ::proj/license :min-count 1 :gen-max 3))
+
+
+;;; Leiningen version
+
+(spec/def ::proj/semantic-version
+  (util/stregex #"(\d+)\.(\d+)\.(\d+)(-\S+)?(-SNAPSHOT)?"))
+
+(spec/def ::proj/min-lein-version ::proj/semantic-version)
 
 
 ;;; Dependencies
@@ -211,6 +219,7 @@
 (spec/fdef proj/exclusion-vec
            :args (spec/cat :exclusion ::proj/exclusion-map)
            :ret ::proj/exclusion)
+
 
 ;;; Big picture
 

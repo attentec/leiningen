@@ -17,7 +17,7 @@
    ::proj/min-lein-version
    ::proj/dependencies
    ::proj/managed-dependencies
-   ; ::proj/pedantic?
+   ::proj/pedantic?
    ; ::proj/exclusions
    ; ::proj/plugins
    ; ::proj/repositories
@@ -186,6 +186,9 @@
 
 (spec/def ::proj/managed-dependencies
   (spec/coll-of ::proj/dependency-vector :kind vector?))
+
+
+(spec/def ::proj/pedantic? #{:abort :warn :ranges true false})
 
 ;;;; Function defenitions
 

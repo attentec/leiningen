@@ -28,6 +28,13 @@
      (spec/and string? #(re-matches ~string-regex %))
      #(strgen/string-generator ~string-regex)))
 
+(defn key-xor?
+  "Returs true if coll exclusively contains one of two keys."
+  [coll a-key b-key]
+  (let [a (contains? coll a-key)
+        b (contains? coll b-key)]
+    (or (and a (not b))
+        (and b (not a)))))
 
 (spec/def ::non-blank-string
   (spec/and string? #(not (str/blank? %))))

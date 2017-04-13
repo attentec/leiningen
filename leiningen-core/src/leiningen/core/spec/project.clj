@@ -18,8 +18,8 @@
    ::proj/dependencies
    ::proj/managed-dependencies
    ::proj/pedantic?
-   ; ::proj/exclusions
-   ; ::proj/plugins
+   ::proj/exclusions
+   ::proj/plugins
    ; ::proj/repositories
    ; ::proj/plugin-repositories
    ; ::proj/mirrors
@@ -189,6 +189,29 @@
 
 
 (spec/def ::proj/pedantic? #{:abort :warn :ranges true false})
+
+
+;;; Plugins
+
+(spec/def ::proj/middleware boolean?)
+(spec/def ::proj/hooks      boolean?)
+
+;; TODO: This duplicates the whole ::proj/dependency-args. See SO question:
+;; http://stackoverflow.com/questions/43388710/
+(spec/def ::proj/plugin-args
+  (spec/keys* :opt-un [::proj/optional ::proj/scope ::proj/classifier
+                       ::proj/native-prefix ::proj/extension ::proj/exclusions
+                       ::proj/middleware ::proj/hooks]))
+
+(spec/def ::proj/plugin-vector
+  (util/vcat :name      ::proj/dependency-name
+             :version   ::proj/version
+             :arguments ::proj/plugin-args))
+
+(spec/def ::proj/plugins
+  (spec/coll-of ::proj/plugin-vector :min-count 1 :gen-max 3))
+
+
 
 ;;;; Function defenitions
 

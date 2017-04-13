@@ -22,7 +22,7 @@
    ::proj/plugins
    ::proj/repositories
    ::proj/plugin-repositories
-   ; ::proj/mirrors
+   ::proj/mirrors
    ; ::proj/local-repo
    ; ::proj/update
    ; ::proj/checksum
@@ -239,7 +239,20 @@
 (spec/def ::proj/repositories
   (spec/coll-of (spec/cat :name ::util/non-blank-string
                           :info (spec/alt :url ::proj/url
-                                          :map ::proj/repository-info-map))))
+                                          :map ::proj/repository-info-map))
+                :gen-max 3 :kind vector?))
+
+(spec/def ::proj/plugin-repositories ::proj/repositories)
+
+
+;;; Mirrors
+
+(spec/def ::proj/repo-manager  boolean?)
+
+(spec/def ::proj/mirrors
+  (spec/map-of (spec/or :regex ::util/stregex
+                        :string ::util/non-blank-string)
+               (spec/keys :opt-un [::proj/name ::proj/url ::proj/repo-manager])))
 
 
 

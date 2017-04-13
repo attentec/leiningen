@@ -44,3 +44,8 @@
 
 (spec/def ::natural-number
   (spec/int-in 0 Integer/MAX_VALUE))
+
+(spec/def ::stregex
+  (spec/with-gen
+    #(instance? java.util.regex.Pattern %)
+    #(gen/fmap re-pattern (spec/gen string?))))

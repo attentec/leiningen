@@ -20,8 +20,8 @@
    ::proj/pedantic?
    ::proj/exclusions
    ::proj/plugins
-   ; ::proj/repositories
-   ; ::proj/plugin-repositories
+   ::proj/repositories
+   ::proj/plugin-repositories
    ; ::proj/mirrors
    ; ::proj/local-repo
    ; ::proj/update
@@ -218,6 +218,28 @@
 
 (spec/def ::proj/plugins
   (spec/coll-of ::proj/plugin-vector :min-count 1 :gen-max 3))
+
+
+;;; Repositories
+
+(spec/def ::proj/snapshots     boolean?)
+(spec/def ::proj/sign-releases boolean?)
+(spec/def ::proj/checksum      #{:fail :warn :ignore})
+(spec/def ::proj/update        #{:always :daily :never})
+(spec/def ::proj/releases      #{:checksum :fail :update :always})
+(spec/def ::proj/username      ::util/non-blank-string)
+(spec/def ::proj/password      ::util/non-blank-string)
+(spec/def ::proj/creds         #{:gpg})
+
+(spec/def ::proj/repository-info-map
+  (spec/keys :opt-un [::proj/url ::proj/snapshots ::proj/sign-releases
+                      ::proj/checksum ::proj/update ::proj/releases
+                      ::proj/username ::proj/password ::proj/creds]))
+
+(spec/def ::proj/repositories
+  (spec/coll-of (spec/cat :name ::util/non-blank-string
+                          :info (spec/alt :url ::proj/url
+                                          :map ::proj/repository-info-map))))
 
 
 

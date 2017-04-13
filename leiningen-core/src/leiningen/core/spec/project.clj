@@ -72,6 +72,13 @@
    ; ::proj/validate
    ])
 
+
+;; TODO: Remove required keyword, it's only there so that
+;; `spec/exercise` doesn't barf. See SO question:
+;;http://stackoverflow.com/questions/43339543/
+;; TODO: Add xor requirement for singularis and pluralis of
+;; mailing-lists and licenses with util/key-xor?. Currently impossible
+;; due to the above mentioned bug.
 (spec/def ::proj/project-args
   (eval `(spec/keys* :opt-un ~project-argument-keys
                      :req-un [::proj/description])))
@@ -197,7 +204,8 @@
 (spec/def ::proj/hooks      boolean?)
 
 ;; TODO: This duplicates the whole ::proj/dependency-args. See SO question:
-;; http://stackoverflow.com/questions/43388710/
+;; http://stackoverflow.com/questions/43388710/ and Alex Miller on irc:
+;; "The easiest way to do what you're talking about is to repeat the valid option keys."
 (spec/def ::proj/plugin-args
   (spec/keys* :opt-un [::proj/optional ::proj/scope ::proj/classifier
                        ::proj/native-prefix ::proj/extension ::proj/exclusions
@@ -248,3 +256,5 @@
                           :version      ::proj/version
                           :arguments    ::proj/project-args)
           :ret symbol?)
+
+; (spec/exercise-fn `proj/defproject)

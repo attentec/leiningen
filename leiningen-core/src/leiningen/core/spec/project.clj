@@ -30,7 +30,7 @@
    ::proj/signing
    ::proj/certificates
    ::proj/profiles
-   ; ::proj/hooks
+   ::proj/hooks
    ; ::proj/middleware
    ; ::proj/implicit-middleware
    ; ::proj/implicit-hooks
@@ -99,8 +99,8 @@
 (spec/def ::proj/local-repo   ::util/non-blank-string)
 (spec/def ::proj/offline?     boolean?)
 (spec/def ::proj/signing      (spec/map-of #{:gpg-key} ::util/non-blank-string))
-(spec/def ::proj/certificates (spec/coll-of ::util/non-blank-string :kind vector?))
-
+(spec/def ::proj/certificates (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
+(spec/def ::proj/hooks        (spec/coll-of symbol? :kind vector? :min-count 1))
 
 ;;; Mailing lists
 
@@ -166,7 +166,7 @@
 (spec/def ::proj/classifier    ::util/non-blank-string)
 (spec/def ::proj/native-prefix ::util/non-blank-string)
 (spec/def ::proj/extension     ::util/non-blank-string)
-(spec/def ::proj/exclusions    (spec/coll-of ::proj/exclusion :gen-max 2))
+(spec/def ::proj/exclusions    (spec/coll-of ::proj/exclusion :gen-max 2 :kind vector? :min-count 1))
 (spec/def ::proj/dependency-args
   (spec/keys*
    :opt-un [::proj/optional ::proj/scope ::proj/classifier
@@ -190,10 +190,10 @@
   (spec/keys :req [::proj/artifact-id ::proj/group-id]))
 
 (spec/def ::proj/dependencies
-  (spec/coll-of ::proj/dependency-vector :kind vector?))
+  (spec/coll-of ::proj/dependency-vector :kind vector? :min-count 1))
 
 (spec/def ::proj/managed-dependencies
-  (spec/coll-of ::proj/dependency-vector :kind vector?))
+  (spec/coll-of ::proj/dependency-vector :kind vector? :min-count 1))
 
 
 ;;; Plugins
@@ -215,7 +215,7 @@
              :arguments ::proj/plugin-args))
 
 (spec/def ::proj/plugins
-  (spec/coll-of ::proj/plugin-vector :min-count 1 :gen-max 3))
+  (spec/coll-of ::proj/plugin-vector :gen-max 3 :kind vector? :min-count 1))
 
 
 ;;; Repositories
@@ -238,7 +238,7 @@
   (spec/coll-of (spec/cat :name ::util/non-blank-string
                           :info (spec/alt :url ::proj/url
                                           :map ::proj/repository-info-map))
-                :gen-max 3 :kind vector?))
+                :gen-max 3 :kind vector? :min-count 1))
 
 (spec/def ::proj/plugin-repositories ::proj/repositories)
 
@@ -259,8 +259,7 @@
 (spec/def ::proj/profiles
   (spec/map-of keyword?
                (eval `(spec/keys ;; Prevent infinite recursion by removing oneself.
-                       :opt-un ~(remove #{::proj/profiles} project-argument-keys)
-                       :gen-max 3))
+                       :opt-un ~(remove #{::proj/profiles} project-argument-keys)))
                :gen-max 3))
 
 

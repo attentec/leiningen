@@ -23,12 +23,12 @@
    ::proj/repositories
    ::proj/plugin-repositories
    ::proj/mirrors
-   ; ::proj/local-repo
-   ; ::proj/update
-   ; ::proj/checksum
-   ; ::proj/offline?
-   ; ::proj/signing
-   ; ::proj/certificates
+   ::proj/local-repo
+   ::proj/update
+   ::proj/checksum
+   ::proj/offline?
+   ::proj/signing
+   ::proj/certificates
    ; ::proj/profiles
    ; ::proj/hooks
    ; ::proj/middleware
@@ -88,17 +88,18 @@
                     :req-un [::proj/description])))
 
 
-;;;; Keys in project-argument-keys from top to bottom.
+;;;; Minor keys in project-argument-keys from top to bottom.
 
-(spec/def ::proj/description ::util/non-blank-string)
-
+(spec/def ::proj/description  ::util/non-blank-string)
 ;; Source, diegoperini: https://mathiasbynens.be/demo/url-regex
-(spec/def ::proj/url
-  (util/stregex #"^(https?|ftp)://[^\s/$.?#].[^\s]*$"))
-
+(spec/def ::proj/url          (util/stregex #"^(https?|ftp)://[^\s/$.?#].[^\s]*$"))
 ;; Won't match email adresses like me@google where the company owns a tld.
-(spec/def ::proj/email
-  (util/stregex #"/\S+@\S+\.\S+/"))
+(spec/def ::proj/email        (util/stregex #"/\S+@\S+\.\S+/"))
+(spec/def ::proj/pedantic?    #{:abort :warn :ranges true false})
+(spec/def ::proj/local-repo   ::util/non-blank-string)
+(spec/def ::proj/offline?     boolean?)
+(spec/def ::proj/signing      (spec/map-of #{:gpg-key} ::util/non-blank-string))
+(spec/def ::proj/certificates (spec/coll-of ::util/non-blank-string :kind vector?))
 
 
 ;;; Mailing lists
@@ -193,9 +194,6 @@
 
 (spec/def ::proj/managed-dependencies
   (spec/coll-of ::proj/dependency-vector :kind vector?))
-
-
-(spec/def ::proj/pedantic? #{:abort :warn :ranges true false})
 
 
 ;;; Plugins

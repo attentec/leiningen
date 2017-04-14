@@ -29,7 +29,7 @@
    ::proj/offline?
    ::proj/signing
    ::proj/certificates
-   ; ::proj/profiles
+   ::proj/profiles
    ; ::proj/hooks
    ; ::proj/middleware
    ; ::proj/implicit-middleware
@@ -250,11 +250,23 @@
 (spec/def ::proj/mirrors
   (spec/map-of (spec/or :regex ::util/stregex
                         :string ::util/non-blank-string)
-               (spec/keys :opt-un [::proj/name ::proj/url ::proj/repo-manager])))
+               (spec/keys :opt-un [::proj/name ::proj/url ::proj/repo-manager])
+               :gen-max 3))
+
+
+;;; Profiles
+
+(spec/def ::proj/profiles
+  (spec/map-of keyword?
+               (eval `(spec/keys ;; Prevent infinite recursion by removing oneself.
+                       :opt-un ~(remove #{::proj/profiles} project-argument-keys)
+                       :gen-max 3))
+               :gen-max 3))
 
 
 
 ;;;; Function defenitions
+
 
 ;;; Dependencies
 

@@ -31,10 +31,10 @@
    ::proj/certificates
    ::proj/profiles
    ::proj/hooks
-   ; ::proj/middleware
-   ; ::proj/implicit-middleware
-   ; ::proj/implicit-hooks
-   ; ::proj/main
+   ::proj/middleware
+   ::proj/implicit-middleware
+   ::proj/implicit-hooks
+   ::proj/main
    ; ::proj/aliases
    ; ::proj/release-tasks
    ; ::proj/prep-tasks
@@ -101,6 +101,11 @@
 (spec/def ::proj/signing      (spec/map-of #{:gpg-key} ::util/non-blank-string))
 (spec/def ::proj/certificates (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
 (spec/def ::proj/hooks        (spec/coll-of symbol? :kind vector? :min-count 1))
+(spec/def ::proj/middleware   (spec/coll-of symbol? :kind vector? :min-count 1))
+(spec/def ::proj/implicit-hooks      boolean?)
+(spec/def ::proj/implicit-middleware boolean?)
+(spec/def ::proj/main         symbol?)
+
 
 ;;; Mailing lists
 
@@ -198,8 +203,8 @@
 
 ;;; Plugins
 
-(spec/def ::proj/middleware boolean?)
-(spec/def ::proj/hooks      boolean?)
+(spec/def :leiningen.core.project.plugin/middleware boolean?)
+(spec/def ::proj/hooks boolean?)
 
 ;; TODO: This duplicates the whole ::proj/dependency-args. See SO question:
 ;; http://stackoverflow.com/questions/43388710/ and Alex Miller on irc:
@@ -207,7 +212,7 @@
 (spec/def ::proj/plugin-args
   (spec/keys* :opt-un [::proj/optional ::proj/scope ::proj/classifier
                        ::proj/native-prefix ::proj/extension ::proj/exclusions
-                       ::proj/middleware ::proj/hooks]))
+                       :leiningen.core.project.plugin/middleware ::proj/hooks]))
 
 (spec/def ::proj/plugin-vector
   (util/vcat :name      ::proj/dependency-name

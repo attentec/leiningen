@@ -35,7 +35,7 @@
    ::proj/implicit-middleware
    ::proj/implicit-hooks
    ::proj/main
-   ; ::proj/aliases
+   ::proj/aliases
    ; ::proj/release-tasks
    ; ::proj/prep-tasks
    ; ::proj/aot
@@ -265,6 +265,23 @@
   (spec/map-of keyword?
                (eval `(spec/keys ;; Prevent infinite recursion by removing oneself.
                        :opt-un ~(remove #{::proj/profiles} project-argument-keys)))
+               :gen-max 3))
+
+
+;;; Aliases
+
+(spec/def ::proj/command-vector
+  (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
+
+(spec/def ::proj/do-command
+  (util/vcat :do          #{"do"}
+             :command-seq (spec/+ (spec/or :str        ::util/non-blank-string
+                                           :cmd-vector ::proj/command-vector))))
+
+(spec/def ::proj/aliases
+  (spec/map-of ::util/non-blank-string
+               (spec/or :command-vector ::proj/command-vector
+                        :do-command     ::proj/do-command)
                :gen-max 3))
 
 

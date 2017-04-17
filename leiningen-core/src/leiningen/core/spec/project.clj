@@ -41,9 +41,9 @@
    ::proj/aot
    ::proj/injections
    ::proj/java-agents
-   ; ::proj/javac-options
-   ; ::proj/warn-on-reflection
-   ; ::proj/global-vars
+   ::proj/javac-options
+   ::proj/warn-on-reflection
+   ::proj/global-vars
    ; ::proj/java-cmd
    ; ::proj/jvm-opts
    ; ::proj/eval-in
@@ -90,23 +90,26 @@
 
 ;;;; Minor keys in project-argument-keys from top to bottom.
 
-(spec/def ::proj/description  ::util/non-blank-string)
+(spec/def ::proj/description         ::util/non-blank-string)
 ;; Source, diegoperini: https://mathiasbynens.be/demo/url-regex
-(spec/def ::proj/url          (util/stregex #"^(https?|ftp)://[^\s/$.?#].[^\s]*$"))
+(spec/def ::proj/url                 (util/stregex #"^(https?|ftp)://[^\s/$.?#].[^\s]*$"))
 ;; Won't match email adresses like me@google where the company owns a tld.
-(spec/def ::proj/email        (util/stregex #"/\S+@\S+\.\S+/"))
-(spec/def ::proj/pedantic?    #{:abort :warn :ranges true false})
-(spec/def ::proj/local-repo   ::util/non-blank-string)
-(spec/def ::proj/offline?     boolean?)
-(spec/def ::proj/signing      (spec/map-of #{:gpg-key} ::util/non-blank-string))
-(spec/def ::proj/certificates (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
-(spec/def ::proj/hooks        (spec/coll-of symbol? :kind vector? :min-count 1))
-(spec/def ::proj/middleware   (spec/coll-of symbol? :kind vector? :min-count 1))
+(spec/def ::proj/email               (util/stregex #"/\S+@\S+\.\S+/"))
+(spec/def ::proj/pedantic?           #{:abort :warn :ranges true false})
+(spec/def ::proj/local-repo          ::util/non-blank-string)
+(spec/def ::proj/offline?            boolean?)
+(spec/def ::proj/signing             (spec/map-of #{:gpg-key} ::util/non-blank-string))
+(spec/def ::proj/certificates        (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
+(spec/def ::proj/hooks               (spec/coll-of symbol? :kind vector? :min-count 1))
+(spec/def ::proj/middleware          (spec/coll-of symbol? :kind vector? :min-count 1))
 (spec/def ::proj/implicit-hooks      boolean?)
 (spec/def ::proj/implicit-middleware boolean?)
-(spec/def ::proj/main         symbol?)
+(spec/def ::proj/main                symbol?)
 ;; TODO: Injections spec is too simple.
-(spec/def ::proj/injections   (spec/coll-of any? :kind vector? :gen-max 3))
+(spec/def ::proj/injections          (spec/coll-of any? :kind vector? :gen-max 3))
+(spec/def ::proj/javac-options       (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
+(spec/def ::proj/warn-on-reflection  boolean?)
+
 
 
 ;;; Mailing lists
@@ -314,7 +317,26 @@
    (util/vcat :name      ::proj/dependency-name
               :version   ::proj/version
               :arguments ::proj/java-agent-args)
-   :kind vector? :gen-max 3))
+   :kind vector? :gen-max 3 :min-count 1))
+
+
+;;; Global vars
+;; See http://stackoverflow.com/questions/43452079
+(spec/def ::proj/clojure-global-vars
+  #{'*print-namespace-maps* '*source-path* '*command-line-args*
+    '*read-eval* '*verbose-defrecords* '*print-level* '*suppress-read*
+    '*print-length* '*file* '*use-context-classloader* '*err*
+    '*default-data-reader-fn* '*allow-unresolved-vars* '*print-meta*
+    '*compile-files* '*math-context* '*data-readers* '*clojure-version*
+    '*unchecked-math* '*out* '*warn-on-reflection* '*compile-path*
+    '*in* '*ns* '*assert* '*print-readably* '*flush-on-newline*
+    '*agent* '*fn-loader* '*compiler-options* '*print-dup*})
+
+;; TODO: Make more precise. See http://stackoverflow.com/questions/43453776
+(spec/def ::proj/global-vars
+  (spec/map-of ::proj/clojure-global-vars
+               any?))
+
 
 
 ;;;; Function defenitions

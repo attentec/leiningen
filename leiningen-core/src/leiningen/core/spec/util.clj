@@ -45,6 +45,7 @@
 (spec/def ::natural-number
   (spec/int-in 0 Integer/MAX_VALUE))
 
+;; Matches regular expressions e.g. #\"\", not strings.
 (spec/def ::stregex
   (spec/with-gen
     #(instance? java.util.regex.Pattern %)

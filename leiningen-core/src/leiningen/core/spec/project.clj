@@ -38,9 +38,9 @@
    ::proj/aliases
    ::proj/release-tasks
    ::proj/prep-tasks
-   ; ::proj/aot
-   ; ::proj/injections
-   ; ::proj/java-agents
+   ::proj/aot
+   ::proj/injections
+   ::proj/java-agents
    ; ::proj/javac-options
    ; ::proj/warn-on-reflection
    ; ::proj/global-vars
@@ -105,6 +105,8 @@
 (spec/def ::proj/implicit-hooks      boolean?)
 (spec/def ::proj/implicit-middleware boolean?)
 (spec/def ::proj/main         symbol?)
+;; TODO: Injections spec is too simple.
+(spec/def ::proj/injections   (spec/coll-of any? :kind vector? :gen-max 3))
 
 
 ;;; Mailing lists
@@ -293,6 +295,26 @@
 (spec/def ::proj/prep-tasks ::proj/release-tasks)
 
 
+;;; AOT, ahead of time compilation
+
+(spec/def ::proj/aot
+  (spec/or :all      #{:all}
+           :sequence (spec/coll-of (spec/or :regex  ::util/stregex
+                                            :symbol symbol?)
+                                   :kind vector? :gen-max 3)))
+
+;;; Java agents
+
+(spec/def ::proj/options ::util/non-blank-string)
+(spec/def ::proj/java-agent-args
+  (spec/keys* :opt-un [::proj/classifier ::proj/options]))
+
+(spec/def ::proj/java-agents
+  (spec/coll-of
+   (util/vcat :name      ::proj/dependency-name
+              :version   ::proj/version
+              :arguments ::proj/java-agent-args)
+   :kind vector? :gen-max 3))
 
 
 ;;;; Function defenitions

@@ -36,8 +36,8 @@
    ::proj/implicit-hooks
    ::proj/main
    ::proj/aliases
-   ; ::proj/release-tasks
-   ; ::proj/prep-tasks
+   ::proj/release-tasks
+   ::proj/prep-tasks
    ; ::proj/aot
    ; ::proj/injections
    ; ::proj/java-agents
@@ -283,6 +283,15 @@
                (spec/or :command-vector ::proj/command-vector
                         :do-command     ::proj/do-command)
                :gen-max 3))
+
+
+;;; Tasks
+
+(spec/def ::proj/release-tasks
+  (spec/coll-of ::proj/command-vector :kind vector? :min-count 1 :gen-max 3))
+
+(spec/def ::proj/prep-tasks ::proj/release-tasks)
+
 
 
 

@@ -90,29 +90,29 @@
 
 ;;;; Minor keys in project-argument-keys from top to bottom.
 
-(spec/def ::proj/description         ::util/non-blank-string)
+(spec/def ::proj/description   ::util/non-blank-string)
 ;; Source, diegoperini: https://mathiasbynens.be/demo/url-regex
-(spec/def ::proj/url                 (util/stregex #"^(https?|ftp)://[^\s/$.?#].[^\s]*$"))
+(spec/def ::proj/url           (util/stregex #"^(https?|ftp)://[^\s/$.?#].[^\s]*$"))
 ;; Won't match email adresses like me@google where the company owns a tld.
-(spec/def ::proj/email               (util/stregex #"/\S+@\S+\.\S+/"))
-(spec/def ::proj/pedantic?           #{:abort :warn :ranges true false})
-(spec/def ::proj/local-repo          ::util/non-blank-string)
-(spec/def ::proj/offline?            boolean?)
-(spec/def ::proj/signing             (spec/map-of #{:gpg-key} ::util/non-blank-string))
-(spec/def ::proj/certificates        (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
-(spec/def ::proj/hooks               (spec/coll-of symbol? :kind vector? :min-count 1))
-(spec/def ::proj/middleware          (spec/coll-of symbol? :kind vector? :min-count 1))
-(spec/def ::proj/implicit-hooks      boolean?)
+(spec/def ::proj/email         (util/stregex #"/\S+@\S+\.\S+/"))
+(spec/def ::proj/pedantic?     #{:abort :warn :ranges true false})
+(spec/def ::proj/local-repo    ::util/non-blank-string)
+(spec/def ::proj/offline?      boolean?)
+(spec/def ::proj/signing       (spec/map-of #{:gpg-key} ::util/non-blank-string))
+(spec/def ::proj/certificates  (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
+(spec/def ::proj/hooks         (spec/coll-of symbol? :kind vector? :min-count 1))
+(spec/def ::proj/middleware    (spec/coll-of symbol? :kind vector? :min-count 1))
+(spec/def ::proj/implicit-hooks boolean?)
 (spec/def ::proj/implicit-middleware boolean?)
-(spec/def ::proj/main                symbol?)
+(spec/def ::proj/main          symbol?)
 ;; TODO: Injections spec is too simple.
-(spec/def ::proj/injections          (spec/coll-of any? :kind vector? :gen-max 3))
-(spec/def ::proj/javac-options       (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
+(spec/def ::proj/injections    (spec/coll-of any? :kind vector? :gen-max 3))
+(spec/def ::proj/javac-options (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
 (spec/def ::proj/warn-on-reflection  boolean?)
-(spec/def ::proj/java-cmd            ::util/non-blank-string)
-(spec/def ::proj/jvm-opts            (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
-(spec/def ::proj/eval-in             #{:subprocess :leiningen :nrepl})
-(spec/def ::proj/bootclasspath       boolean?)
+(spec/def ::proj/java-cmd      ::util/non-blank-string)
+(spec/def ::proj/jvm-opts      (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
+(spec/def ::proj/eval-in       #{:subprocess :leiningen :nrepl})
+(spec/def ::proj/bootclasspath boolean?)
 
 
 ;;; Mailing lists

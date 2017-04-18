@@ -55,7 +55,7 @@
    ::proj/target-path
    ::proj/compile-path
    ::proj/native-path
-   ; ::proj/clean-targets
+   ::proj/clean-targets
    ; ::proj/clean-non-project-classes
    ; ::proj/checkout-deps-shares
    ; ::proj/test-selectors
@@ -351,6 +351,12 @@
 (spec/def ::proj/compile-path      ::util/non-blank-string)
 (spec/def ::proj/native-path       ::util/non-blank-string)
 
+(spec/def ::proj/clean-targets
+  (spec/coll-of (spec/alt :proj-key  keyword?
+                          :path      ::util/non-blank-string
+                          :proj-path (spec/coll-of keyword?
+                                      :kind vector? :min-count 2))
+                :kind vector? :min-count 1))
 
 
 ;;;; Function defenitions

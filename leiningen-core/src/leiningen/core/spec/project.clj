@@ -59,7 +59,7 @@
    ::proj/clean-non-project-classes
    ::proj/checkout-deps-shares
    ::proj/test-selectors
-   ; ::proj/monkeypatch-clojure-test
+   ::proj/monkeypatch-clojure-test
    ; ::proj/repl-options
    ; ::proj/jar-name
    ; ::proj/uberjar-name
@@ -114,6 +114,8 @@
 (spec/def ::proj/eval-in       #{:subprocess :leiningen :nrepl})
 (spec/def ::proj/bootclasspath boolean?)
 (spec/def ::proj/clean-non-project-classes boolean?)
+(spec/def ::proj/monkeypatch-clojure-test boolean?)
+
 
 ;;; Mailing lists
 
@@ -363,9 +365,9 @@
 
 
 ;;; Test selectors
-;; TODO: Yet another place where the value can essentially be arbitrary clojure code.
 (spec/def ::proj/test-selectors
-  (spec/map-of keyword? any?))
+  (spec/map-of keyword? (spec/or :keyword keyword?
+                                 :code    ::util/predicate)))
 
 
 

@@ -5,6 +5,9 @@
    [clojure.string         :as str]
    [miner.strgen           :as strgen]))
 
+
+;;; Macros
+
 (defmacro vcat
   "Takes key+pred pairs, e.g.
 
@@ -28,6 +31,9 @@
      (spec/and string? #(re-matches ~string-regex %))
      #(strgen/string-generator ~string-regex)))
 
+
+;;; Functions
+
 (defn key-xor?
   "Returs true if coll exclusively contains one of two keys."
   [coll a-key b-key]
@@ -35,6 +41,9 @@
         b (contains? coll b-key)]
     (or (and a (not b))
         (and b (not a)))))
+
+
+;;; Data specs
 
 (spec/def ::non-blank-string
   (spec/and string? #(not (str/blank? %))))
@@ -45,8 +54,15 @@
 (spec/def ::natural-number
   (spec/int-in 0 Integer/MAX_VALUE))
 
-;; Matches regular expressions e.g. #\"\", not strings.
+;; Matches regular expressions, e.g. #"", not strings.
 (spec/def ::stregex
   (spec/with-gen
     #(instance? java.util.regex.Pattern %)
     #(gen/fmap re-pattern (spec/gen string?))))
+
+
+;;; Function specs
+
+(spec/fdef ::predicate
+           :args (spec/cat :arg any?)
+           :ret  boolean?)

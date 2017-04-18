@@ -58,7 +58,7 @@
    ::proj/clean-targets
    ::proj/clean-non-project-classes
    ::proj/checkout-deps-shares
-   ; ::proj/test-selectors
+   ::proj/test-selectors
    ; ::proj/monkeypatch-clojure-test
    ; ::proj/repl-options
    ; ::proj/jar-name
@@ -360,6 +360,13 @@
 
 (spec/def ::proj/checkout-deps-shares
   ::proj/clean-targets)
+
+
+;;; Test selectors
+;; TODO: Yet another place where the value can essentially be arbitrary clojure code.
+(spec/def ::proj/test-selectors
+  (spec/map-of keyword? any?))
+
 
 
 ;;;; Function defenitions

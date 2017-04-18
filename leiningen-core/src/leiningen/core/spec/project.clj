@@ -56,8 +56,8 @@
    ::proj/compile-path
    ::proj/native-path
    ::proj/clean-targets
-   ; ::proj/clean-non-project-classes
-   ; ::proj/checkout-deps-shares
+   ::proj/clean-non-project-classes
+   ::proj/checkout-deps-shares
    ; ::proj/test-selectors
    ; ::proj/monkeypatch-clojure-test
    ; ::proj/repl-options
@@ -113,7 +113,7 @@
 (spec/def ::proj/jvm-opts      (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
 (spec/def ::proj/eval-in       #{:subprocess :leiningen :nrepl})
 (spec/def ::proj/bootclasspath boolean?)
-
+(spec/def ::proj/clean-non-project-classes boolean?)
 
 ;;; Mailing lists
 
@@ -357,6 +357,9 @@
                           :proj-path (spec/coll-of keyword?
                                       :kind vector? :min-count 2))
                 :kind vector? :min-count 1))
+
+(spec/def ::proj/checkout-deps-shares
+  ::proj/clean-targets)
 
 
 ;;;; Function defenitions

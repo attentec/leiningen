@@ -48,13 +48,13 @@
    ::proj/jvm-opts
    ::proj/eval-in
    ::proj/bootclasspath
-   ; ::proj/source-paths
-   ; ::proj/java-source-paths
-   ; ::proj/test-paths
-   ; ::proj/resource-paths
-   ; ::proj/target-path
-   ; ::proj/compile-path
-   ; ::proj/native-path
+   ::proj/source-paths
+   ::proj/java-source-paths
+   ::proj/test-paths
+   ::proj/resource-paths
+   ::proj/target-path
+   ::proj/compile-path
+   ::proj/native-path
    ; ::proj/clean-targets
    ; ::proj/clean-non-project-classes
    ; ::proj/checkout-deps-shares
@@ -339,6 +339,17 @@
 (spec/def ::proj/global-vars
   (spec/map-of ::proj/clojure-global-vars
                any?))
+
+
+;;; Paths
+
+(spec/def ::proj/source-paths      (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
+(spec/def ::proj/java-source-paths (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
+(spec/def ::proj/test-paths        (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
+(spec/def ::proj/resource-paths    (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
+(spec/def ::proj/target-path       ::util/non-blank-string)
+(spec/def ::proj/compile-path      ::util/non-blank-string)
+(spec/def ::proj/native-path       ::util/non-blank-string)
 
 
 

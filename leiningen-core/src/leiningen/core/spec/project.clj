@@ -44,10 +44,10 @@
    ::proj/javac-options
    ::proj/warn-on-reflection
    ::proj/global-vars
-   ; ::proj/java-cmd
-   ; ::proj/jvm-opts
-   ; ::proj/eval-in
-   ; ::proj/bootclasspath
+   ::proj/java-cmd
+   ::proj/jvm-opts
+   ::proj/eval-in
+   ::proj/bootclasspath
    ; ::proj/source-paths
    ; ::proj/java-source-paths
    ; ::proj/test-paths
@@ -109,7 +109,10 @@
 (spec/def ::proj/injections          (spec/coll-of any? :kind vector? :gen-max 3))
 (spec/def ::proj/javac-options       (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
 (spec/def ::proj/warn-on-reflection  boolean?)
-
+(spec/def ::proj/java-cmd            ::util/non-blank-string)
+(spec/def ::proj/jvm-opts            (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
+(spec/def ::proj/eval-in             #{:subprocess :leiningen :nrepl})
+(spec/def ::proj/bootclasspath       boolean?)
 
 
 ;;; Mailing lists

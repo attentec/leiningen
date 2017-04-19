@@ -61,12 +61,12 @@
    ::proj/test-selectors
    ::proj/monkeypatch-clojure-test
    ::proj/repl-options
-   ; ::proj/jar-name
-   ; ::proj/uberjar-name
-   ; ::proj/omit-source
-   ; ::proj/jar-exclusions
-   ; ::proj/uberjar-exclusions
-   ; ::proj/auto-clean
+   ::proj/jar-name
+   ::proj/uberjar-name
+   ::proj/omit-source
+   ::proj/jar-exclusions
+   ::proj/uberjar-exclusions
+   ::proj/auto-clean
    ; ::proj/uberjar-merge-with
    ; ::proj/scm
    ; ::proj/validate
@@ -117,6 +117,12 @@
 (spec/def ::proj/bootclasspath boolean?)
 (spec/def ::proj/clean-non-project-classes boolean?)
 (spec/def ::proj/monkeypatch-clojure-test boolean?)
+(spec/def ::proj/jar-name      ::util/non-blank-string)
+(spec/def ::proj/uberjar-name  ::util/non-blank-string)
+(spec/def ::proj/omit-source   boolean?)
+(spec/def ::proj/jar-exclusions (spec/coll-of ::util/stregex :kind vector? :min-count 1))
+(spec/def ::proj/uberjar-exclusions (spec/coll-of ::util/stregex :kind vector? :min-count 1))
+(spec/def ::proj/auto-clean     boolean?)
 
 
 ;;; Mailing lists

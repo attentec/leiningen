@@ -27,6 +27,7 @@
    ::proj/update
    ::proj/checksum
    ::proj/offline?
+   ; ::proj/deploy-repositories
    ::proj/signing
    ::proj/certificates
    ::proj/profiles
@@ -67,9 +68,18 @@
    ::proj/jar-exclusions
    ::proj/uberjar-exclusions
    ::proj/auto-clean
-   ; ::proj/uberjar-merge-with
-   ; ::proj/scm
-   ; ::proj/validate
+   ::proj/uberjar-merge-with
+   ; ::proj/filespecs
+   ; ::proj/manifest
+   ; ::proj/pom-location
+   ; ::proj/parent
+   ; ::proj/extensions
+   ; ::proj/pom-plugins
+   ; ::proj/pom-addition
+   ::proj/scm
+   ; ::proj/install-releases
+   ; ::proj/deplay-branches
+   ; ::proj/classifiers
    ])
 
 
@@ -405,6 +415,22 @@
                       ::proj/host   ::proj/port    ::proj/timeout
                       ::proj/nrepl-handler         ::proj/nrepl-middleware]))
 
+;;; Uberjar merge with
+
+(spec/def ::proj/uberjar-merge-with
+  (spec/map-of (spec/or :regex  ::util/stregex
+                        :string string?)
+               (spec/cat :input-strmeam->datum symbol?
+                         :datum-merger         symbol?
+                         :datum-printer        symbol?)))
+
+
+;;; Source Control Management
+
+(spec/def ::proj/tag ::util/non-blank-string)
+(spec/def ::proj/dir ::util/non-blank-string)
+(spec/def ::proj/scm
+  (spec/keys :opt-un [::proj/name ::proj/tag ::proj/url ::proj/dir]))
 
 
 ;;;; Function defenitions

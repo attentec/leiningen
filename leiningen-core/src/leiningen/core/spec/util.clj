@@ -51,8 +51,8 @@
 (spec/def ::namespaced-string
   (stregex #"[^\s/]+/[^\s/]+"))
 
-(spec/def ::natural-number
-  (spec/int-in 0 Integer/MAX_VALUE))
+(spec/def ::positive-integer
+  (spec/and integer? pos?))
 
 ;; Matches regular expressions, e.g. #"", not strings.
 (spec/def ::stregex
@@ -60,9 +60,38 @@
     #(instance? java.util.regex.Pattern %)
     #(gen/fmap re-pattern (spec/gen string?))))
 
+;; Generates from namespaces in the running jvm.
+(spec/def ::namespace
+  (spec/with-gen
+    #(instance? clojure.lang.Namespace %)
+    #(gen/elements (all-ns))))
+
+;; Only matches namespaces in the currently running jvm.
+(spec/def ::namespace-symbol
+  (spec/with-gen
+    #(instance? clojure.lang.Namespace (find-ns %))
+    #(gen/fmap ns-name (gen/elements (all-ns)))))
+
+(spec/def ::exception
+  (spec/with-gen
+    #(instance? java.lang.Exception %)
+    #(gen/fmap (fn [str] (java.lang.Exception. str)) (spec/gen string?))))
+
 
 ;;; Function specs
 
 (spec/fdef ::predicate
            :args (spec/cat :arg any?)
            :ret  boolean?)
+
+(spec/fdef ::nullary-fn
+           :args (spec/cat)
+           :ret  any?)
+
+(spec/fdef ::unary-fn
+           :args (spec/cat :first any?)
+           :ret  any?)
+
+(spec/fdef ::binary-fn
+           :args (spec/cat :first any? :second any?)
+           :ret  any?)

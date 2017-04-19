@@ -60,7 +60,7 @@
    ::proj/checkout-deps-shares
    ::proj/test-selectors
    ::proj/monkeypatch-clojure-test
-   ; ::proj/repl-options
+   ::proj/repl-options
    ; ::proj/jar-name
    ; ::proj/uberjar-name
    ; ::proj/omit-source
@@ -92,6 +92,8 @@
 
 (spec/def ::proj/description   ::util/non-blank-string)
 ;; Source, diegoperini: https://mathiasbynens.be/demo/url-regex
+;; TODO: Replace with java.net.URL for acceptance or perhaps with
+;; https://github.com/SparkFund/useful-specs/
 (spec/def ::proj/url           (util/stregex #"^(https?|ftp)://[^\s/$.?#].[^\s]*$"))
 ;; Won't match email adresses like me@google where the company owns a tld.
 (spec/def ::proj/email         (util/stregex #"/\S+@\S+\.\S+/"))
@@ -365,9 +367,37 @@
 
 
 ;;; Test selectors
+
 (spec/def ::proj/test-selectors
   (spec/map-of keyword? (spec/or :keyword keyword?
                                  :code    ::util/predicate)))
+
+
+;;; REPL options
+
+(spec/fdef ::ns->str
+           :args (spec/cat :arg ::util/namespace)
+           :ret  string?)
+(spec/fdef ::exception-printer
+           :args (spec/+ ::util/exception)
+           :ret nil?)
+(spec/def ::proj/prompt            ::ns->str)
+(spec/def ::proj/welcome           ::util/nullary-fn)
+(spec/def ::proj/init-ns           ::util/namespace-symbol)
+(spec/def ::proj/init              ::util/nullary-fn)
+(spec/def ::proj/caught            ::exception-printer)
+(spec/def ::proj/skip-default-init boolean?)
+(spec/def ::proj/host              ::util/non-blank-string)
+(spec/def ::proj/port              (spec/and ::util/positive-integer (partial > 65535)))
+(spec/def ::proj/timeout           nat-int?)
+(spec/def ::proj/nrepl-handler     ::util/nullary-fn)
+(spec/def ::proj/nrepl-middleware  (spec/or ::util/unary-fn qualified-symbol?))
+
+(spec/def ::proj/repl-options
+  (spec/keys :opt-un [::proj/prompt ::proj/welcome ::proj/init-ns
+                      ::proj/init   ::proj/caught  ::proj/skip-default-init
+                      ::proj/host   ::proj/port    ::proj/timeout
+                      ::proj/nrepl-handler         ::proj/nrepl-middleware]))
 
 
 

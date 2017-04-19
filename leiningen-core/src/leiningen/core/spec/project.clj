@@ -27,7 +27,7 @@
    ::proj/update
    ::proj/checksum
    ::proj/offline?
-   ; ::proj/deploy-repositories
+   ::proj/deploy-repositories
    ::proj/signing
    ::proj/certificates
    ::proj/profiles
@@ -69,7 +69,7 @@
    ::proj/uberjar-exclusions
    ::proj/auto-clean
    ::proj/uberjar-merge-with
-   ; ::proj/filespecs
+   ::proj/filespecs
    ; ::proj/manifest
    ; ::proj/pom-location
    ; ::proj/parent
@@ -274,6 +274,7 @@
                 :gen-max 3 :kind vector? :min-count 1))
 
 (spec/def ::proj/plugin-repositories ::proj/repositories)
+(spec/def ::proj/deploy-repositories ::proj/repositories)
 
 
 ;;; Mirrors
@@ -415,17 +416,43 @@
                       ::proj/host   ::proj/port    ::proj/timeout
                       ::proj/nrepl-handler         ::proj/nrepl-middleware]))
 
-;;; Uberjar merge with
+;;; Uberjar content management
 
 (spec/def ::proj/uberjar-merge-with
   (spec/map-of (spec/or :regex  ::util/stregex
                         :string string?)
-               (spec/cat :input-strmeam->datum symbol?
-                         :datum-merger         symbol?
-                         :datum-printer        symbol?)))
+               (spec/cat :input-stream->datum symbol?
+                         :datum-merger        symbol?
+                         :datum-printer       symbol?)))
 
+(spec/fdef ::filespec-fn
+           :args (spec/cat :project-map ::proj/project-map)
+           :ret  ::proj/filespec)
 
-;;; Source Control Management
+(spec/def ::proj/path  ::util/non-blank-string)
+(spec/def ::proj/paths (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
+(spec/def ::proj/bytes ::util/non-blank-string)
+(spec/def ::proj/fn    ::filespec-fn)
+
+(spec/def :leiningen.core.project.filespec/type  #{:path :paths :bytes :fn})
+(defmulti  filespec-type :type)
+(defmethod filespec-type :path  [_] (spec/keys :req-un [:leiningen.core.project.filespec/type ::proj/path]))
+(defmethod filespec-type :paths [_] (spec/keys :req-un [:leiningen.core.project.filespec/type ::proj/paths]))
+(defmethod filespec-type :bytes [_] (spec/keys :req-un [:leiningen.core.project.filespec/type ::proj/path ::proj/bytes]))
+(defmethod filespec-type :fn    [_] (spec/keys :req-un [:leiningen.core.project.filespec/type ::proj/fn]))
+
+(spec/def ::proj/filespec (spec/multi-spec filespecs-type :type))
+(spec/def ::proj/filespecs
+  (spec/coll-of ::proj/filespec :kind vector? :min-count 1 :gen-max 3))
+
+(gen/generate (spec/gen ::proj/filespecs))
+(spec/valid? ::proj/filespecs [{:type :path :path "compiled"}])
+(time (spec/valid? ::filespec-fn (fn [p]
+                             {:type :bytes :path "git-log"
+                              :bytes (:out (clojure.java.shell/sh
+                                            "git" "log" "-n" "1"))})))
+
+;;; Source control management
 
 (spec/def ::proj/tag ::util/non-blank-string)
 (spec/def ::proj/dir ::util/non-blank-string)
@@ -470,4 +497,7 @@
                           :arguments    ::proj/project-args)
           :ret symbol?)
 
-; (spec/exercise-fn `proj/defproject)
+
+;; (spec/exercise-fn `proj/defproject)
+;; (for [i (range 10)]
+;;  (time (gen/generate (spec/gen ::proj/project-map))))

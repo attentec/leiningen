@@ -425,32 +425,42 @@
                          :datum-merger        symbol?
                          :datum-printer       symbol?)))
 
+;;; Filespecs
+
 (spec/fdef ::filespec-fn
-           :args (spec/cat :project-map ::proj/project-map)
-           :ret  ::proj/filespec)
+           :args (spec/cat :project-map :filespec-no-fn/project-map)
+           :ret  :filespec-no-fn/filespec)
 
-(spec/def ::proj/path  ::util/non-blank-string)
-(spec/def ::proj/paths (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
-(spec/def ::proj/bytes ::util/non-blank-string)
-(spec/def ::proj/fn    ::filespec-fn)
+(spec/def ::proj/path    ::util/non-blank-string)
+(spec/def ::proj/paths   (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
+(spec/def ::proj/bytes   ::util/non-blank-string)
+(spec/def :filespec/fn   ::filespec-fn)
+(spec/def :filespec/type #{:path :paths :bytes :fn})
 
-(spec/def :leiningen.core.project.filespec/type  #{:path :paths :bytes :fn})
 (defmulti  filespec-type :type)
-(defmethod filespec-type :path  [_] (spec/keys :req-un [:leiningen.core.project.filespec/type ::proj/path]))
-(defmethod filespec-type :paths [_] (spec/keys :req-un [:leiningen.core.project.filespec/type ::proj/paths]))
-(defmethod filespec-type :bytes [_] (spec/keys :req-un [:leiningen.core.project.filespec/type ::proj/path ::proj/bytes]))
-(defmethod filespec-type :fn    [_] (spec/keys :req-un [:leiningen.core.project.filespec/type ::proj/fn]))
+(defmethod filespec-type :path  [_] (spec/keys :req-un [:filespec/type ::proj/path]))
+(defmethod filespec-type :paths [_] (spec/keys :req-un [:filespec/type ::proj/paths]))
+(defmethod filespec-type :bytes [_] (spec/keys :req-un [:filespec/type ::proj/path ::proj/bytes]))
+(defmethod filespec-type :fn    [_] (spec/keys :req-un [:filespec/type :filespec/fn]))
 
-(spec/def ::proj/filespec (spec/multi-spec filespecs-type :type))
+(spec/def ::proj/filespec (spec/multi-spec filespec-type :type))
 (spec/def ::proj/filespecs
   (spec/coll-of ::proj/filespec :kind vector? :min-count 1 :gen-max 3))
 
-(gen/generate (spec/gen ::proj/filespecs))
-(spec/valid? ::proj/filespecs [{:type :path :path "compiled"}])
-(time (spec/valid? ::filespec-fn (fn [p]
-                             {:type :bytes :path "git-log"
-                              :bytes (:out (clojure.java.shell/sh
-                                            "git" "log" "-n" "1"))})))
+;; The below repetition exists to avoid infinite loops in spec
+(spec/def ::proj/project-map-no-filespec
+  (eval `(spec/keys :opt-un ~(remove #{::proj/filespecs} project-argument-keys)
+                    :req-un [::proj/description])))
+
+(spec/def :filespec-no-fn/type  #{:path :paths :bytes})
+
+(defmulti  filespec-type-no-fn :type)
+(defmethod filespec-type-no-fn :path  [_] (spec/keys :req-un [:filespec-no-fn/type ::proj/path]))
+(defmethod filespec-type-no-fn :paths [_] (spec/keys :req-un [:filespec-no-fn/type ::proj/paths]))
+(defmethod filespec-type-no-fn :bytes [_] (spec/keys :req-un [:filespec-no-fn/type ::proj/path ::proj/bytes]))
+
+(spec/def :filespec-no-fn/filespec  (spec/multi-spec filespec-type-no-fn :type))
+
 
 ;;; Source control management
 
@@ -499,5 +509,3 @@
 
 
 ;; (spec/exercise-fn `proj/defproject)
-;; (for [i (range 10)]
-;;  (time (gen/generate (spec/gen ::proj/project-map))))

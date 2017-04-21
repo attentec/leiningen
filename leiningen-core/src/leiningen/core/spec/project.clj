@@ -70,12 +70,12 @@
    ::proj/auto-clean
    ::proj/uberjar-merge-with
    ::proj/filespecs
-   ; ::proj/manifest
-   ; ::proj/pom-location
-   ; ::proj/parent
-   ; ::proj/extensions
-   ; ::proj/pom-plugins
-   ; ::proj/pom-addition
+   ::proj/manifest
+   ::proj/pom-location
+   ::proj/parent
+   ::proj/extensions
+   ::proj/pom-plugins
+   ::proj/pom-addition
    ::proj/scm
    ; ::proj/install-releases
    ; ::proj/deplay-branches
@@ -211,9 +211,14 @@
 
 (spec/def ::proj/version ::util/non-blank-string)
 
+;; TODO: Perhaps we can attach a generator here which pulls in artifacts from:
+;; https://clojars.org/repo/all-jars.clj
+(spec/def ::proj/artifact
+  (spec/cat :dep-name ::proj/dependency-name
+            :version  ::proj/version))
+
 (spec/def ::proj/dependency-vector
-  (util/vcat :name      ::proj/dependency-name
-             :version   ::proj/version
+  (util/vcat :artifact  ::proj/artifact
              :arguments ::proj/dependency-args))
 
 (spec/def ::proj/dependency-map
@@ -243,8 +248,7 @@
                        :leiningen.core.project.plugin/middleware ::proj/hooks]))
 
 (spec/def ::proj/plugin-vector
-  (util/vcat :name      ::proj/dependency-name
-             :version   ::proj/version
+  (util/vcat :artifact  ::proj/artifact
              :arguments ::proj/plugin-args))
 
 (spec/def ::proj/plugins
@@ -338,8 +342,7 @@
 
 (spec/def ::proj/java-agents
   (spec/coll-of
-   (util/vcat :name      ::proj/dependency-name
-              :version   ::proj/version
+   (util/vcat ::artifact ::proj/artifact
               :arguments ::proj/java-agent-args)
    :kind vector? :gen-max 3 :min-count 1))
 
@@ -427,6 +430,22 @@
 
 ;;; Filespecs
 
+;; The below repetition exists to avoid infinite loops in spec
+(spec/def ::proj/project-map-no-filespec
+  (eval `(spec/keys :opt-un ~(remove #{::proj/filespecs} project-argument-keys)
+                    :req-un [::proj/description])))
+
+(spec/def :filespec-no-fn/type  #{:path :paths :bytes})
+
+(defmulti  filespec-type-no-fn :type)
+(defmethod filespec-type-no-fn :path  [_] (spec/keys :req-un [:filespec-no-fn/type ::proj/path]))
+(defmethod filespec-type-no-fn :paths [_] (spec/keys :req-un [:filespec-no-fn/type ::proj/paths]))
+(defmethod filespec-type-no-fn :bytes [_] (spec/keys :req-un [:filespec-no-fn/type ::proj/path ::proj/bytes]))
+
+(spec/def :filespec-no-fn/filespec  (spec/multi-spec filespec-type-no-fn :type))
+
+;; Non-duplicate code below, as it were
+
 (spec/fdef ::filespec-fn
            :args (spec/cat :project-map :filespec-no-fn/project-map)
            :ret  :filespec-no-fn/filespec)
@@ -447,19 +466,51 @@
 (spec/def ::proj/filespecs
   (spec/coll-of ::proj/filespec :kind vector? :min-count 1 :gen-max 3))
 
-;; The below repetition exists to avoid infinite loops in spec
-(spec/def ::proj/project-map-no-filespec
-  (eval `(spec/keys :opt-un ~(remove #{::proj/filespecs} project-argument-keys)
-                    :req-un [::proj/description])))
 
-(spec/def :filespec-no-fn/type  #{:path :paths :bytes})
 
-(defmulti  filespec-type-no-fn :type)
-(defmethod filespec-type-no-fn :path  [_] (spec/keys :req-un [:filespec-no-fn/type ::proj/path]))
-(defmethod filespec-type-no-fn :paths [_] (spec/keys :req-un [:filespec-no-fn/type ::proj/paths]))
-(defmethod filespec-type-no-fn :bytes [_] (spec/keys :req-un [:filespec-no-fn/type ::proj/path ::proj/bytes]))
+;;; Maven POM stuff
 
-(spec/def :filespec-no-fn/filespec  (spec/multi-spec filespec-type-no-fn :type))
+(spec/def ::proj/manifest
+  (spec/map-of (spec/or :string  ::util/non-blank-string
+                        :keyword keyword?)
+               any?))
+
+(spec/def ::proj/pom-location ::util/non-blank-string)
+
+(spec/def ::proj/relative-path    ::util/non-blank-string)
+(spec/def ::proj/parent-arguments (spec/keys* :opt-un [::proj/relative-path]))
+(spec/def ::proj/parent
+  (util/vcat :artifact  ::proj/artifact
+             :arguments ::proj/parent-arguments))
+
+(spec/def ::proj/pom-extension (util/vcat :artifact ::proj/artifact))
+(spec/def ::proj/extensions
+  (spec/coll-of ::proj/pom-extension :kind vector? :min-count 1 :gen-max 3))
+
+(spec/def ::proj/xml-as-vec
+  (spec/with-gen (util/vcat :tag        keyword?
+                            :attributes (spec/? map?)
+                            :content    (spec/* (spec/or :terminal string?
+                                                         :element  ::proj/xml-as-vec)))
+    ;; TODO: Replace with a more complex generator.
+    #(spec/gen (util/vcat :tag keyword?
+                                      :attributes (spec/? map?)
+                                      :content string?))))
+
+(spec/def :pom-plugin-options/configuration ::proj/xml-as-vec)
+(spec/def :pom-plugin-options/extensions    ::proj/xml-as-vec)
+(spec/def :pom-plugin-options/executions    ::proj/xml-as-vec)
+
+(spec/def ::proj/pom-plugin-options
+  (spec/keys :opt-un [:pom-plugin-options/configuration :pom-plugin-options/extensions
+                      :pom-plugin-options/executions]))
+
+(spec/def ::proj/pom-plugin
+  (util/vcat :artifact ::proj/artifact
+             :options  ::proj/pom-plugin-options))
+(spec/def ::proj/pom-plugins (spec/coll-of ::proj/pom-plugin))
+
+(spec/def ::proj/pom-addition ::proj/xml-as-vec)
 
 
 ;;; Source control management

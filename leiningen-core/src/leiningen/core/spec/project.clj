@@ -82,7 +82,6 @@
    ::proj/classifiers
    ])
 
-
 ;; TODO: Remove required keyword, it's only there so that
 ;; `spec/exercise` doesn't barf. See SO question:
 ;;http://stackoverflow.com/questions/43339543/
@@ -90,16 +89,13 @@
 ;; mailing-lists and licenses with util/key-xor?. Currently impossible
 ;; due to the above mentioned bug.
 (spec/def ::proj/project-args
-  (eval `(spec/keys* :opt-un ~project-argument-keys
-                     :req-un [::proj/description])))
+  (eval `(spec/keys* :opt-un ~project-argument-keys)))
 
 (spec/def ::proj/project-map
-  (eval `(spec/keys :opt-un ~project-argument-keys
-                    :req-un [::proj/description])))
+  (eval `(spec/keys :opt-un ~project-argument-keys)))
 
 (spec/def ::proj/project-map-non-recursive
-  (eval `(spec/keys :opt-un ~(remove #{::proj/filespecs ::proj/profiles} project-argument-keys)
-                    :req-un [::proj/description])))
+  (eval `(spec/keys :opt-un ~(remove #{::proj/filespecs ::proj/profiles} project-argument-keys))))
 
 ;;; Minor keys in project-argument-keys from top to bottom.
 
@@ -563,5 +559,5 @@
                           :arguments    ::proj/project-args)
           :ret symbol?)
 
-
+; (leiningen.core.spec.benchmark/benchmark-generation [::proj/project-map] 20)
 ;; (spec/exercise-fn `proj/defproject)

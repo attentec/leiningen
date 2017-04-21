@@ -97,6 +97,9 @@
   (eval `(spec/keys :opt-un ~project-argument-keys
                     :req-un [::proj/description])))
 
+(spec/def ::proj/project-map-non-recursive
+  (eval `(spec/keys :opt-un ~(remove #{::proj/filespecs ::proj/profiles} project-argument-keys)
+                    :req-un [::proj/description])))
 
 ;;; Minor keys in project-argument-keys from top to bottom.
 
@@ -112,6 +115,7 @@
 (spec/def ::proj/offline?      boolean?)
 (spec/def ::proj/signing       (spec/map-of #{:gpg-key} ::util/non-blank-string))
 (spec/def ::proj/certificates  (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
+(spec/def ::proj/profiles      (spec/map-of keyword? ::proj/project-map-non-recursive :gen-max 2))
 (spec/def ::proj/hooks         (spec/coll-of symbol? :kind vector? :min-count 1))
 (spec/def ::proj/middleware    (spec/coll-of symbol? :kind vector? :min-count 1))
 (spec/def ::proj/implicit-hooks boolean?)
@@ -230,10 +234,10 @@
   (spec/keys :req [::proj/artifact-id ::proj/group-id]))
 
 (spec/def ::proj/dependencies
-  (spec/coll-of ::proj/dependency-vector :kind vector? :min-count 1))
+  (spec/coll-of ::proj/dependency-vector :kind vector? :min-count 1 :gen-max 5))
 
 (spec/def ::proj/managed-dependencies
-  (spec/coll-of ::proj/dependency-vector :kind vector? :min-count 1))
+  (spec/coll-of ::proj/dependency-vector :kind vector? :min-count 1 :gen-max 5))
 
 
 ;;; Plugins
@@ -296,11 +300,7 @@
 
 ;;; Profiles
 
-(spec/def ::proj/profiles
-  (spec/map-of keyword?
-               (eval `(spec/keys ;; Prevent infinite recursion by removing oneself.
-                       :opt-un ~(remove #{::proj/profiles} project-argument-keys)))
-               :gen-max 3))
+
 
 
 ;;; Aliases
@@ -433,10 +433,6 @@
 ;;; Filespecs
 
 ;; The below repetition exists to avoid infinite loops in spec
-(spec/def ::proj/project-map-no-filespec
-  (eval `(spec/keys :opt-un ~(remove #{::proj/filespecs} project-argument-keys)
-                    :req-un [::proj/description])))
-
 (spec/def :filespec-no-fn/type  #{:path :paths :bytes})
 
 (defmulti  filespec-type-no-fn :type)
@@ -444,12 +440,12 @@
 (defmethod filespec-type-no-fn :paths [_] (spec/keys :req-un [:filespec-no-fn/type ::proj/paths]))
 (defmethod filespec-type-no-fn :bytes [_] (spec/keys :req-un [:filespec-no-fn/type ::proj/path ::proj/bytes]))
 
-(spec/def :filespec-no-fn/filespec  (spec/multi-spec filespec-type-no-fn :type))
+(spec/def :filespec-no-fn/filespec (spec/multi-spec filespec-type-no-fn :type))
 
 ;; Non-duplicate code below, as it were
 
 (spec/fdef ::filespec-fn
-           :args (spec/cat :project-map ::proj/project-map-no-filespec)
+           :args (spec/cat :project-map ::proj/project-map-non-recursive)
            :ret  :filespec-no-fn/filespec)
 
 (spec/def ::proj/path    ::util/non-blank-string)
@@ -466,8 +462,7 @@
 
 (spec/def ::proj/filespec (spec/multi-spec filespec-type :type))
 (spec/def ::proj/filespecs
-  (spec/coll-of ::proj/filespec :kind vector? :min-count 1 :gen-max 3))
-
+  (spec/coll-of ::proj/filespec :kind vector? :min-count 1 :gen-max 2))
 
 
 ;;; Maven POM stuff
@@ -525,7 +520,7 @@
 
 ;;;  Classifiers
 
-(spec/def ::proj/classifier
+(spec/def ::proj/classifiers
   (spec/map-of keyword?
                (spec/or :map     map?
                         :keyword keyword?)))

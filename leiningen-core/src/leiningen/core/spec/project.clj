@@ -77,9 +77,9 @@
    ::proj/pom-plugins
    ::proj/pom-addition
    ::proj/scm
-   ; ::proj/install-releases
-   ; ::proj/deplay-branches
-   ; ::proj/classifiers
+   ::proj/install-releases?
+   ::proj/deploy-branches
+   ::proj/classifiers
    ])
 
 
@@ -98,7 +98,7 @@
                     :req-un [::proj/description])))
 
 
-;;;; Minor keys in project-argument-keys from top to bottom.
+;;; Minor keys in project-argument-keys from top to bottom.
 
 (spec/def ::proj/description   ::util/non-blank-string)
 ;; Source, diegoperini: https://mathiasbynens.be/demo/url-regex
@@ -133,6 +133,8 @@
 (spec/def ::proj/jar-exclusions (spec/coll-of ::util/stregex :kind vector? :min-count 1))
 (spec/def ::proj/uberjar-exclusions (spec/coll-of ::util/stregex :kind vector? :min-count 1))
 (spec/def ::proj/auto-clean     boolean?)
+(spec/def ::proj/install-releases? boolean?)
+(spec/def ::proj/deploy-branches (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
 
 
 ;;; Mailing lists
@@ -447,7 +449,7 @@
 ;; Non-duplicate code below, as it were
 
 (spec/fdef ::filespec-fn
-           :args (spec/cat :project-map :filespec-no-fn/project-map)
+           :args (spec/cat :project-map ::proj/project-map-no-filespec)
            :ret  :filespec-no-fn/filespec)
 
 (spec/def ::proj/path    ::util/non-blank-string)
@@ -519,6 +521,14 @@
 (spec/def ::proj/dir ::util/non-blank-string)
 (spec/def ::proj/scm
   (spec/keys :opt-un [::proj/name ::proj/tag ::proj/url ::proj/dir]))
+
+
+;;;  Classifiers
+
+(spec/def ::proj/classifier
+  (spec/map-of keyword?
+               (spec/or :map     map?
+                        :keyword keyword?)))
 
 
 ;;;; Function defenitions

@@ -559,5 +559,5 @@
                           :arguments    ::proj/project-args)
           :ret symbol?)
 
-; (leiningen.core.spec.benchmark/benchmark-generation [::proj/project-map] 20)
+; (leiningen.core.spec.benchmark/benchmark-generation project-argument-keys 100)
 ;; (spec/exercise-fn `proj/defproject)

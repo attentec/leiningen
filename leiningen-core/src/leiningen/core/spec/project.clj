@@ -103,7 +103,7 @@
 ;; Source, diegoperini: https://mathiasbynens.be/demo/url-regex
 ;; TODO: Replace with java.net.URL for acceptance or perhaps with
 ;; https://github.com/SparkFund/useful-specs/
-(spec/def ::proj/url           (util/stregex #"^(https?|ftp)://[^\s/$.?#].[^\s]*$"))
+(spec/def ::proj/url           (util/stregex #"^(https?|ftp)://[^\s/$.?#]\.[^\s]*$"))
 ;; Won't match email adresses like me@google where the company owns a tld.
 (spec/def ::proj/email         (util/stregex #"/\S+@\S+\.\S+/"))
 (spec/def ::proj/pedantic?     #{:abort :warn :ranges true false})

@@ -46,7 +46,7 @@
 ;;; Data specs
 
 (spec/def ::non-blank-string
-  (spec/and string? #(not (str/blank? %))))
+  (spec/and string? (complement str/blank?)))
 
 (spec/def ::namespaced-string
   (stregex #"[^\s/]+/[^\s/]+"))

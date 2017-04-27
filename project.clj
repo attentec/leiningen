@@ -18,7 +18,7 @@
                  [clojure-complete "0.2.4"]
                  [prismatic/schema "1.1.5"]
                  [prismatic/schema-generators "0.1.0"]
-                 [com.velisco/strgen "0.1.2"]
+                 [com.velisco/strgen "0.1.3"]
                  ;; bump versions of various common transitive deps
                  [scout "0.1.1"]
                  [slingshot "0.12.2"]

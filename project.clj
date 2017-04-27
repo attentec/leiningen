@@ -9,7 +9,7 @@
   :dependencies [[leiningen-core "2.7.2-SNAPSHOT"]
                  [org.clojure/clojure "1.9.0-alpha15"]
                  [org.clojure/data.xml "0.0.8"]
-                 [com.velisco/strgen "0.1.2"]
+                 [com.velisco/strgen "0.1.3"]
                  [commons-io "2.5"]
                  [commons-lang "2.6"]
                  [bultitude "0.2.8"]

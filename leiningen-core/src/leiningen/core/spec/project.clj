@@ -100,12 +100,10 @@
 ;;; Minor keys in project-argument-keys from top to bottom.
 
 (spec/def ::proj/description   ::util/non-blank-string)
-;; Source, diegoperini: https://mathiasbynens.be/demo/url-regex
 ;; TODO: Replace with java.net.URL for acceptance or perhaps with
 ;; https://github.com/SparkFund/useful-specs/
-(spec/def ::proj/url           (util/stregex #"^(https?|ftp)://[^\s/$.?#]\.[^\s]*$"))
-;; Won't match email adresses like me@google where the company owns a tld.
-(spec/def ::proj/email         (util/stregex #"/\S+@\S+\.\S+/"))
+(spec/def ::proj/url           (util/stregex #"^(https?|ftp)://[^\s/$.?#]+\.?[^\s]*$"))
+(spec/def ::proj/email         (util/stregex #"\S+@\S+\.?\S+"))
 (spec/def ::proj/pedantic?     #{:abort :warn :ranges true false})
 (spec/def ::proj/local-repo    ::util/non-blank-string)
 (spec/def ::proj/offline?      boolean?)

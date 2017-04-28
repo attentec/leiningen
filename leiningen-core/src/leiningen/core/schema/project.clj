@@ -10,8 +10,10 @@
 ;;; Minor keys in project-argument-keys from top to bottom.
 
 ;; Regexes aren't accepted by defschema, see: https://github.com/plumatic/schema/issues/391
-(def url   (util/stregex! #"^(https?|ftp)://[^\s/$.?#]+\.?[^\s]*$"))
-(def email (util/stregex! #"\S+@\S+\.?\S+"))
+(def url                     (util/stregex! #"^(https?|ftp)://[^\s/$.?#]+\.?[^\s]*$"))
+(def email                   (util/stregex! #"\S+@\S+\.?\S+"))
+(def semantic-version-string (util/stregex! #"(\d+)\.(\d+)\.(\d+)(-\w+)?(-SNAPSHOT)?"))
+
 
 ;;; Mailing lists
 
@@ -25,19 +27,29 @@
    (schema/optional-key :post)           email
    (schema/optional-key :subscribe)      subscribe
    (schema/optional-key :unsubscribe)    unsubscribe})
+(def mailing-lists [mailing-list])
 
+
+;;; Licenses
+
+(def distribution (schema/enum :repo :manual))
+(def license
+  {(schema/optional-key :name)         name
+   (schema/optional-key :url)          url
+   (schema/optional-key :distribution) distribution
+   (schema/optional-key :comments)     util/non-blank-string})
+(def licenses [license])
 
 
 
 (defschema project-argument-keys
-  {
-   (schema/optional-key :description)           util/non-blank-string
-   (schema/optional-key :url)                   url
-   (schema/optional-key :mailing-list)          mailing-list
-   ;; (schema/optional-key :mailing-lists)
-   ;; (schema/optional-key :license)
-   ;; (schema/optional-key :licenses)
-   ;; (schema/optional-key :min-lein-version)
+  {(schema/optional-key :description)                util/non-blank-string
+   (schema/optional-key :url)                        url
+   (schema/optional-key :mailing-list)               mailing-list
+   (schema/optional-key :mailing-lists)              mailing-lists
+   (schema/optional-key :license)                    license
+   (schema/optional-key :licenses)                   licenses
+   (schema/optional-key :min-lein-version)           semantic-version-string
    ;; (schema/optional-key :dependencies)
    ;; (schema/optional-key :managed-dependencies)
    ;; (schema/optional-key :pedantic?)

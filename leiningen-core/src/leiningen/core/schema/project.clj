@@ -14,6 +14,8 @@
 (def email                   (util/stregex! #"\S+@\S+\.?\S+"))
 (def semantic-version-string (util/stregex! #"(\d+)\.(\d+)\.(\d+)(-\w+)?(-SNAPSHOT)?"))
 (def namespaced-string       (util/stregex! #"[^\s/]+/[^\s/]+"))
+(def pedantic?               (schema/enum :abort :warn :ranges true false))
+
 
 ;;; Mailing lists
 
@@ -23,6 +25,7 @@
 (def unsubscribe    (schema/cond-pre email url))
 (def mailing-list
   {(schema/optional-key :name)           name
+   (schema/optional-key :archive)        url
    (schema/optional-key :other-archives) other-archives
    (schema/optional-key :post)           email
    (schema/optional-key :subscribe)      subscribe
@@ -69,7 +72,7 @@
 (defn exclusion-vector? [excl-vec]
   ((util/first-rest-cat-fn dependency-name exclusion-args) excl-vec))
 (def exclusion-vector
-  (schema/constrained schema/Any exclusion-vector?))
+  (schema/constrained [schema/Any] exclusion-vector?))
 
 (def exclusion
   (schema/cond-pre dependency-name exclusion-vector))
@@ -79,13 +82,14 @@
   {:artifact-id artifact-id
    :group-id    group-id})
 
+(def dependency-args-map {:optional      optional
+                          :scope         scope
+                          :classifier    classifier
+                          :native-prefix native-prefix
+                          :extension     extension
+                          :exclusions    exclusions})
 (defn dependency-args? [kv-seq]
-  (util/key-val-seq? kv-seq {:optional      optional
-                             :scope         scope
-                             :classifier    classifier
-                             :native-prefix native-prefix
-                             :extension     extension
-                             :exclusions    exclusions}))
+  (util/key-val-seq? kv-seq dependency-args-map))
 (def dependency-args
   (schema/constrained schema/Any dependency-args?))
 
@@ -114,8 +118,27 @@
   [dependency-vector])
 
 
+;;; Plugins
 
-(defschema project-argument-keys
+
+(defn plugin-args? [kv-seq]
+  (util/key-val-seq? kv-seq (merge dependency-args-map
+                                   {:middleware schema/Bool
+                                    :hooks      schema/Bool})))
+(def plugin-args
+  (schema/constrained schema/Any plugin-args?))
+
+(defn plugin-vector? [dep-vec]
+  ((util/pair-rest-cat-fn artifact plugin-args) dep-vec))
+(def plugin-vector
+  (schema/constrained [schema/Any] plugin-vector?))
+
+(def plugins
+  [plugin-vector])
+
+
+
+(defschema project-map
   {(schema/optional-key :description)                util/non-blank-string
    (schema/optional-key :url)                        url
    (schema/optional-key :mailing-list)               mailing-list
@@ -125,9 +148,9 @@
    (schema/optional-key :min-lein-version)           semantic-version-string
    (schema/optional-key :dependencies)               dependencies
    (schema/optional-key :managed-dependencies)       dependencies
-   ;; (schema/optional-key :pedantic?)
-   ;; (schema/optional-key :exclusions)
-   ;; (schema/optional-key :plugins)
+   (schema/optional-key :pedantic?)                  pedantic?
+   (schema/optional-key :exclusions)                 exclusions
+   (schema/optional-key :plugins)                    plugins
    ;; (schema/optional-key :repositories)
    ;; (schema/optional-key :plugin-repositories)
    ;; (schema/optional-key :mirrors)

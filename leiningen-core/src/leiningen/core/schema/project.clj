@@ -15,16 +15,16 @@
 (def semantic-version-string (util/stregex! #"(\d+)\.(\d+)\.(\d+)(-\w+)?(-SNAPSHOT)?"))
 (def namespaced-string       (util/stregex! #"[^\s/]+/[^\s/]+"))
 (def pedantic?               (schema/enum :abort :warn :ranges true false))
-
+(def signing                 {:gpg-key util/non-blank-string})
 
 ;;; Mailing lists
 
-(def name           util/non-blank-string)
+(def name-schema    util/non-blank-string)
 (def other-archives [url])
 (def subscribe      (schema/cond-pre email url))
 (def unsubscribe    (schema/cond-pre email url))
 (def mailing-list
-  {(schema/optional-key :name)           name
+  {(schema/optional-key :name)           name-schema
    (schema/optional-key :archive)        url
    (schema/optional-key :other-archives) other-archives
    (schema/optional-key :post)           email
@@ -37,7 +37,7 @@
 
 (def distribution (schema/enum :repo :manual))
 (def license
-  {(schema/optional-key :name)         name
+  {(schema/optional-key :name)         name-schema
    (schema/optional-key :url)          url
    (schema/optional-key :distribution) distribution
    (schema/optional-key :comments)     util/non-blank-string})
@@ -120,7 +120,6 @@
 
 ;;; Plugins
 
-
 (defn plugin-args? [kv-seq]
   (util/key-val-seq? kv-seq (merge dependency-args-map
                                    {:middleware schema/Bool
@@ -137,6 +136,34 @@
   [plugin-vector])
 
 
+;;; Repositories
+
+(def checksum    (schema/enum :fail :warn :ignore))
+(def update-enum (schema/enum :always :daily :never))
+(def releases    {(schema/optional-key :checksum) checksum
+                  (schema/optional-key :update)   update-enum})
+(def password    (schema/cond-pre util/non-blank-string
+                                  (schema/enum :env)))
+(def creds       (schema/enum :gpg))
+
+(def repository-info-map
+  {(schema/optional-key :url)           url
+   (schema/optional-key :snapshots)     schema/Bool
+   (schema/optional-key :sign-releases) schema/Bool
+   (schema/optional-key :checksum)      checksum
+   (schema/optional-key :update)        update-enum
+   (schema/optional-key :releases)      releases
+   (schema/optional-key :username)      util/non-blank-string
+   (schema/optional-key :password)      password
+   (schema/optional-key :creds)         creds
+   (schema/optional-key :signing)       signing})
+
+(def repository
+  [(schema/one util/non-blank-string "name")
+   (schema/one (schema/cond-pre url repository-info-map) "url or info-map")])
+(def repositories
+  [repository])
+
 
 (defschema project-map
   {(schema/optional-key :description)                util/non-blank-string
@@ -151,15 +178,15 @@
    (schema/optional-key :pedantic?)                  pedantic?
    (schema/optional-key :exclusions)                 exclusions
    (schema/optional-key :plugins)                    plugins
-   ;; (schema/optional-key :repositories)
-   ;; (schema/optional-key :plugin-repositories)
+   (schema/optional-key :repositories)               repositories
+   (schema/optional-key :plugin-repositories)        repositories
    ;; (schema/optional-key :mirrors)
    ;; (schema/optional-key :local-repo)
    ;; (schema/optional-key :update)
    ;; (schema/optional-key :checksum)
    ;; (schema/optional-key :offline?)
-   ;; (schema/optional-key :deploy-repositories)
-   ;; (schema/optional-key :signing)
+   (schema/optional-key :deploy-repositories)        repositories
+   (schema/optional-key :signing)                    signing
    ;; (schema/optional-key :certificates)
    ;; (schema/optional-key :profiles)
    ;; (schema/optional-key :hooks)

@@ -13,7 +13,7 @@
 (def url                     (util/stregex! #"^(https?|ftp)://[^\s/$.?#]+\.?[^\s]*$"))
 (def email                   (util/stregex! #"\S+@\S+\.?\S+"))
 (def semantic-version-string (util/stregex! #"(\d+)\.(\d+)\.(\d+)(-\w+)?(-SNAPSHOT)?"))
-
+(def namespaced-string       (util/stregex! #"[^\s/]+/[^\s/]+"))
 
 ;;; Mailing lists
 
@@ -41,6 +41,79 @@
 (def licenses [license])
 
 
+;;; Dependencies
+
+(def dependency-name
+  (schema/cond-pre namespaced-string util/non-blank-string
+                   util/qualified-symbol schema/Symbol))
+
+(def optional      (schema/pred util/boolean?))
+(def scope         util/non-blank-string)
+(def classifier    util/non-blank-string)
+(def native-prefix (schema/pred string?))
+(def extension     util/non-blank-string)
+(def artifact-id   util/non-blank-string)
+(def group-id      util/non-blank-string)
+(def version       util/non-blank-string)
+
+;; TODO: Provide generator for everything that uses util/key-val-seq.
+(defn exclusion-arguments? [kv-seq]
+  (util/key-val-seq? kv-seq {:scope         scope
+                             :classifier    classifier
+                             :native-prefix native-prefix
+                             :extension     extension}))
+(def exclusion-args
+  (schema/constrained schema/Any exclusion-arguments?))
+
+
+(defn exclusion-vector? [excl-vec]
+  ((util/first-rest-cat-fn dependency-name exclusion-args) excl-vec))
+(def exclusion-vector
+  (schema/constrained schema/Any exclusion-vector?))
+
+(def exclusion
+  (schema/cond-pre dependency-name exclusion-vector))
+(def exclusions [exclusion])
+
+(def dependency-name-map
+  {:artifact-id artifact-id
+   :group-id    group-id})
+
+(defn dependency-args? [kv-seq]
+  (util/key-val-seq? kv-seq {:optional      optional
+                             :scope         scope
+                             :classifier    classifier
+                             :native-prefix native-prefix
+                             :extension     extension
+                             :exclusions    exclusions}))
+(def dependency-args
+  (schema/constrained schema/Any dependency-args?))
+
+;; TODO: Perhaps we can attach a generator here which pulls in artifacts from:
+;; https://clojars.org/repo/all-jars.clj
+(def artifact
+  [(schema/one dependency-name "name") (schema/one version "version")])
+
+(defn dependency-vector? [dep-vec]
+  ((util/pair-rest-cat-fn artifact dependency-args) dep-vec))
+(def dependency-vector
+  (schema/constrained [schema/Any] dependency-vector?))
+
+(def dependency-map
+  {:artifact-id artifact-id
+   :group-id    group-id
+   :version     version})
+
+(def exclusion-map
+  {:artifact-id artifact-id :group-id group-id})
+
+(def dependencies
+  [dependency-vector])
+
+(def managed-dependencies
+  [dependency-vector])
+
+
 
 (defschema project-argument-keys
   {(schema/optional-key :description)                util/non-blank-string
@@ -50,8 +123,8 @@
    (schema/optional-key :license)                    license
    (schema/optional-key :licenses)                   licenses
    (schema/optional-key :min-lein-version)           semantic-version-string
-   ;; (schema/optional-key :dependencies)
-   ;; (schema/optional-key :managed-dependencies)
+   (schema/optional-key :dependencies)               dependencies
+   (schema/optional-key :managed-dependencies)       dependencies
    ;; (schema/optional-key :pedantic?)
    ;; (schema/optional-key :exclusions)
    ;; (schema/optional-key :plugins)

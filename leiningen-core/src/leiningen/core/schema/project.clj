@@ -188,13 +188,13 @@
    (schema/optional-key :repositories)               repositories
    (schema/optional-key :plugin-repositories)        repositories
    (schema/optional-key :mirrors)                    mirrors
-   ;; (schema/optional-key :local-repo)
-   ;; (schema/optional-key :update)
-   ;; (schema/optional-key :checksum)
-   ;; (schema/optional-key :offline?)
+   (schema/optional-key :local-repo)                 util/non-blank-string
+   (schema/optional-key :update)                     update-enum
+   (schema/optional-key :checksum)                   checksum
+   (schema/optional-key :offline?)                   schema/Bool
    (schema/optional-key :deploy-repositories)        repositories
    (schema/optional-key :signing)                    signing
-   ;; (schema/optional-key :certificates)
+   (schema/optional-key :certificates)               [util/non-blank-string]
    ;; (schema/optional-key :profiles)
    ;; (schema/optional-key :hooks)
    ;; (schema/optional-key :middleware)

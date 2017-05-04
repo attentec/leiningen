@@ -197,7 +197,7 @@
 (spec/def ::proj/optional      boolean?)
 (spec/def ::proj/scope         ::util/non-blank-string)
 (spec/def ::proj/classifier    ::util/non-blank-string)
-(spec/def ::proj/native-prefix ::util/non-blank-string)
+(spec/def ::proj/native-prefix string?)
 (spec/def ::proj/extension     ::util/non-blank-string)
 (spec/def ::proj/exclusions    (spec/coll-of ::proj/exclusion :gen-max 2 :kind vector? :min-count 1))
 (spec/def ::proj/dependency-args
@@ -261,15 +261,17 @@
 (spec/def ::proj/sign-releases boolean?)
 (spec/def ::proj/checksum      #{:fail :warn :ignore})
 (spec/def ::proj/update        #{:always :daily :never})
-(spec/def ::proj/releases      #{:checksum :fail :update :always})
+(spec/def ::proj/releases      (spec/keys :opt-un [::proj/checksum
+                                                   ::proj/update]))
 (spec/def ::proj/username      ::util/non-blank-string)
-(spec/def ::proj/password      ::util/non-blank-string)
+(spec/def ::proj/password      (spec/or ::util/non-blank-string #{:env}))
 (spec/def ::proj/creds         #{:gpg})
 
 (spec/def ::proj/repository-info-map
   (spec/keys :opt-un [::proj/url ::proj/snapshots ::proj/sign-releases
                       ::proj/checksum ::proj/update ::proj/releases
-                      ::proj/username ::proj/password ::proj/creds]))
+                      ::proj/username ::proj/password ::proj/creds
+                      ::proj/signing]))
 
 (spec/def ::proj/repositories
   (spec/coll-of (spec/cat :name ::util/non-blank-string

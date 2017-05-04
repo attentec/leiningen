@@ -165,6 +165,13 @@
   [repository])
 
 
+;;; Mirrors
+
+(def mirrors
+  {(schema/cond-pre schema/Str schema/Regex) {(schema/optional-key :name)          name-schema
+                                              (schema/optional-key :url)           url
+                                              (schema/optional-key :repo-manager) schema/Bool}})
+
 (defschema project-map
   {(schema/optional-key :description)                util/non-blank-string
    (schema/optional-key :url)                        url
@@ -180,7 +187,7 @@
    (schema/optional-key :plugins)                    plugins
    (schema/optional-key :repositories)               repositories
    (schema/optional-key :plugin-repositories)        repositories
-   ;; (schema/optional-key :mirrors)
+   (schema/optional-key :mirrors)                    mirrors
    ;; (schema/optional-key :local-repo)
    ;; (schema/optional-key :update)
    ;; (schema/optional-key :checksum)

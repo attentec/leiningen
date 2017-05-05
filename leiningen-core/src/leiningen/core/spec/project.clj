@@ -102,37 +102,37 @@
 (spec/def ::proj/description   ::util/non-blank-string)
 ;; TODO: Replace with java.net.URL for acceptance or perhaps with
 ;; https://github.com/SparkFund/useful-specs/
-(spec/def ::proj/url           (util/stregex #"^(https?|ftp)://[^\s/$.?#]+\.?[^\s]*$"))
-(spec/def ::proj/email         (util/stregex #"\S+@\S+\.?\S+"))
-(spec/def ::proj/pedantic?     #{:abort :warn :ranges true false})
-(spec/def ::proj/local-repo    ::util/non-blank-string)
-(spec/def ::proj/offline?      boolean?)
-(spec/def ::proj/signing       (spec/map-of #{:gpg-key} ::util/non-blank-string))
-(spec/def ::proj/certificates  (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
-(spec/def ::proj/profiles      (spec/map-of keyword? ::proj/project-map-non-recursive :gen-max 2))
-(spec/def ::proj/hooks         (spec/coll-of symbol? :kind vector? :min-count 1))
-(spec/def ::proj/middleware    (spec/coll-of symbol? :kind vector? :min-count 1))
-(spec/def ::proj/implicit-hooks boolean?)
-(spec/def ::proj/implicit-middleware boolean?)
-(spec/def ::proj/main          symbol?)
+(spec/def ::proj/url                  (util/stregex #"^(https?|ftp)://[^\s/$.?#]+\.?[^\s]*$"))
+(spec/def ::proj/email                (util/stregex #"\S+@\S+\.?\S+"))
+(spec/def ::proj/pedantic?            #{:abort :warn :ranges true false})
+(spec/def ::proj/local-repo           ::util/non-blank-string)
+(spec/def ::proj/offline?             boolean?)
+(spec/def ::proj/signing              (spec/map-of #{:gpg-key} ::util/non-blank-string))
+(spec/def ::proj/certificates         (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
+(spec/def ::proj/profiles             (spec/map-of keyword? ::proj/project-map-non-recursive :gen-max 2))
+(spec/def ::proj/hooks                (spec/coll-of symbol? :kind vector? :min-count 1))
+(spec/def ::proj/middleware           (spec/coll-of symbol? :kind vector? :min-count 1))
+(spec/def ::proj/implicit-hooks       boolean?)
+(spec/def ::proj/implicit-middleware  boolean?)
+(spec/def ::proj/main                 symbol?)
 ;; TODO: Injections spec is too simple.
-(spec/def ::proj/injections    (spec/coll-of any? :kind vector? :gen-max 3))
-(spec/def ::proj/javac-options (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
-(spec/def ::proj/warn-on-reflection  boolean?)
-(spec/def ::proj/java-cmd      ::util/non-blank-string)
-(spec/def ::proj/jvm-opts      (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
-(spec/def ::proj/eval-in       #{:subprocess :leiningen :nrepl})
-(spec/def ::proj/bootclasspath boolean?)
+(spec/def ::proj/injections           (spec/coll-of any? :kind vector? :gen-max 3))
+(spec/def ::proj/javac-options        (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
+(spec/def ::proj/warn-on-reflection   boolean?)
+(spec/def ::proj/java-cmd             ::util/non-blank-string)
+(spec/def ::proj/jvm-opts             (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
+(spec/def ::proj/eval-in              #{:subprocess :leiningen :nrepl})
+(spec/def ::proj/bootclasspath        boolean?)
 (spec/def ::proj/clean-non-project-classes boolean?)
 (spec/def ::proj/monkeypatch-clojure-test boolean?)
-(spec/def ::proj/jar-name      ::util/non-blank-string)
-(spec/def ::proj/uberjar-name  ::util/non-blank-string)
-(spec/def ::proj/omit-source   boolean?)
-(spec/def ::proj/jar-exclusions (spec/coll-of ::util/stregex :kind vector? :min-count 1))
-(spec/def ::proj/uberjar-exclusions (spec/coll-of ::util/stregex :kind vector? :min-count 1))
-(spec/def ::proj/auto-clean     boolean?)
-(spec/def ::proj/install-releases? boolean?)
-(spec/def ::proj/deploy-branches (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
+(spec/def ::proj/jar-name             ::util/non-blank-string)
+(spec/def ::proj/uberjar-name         ::util/non-blank-string)
+(spec/def ::proj/omit-source          boolean?)
+(spec/def ::proj/jar-exclusions       (spec/coll-of ::util/stregex :kind vector? :min-count 1))
+(spec/def ::proj/uberjar-exclusions   (spec/coll-of ::util/stregex :kind vector? :min-count 1))
+(spec/def ::proj/auto-clean           boolean?)
+(spec/def ::proj/install-releases?    boolean?)
+(spec/def ::proj/deploy-branches      (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
 
 
 ;;; Mailing lists
@@ -237,7 +237,7 @@
 ;;; Plugins
 
 (spec/def :leiningen.core.project.plugin/middleware boolean?)
-(spec/def ::proj/hooks boolean?)
+(spec/def :leiningen.core.project.plugin/hooks boolean?)
 
 ;; TODO: This duplicates the whole ::proj/dependency-args. See SO question:
 ;; http://stackoverflow.com/questions/43388710/ and Alex Miller on irc:
@@ -245,7 +245,8 @@
 (spec/def ::proj/plugin-args
   (spec/keys* :opt-un [::proj/optional ::proj/scope ::proj/classifier
                        ::proj/native-prefix ::proj/extension ::proj/exclusions
-                       :leiningen.core.project.plugin/middleware ::proj/hooks]))
+                       :leiningen.core.project.plugin/middleware
+                       :leiningen.core.project.plugin/hooks]))
 
 (spec/def ::proj/plugin-vector
   (util/vcat :artifact  ::proj/artifact
@@ -292,11 +293,6 @@
                         :string ::util/non-blank-string)
                (spec/keys :opt-un [::proj/name ::proj/url ::proj/repo-manager])
                :gen-max 3))
-
-
-;;; Profiles
-
-
 
 
 ;;; Aliases

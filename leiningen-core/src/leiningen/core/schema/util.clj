@@ -25,6 +25,8 @@
   (swap! generators assoc string-regex (strgen/string-generator string-regex))
   string-regex)
 
+;;; Predicates
+
 (defn simple-symbol?
   "Return true if x is a symbol without a namespace."
   [x] (and (symbol? x) (nil? (namespace x))))
@@ -49,6 +51,12 @@
                     (schema/check schema v)
                     :schema/invalid))))))
 
+(defn non-blank-string?
+  [string] (not (str/blank? string)))
+
+
+;;; Regex replacements
+
 (defn cat-fn
   "Concatinate schemas together to form one continous sequence."
   [schemas]
@@ -71,12 +79,11 @@
     (and (nil? (schema/check pair-schema [(first data) (second data)]))
          (nil? (schema/check rest-schema  (next (rest  data)))))))
 
-(for [[schema i] (map-indexed list [1 2 3 4])]
-  [schema i])
+
 ;;; Data schemas
 
 (schema/defschema non-blank-string
-  (schema/constrained schema/Str (complement str/blank?)))
+  (schema/constrained schema/Str non-blank-string?))
 
 (schema/defschema qualified-symbol
   (let [schema (schema/pred qualified-symbol?)]

@@ -16,6 +16,11 @@
 (def namespaced-string       (util/stregex! #"[^\s/]+/[^\s/]+"))
 (def pedantic?               (schema/enum :abort :warn :ranges true false))
 (def signing                 {:gpg-key util/non-blank-string})
+(def certificates            (schema/constrained [util/non-blank-string] not-empty))
+(declare project-map-non-recursive)
+(def profiles                {schema/Keyword project-map-non-recursive})
+(def hooks                   (schema/constrained [schema/Symbol] not-empty))
+(def middleware              (schema/constrained [schema/Symbol] not-empty))
 
 ;;; Mailing lists
 
@@ -30,7 +35,8 @@
    (schema/optional-key :post)           email
    (schema/optional-key :subscribe)      subscribe
    (schema/optional-key :unsubscribe)    unsubscribe})
-(def mailing-lists [mailing-list])
+(def mailing-lists
+  (schema/constrained [mailing-list] not-empty))
 
 
 ;;; Licenses
@@ -41,7 +47,8 @@
    (schema/optional-key :url)          url
    (schema/optional-key :distribution) distribution
    (schema/optional-key :comments)     util/non-blank-string})
-(def licenses [license])
+(def licenses
+  (schema/constrained [license] not-empty))
 
 
 ;;; Dependencies
@@ -76,7 +83,8 @@
 
 (def exclusion
   (schema/cond-pre dependency-name exclusion-vector))
-(def exclusions [exclusion])
+(def exclusions
+  (schema/constrained [exclusion] not-empty))
 
 (def dependency-name-map
   {:artifact-id artifact-id
@@ -112,10 +120,10 @@
   {:artifact-id artifact-id :group-id group-id})
 
 (def dependencies
-  [dependency-vector])
+  (schema/constrained [dependency-vector] not-empty))
 
 (def managed-dependencies
-  [dependency-vector])
+  (schema/constrained [dependency-vector] not-empty))
 
 
 ;;; Plugins
@@ -133,7 +141,7 @@
   (schema/constrained [schema/Any] plugin-vector?))
 
 (def plugins
-  [plugin-vector])
+  (schema/constrained [plugin-vector] not-empty))
 
 
 ;;; Repositories
@@ -172,6 +180,26 @@
                                               (schema/optional-key :url)           url
                                               (schema/optional-key :repo-manager) schema/Bool}})
 
+
+;;; Aliases
+
+(def command-vector
+  (schema/constrained
+   [(schema/cond-pre util/non-blank-string schema/Keyword)]
+   not-empty))
+
+(def do-command
+  [(schema/one (schema/enum "do") "do")
+   (schema/cond-pre schema/Str command-vector)])
+
+(def aliases
+  {util/non-blank-string (schema/conditional
+                          #(= (first %) "do") do-command
+                          :else               command-vector)})
+
+
+;;; Project maps and permutations
+
 (defschema project-map
   {(schema/optional-key :description)                util/non-blank-string
    (schema/optional-key :url)                        url
@@ -194,14 +222,14 @@
    (schema/optional-key :offline?)                   schema/Bool
    (schema/optional-key :deploy-repositories)        repositories
    (schema/optional-key :signing)                    signing
-   (schema/optional-key :certificates)               [util/non-blank-string]
-   ;; (schema/optional-key :profiles)
-   ;; (schema/optional-key :hooks)
-   ;; (schema/optional-key :middleware)
-   ;; (schema/optional-key :implicit-middleware)
-   ;; (schema/optional-key :implicit-hooks)
-   ;; (schema/optional-key :main)
-   ;; (schema/optional-key :aliases)
+   (schema/optional-key :certificates)               certificates
+   (schema/optional-key :profiles)                   profiles
+   (schema/optional-key :hooks)                      hooks
+   (schema/optional-key :middleware)                 middleware
+   (schema/optional-key :implicit-middleware)        schema/Bool
+   (schema/optional-key :implicit-hooks)             schema/Bool
+   (schema/optional-key :main)                       schema/Symbol
+   (schema/optional-key :aliases)                    aliases
    ;; (schema/optional-key :release-tasks)
    ;; (schema/optional-key :prep-tasks)
    ;; (schema/optional-key :aot)
@@ -245,6 +273,11 @@
    ;; (schema/optional-key :install-releases?)
    ;; (schema/optional-key :deploy-branches)
    ;; (schema/optional-key :classifiers)
+   ;; Make the map schema open.
+   ;schema/Keyword schema/Any
    })
+
+(defschema project-map-non-recursive (dissoc project-map :filespecs :profiles))
+
 
 ; (gen/generate project-argument-keys @util/generators)

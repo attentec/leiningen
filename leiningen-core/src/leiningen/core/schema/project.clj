@@ -22,6 +22,8 @@
 (def hooks                   (schema/constrained [schema/Symbol] not-empty))
 (def middleware              (schema/constrained [schema/Symbol] not-empty))
 
+
+
 ;;; Mailing lists
 
 (def name-schema    util/non-blank-string)
@@ -198,7 +200,36 @@
                           :else               command-vector)})
 
 
-;;; Project maps and permutations
+(def release-tasks
+  (schema/constrained
+   [(schema/cond-pre schema/Str command-vector)]
+   not-empty))
+
+
+(def aot
+  (schema/cond-pre (schema/enum :all)
+                   [(schema/cond-pre schema/Symbol schema/Regex)]))
+
+
+;;; Java agents
+
+(defn java-agent-args? [kv-seq]
+  (util/key-val-seq? kv-seq {:classifier classifier
+                             :options    schema/Str}))
+(def java-agent-args
+  (schema/constrained schema/Any java-agent-args?))
+
+(defn java-agent-vector? [dep-vec]
+  ((util/pair-rest-cat-fn artifact java-agent-args) dep-vec))
+(def java-agents
+  (schema/constrained
+   [(schema/constrained [schema/Any] java-agent-vector?)]
+   not-empty))
+
+
+
+
+;;; Project maps and permutations there of.
 
 (defschema project-map
   {(schema/optional-key :description)                util/non-blank-string
@@ -230,11 +261,11 @@
    (schema/optional-key :implicit-hooks)             schema/Bool
    (schema/optional-key :main)                       schema/Symbol
    (schema/optional-key :aliases)                    aliases
-   ;; (schema/optional-key :release-tasks)
-   ;; (schema/optional-key :prep-tasks)
-   ;; (schema/optional-key :aot)
-   ;; (schema/optional-key :injections)
-   ;; (schema/optional-key :java-agents)
+   (schema/optional-key :release-tasks)              release-tasks
+   (schema/optional-key :prep-tasks)                 release-tasks
+   (schema/optional-key :aot)                        aot
+   (schema/optional-key :injections)                 [schema/Any] ; TODO: Too lax
+   (schema/optional-key :java-agents)                java-agents
    ;; (schema/optional-key :javac-options)
    ;; (schema/optional-key :warn-on-reflection)
    ;; (schema/optional-key :global-vars)

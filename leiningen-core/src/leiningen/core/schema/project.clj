@@ -21,7 +21,9 @@
 (def profiles                {schema/Keyword project-map-non-recursive})
 (def hooks                   (schema/constrained [schema/Symbol] not-empty))
 (def middleware              (schema/constrained [schema/Symbol] not-empty))
-
+(def javac-options           (schema/constrained [util/non-blank-string] not-empty))
+(def jvm-opts                (schema/constrained [util/non-blank-string] not-empty))
+(def eval-in                 (schema/enum :subprocess :leiningen :nrepl))
 
 
 ;;; Mailing lists
@@ -226,7 +228,21 @@
    [(schema/constrained [schema/Any] java-agent-vector?)]
    not-empty))
 
+;;; Global vars
+;; See http://stackoverflow.com/questions/43452079
+(def clojure-global-vars
+  (schema/enum
+   '*print-namespace-maps* '*source-path* '*command-line-args*
+   '*read-eval* '*verbose-defrecords* '*print-level* '*suppress-read*
+    '*print-length* '*file* '*use-context-classloader* '*err*
+    '*default-data-reader-fn* '*allow-unresolved-vars* '*print-meta*
+    '*compile-files* '*math-context* '*data-readers* '*clojure-version*
+    '*unchecked-math* '*out* '*warn-on-reflection* '*compile-path*
+    '*in* '*ns* '*assert* '*print-readably* '*flush-on-newline*
+    '*agent* '*fn-loader* '*compiler-options* '*print-dup*))
 
+(def global-vars
+  {clojure-global-vars schema/Any})
 
 
 ;;; Project maps and permutations there of.
@@ -266,13 +282,13 @@
    (schema/optional-key :aot)                        aot
    (schema/optional-key :injections)                 [schema/Any] ; TODO: Too lax
    (schema/optional-key :java-agents)                java-agents
-   ;; (schema/optional-key :javac-options)
-   ;; (schema/optional-key :warn-on-reflection)
-   ;; (schema/optional-key :global-vars)
-   ;; (schema/optional-key :java-cmd)
-   ;; (schema/optional-key :jvm-opts)
-   ;; (schema/optional-key :eval-in)
-   ;; (schema/optional-key :bootclasspath)
+   (schema/optional-key :javac-options)              javac-options
+   (schema/optional-key :warn-on-reflection)         schema/Bool
+   (schema/optional-key :global-vars)                global-vars
+   (schema/optional-key :java-cmd)                   util/non-blank-string
+   (schema/optional-key :jvm-opts)                   jvm-opts
+   (schema/optional-key :eval-in)                    eval-in
+   (schema/optional-key :bootclasspath)              schema/Bool
    ;; (schema/optional-key :source-paths)
    ;; (schema/optional-key :java-source-paths)
    ;; (schema/optional-key :test-paths)

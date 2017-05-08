@@ -95,7 +95,8 @@
   (eval `(spec/keys :opt-un ~project-argument-keys)))
 
 (spec/def ::proj/project-map-non-recursive
-  (eval `(spec/keys :opt-un ~(remove #{::proj/filespecs ::proj/profiles} project-argument-keys))))
+  (eval `(spec/keys :opt-un ~(remove #{::proj/filespecs ::proj/profiles ::proj/checkout-deps-shares}
+                                     project-argument-keys))))
 
 ;;; Minor keys in project-argument-keys from top to bottom.
 
@@ -298,7 +299,9 @@
 ;;; Aliases
 
 (spec/def ::proj/command-vector
-  (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
+  (spec/coll-of (spec/or :string  ::util/non-blank-string
+                         :keyword keyword?)
+                :kind vector? :min-count 1))
 
 (spec/def ::proj/do-command
   (util/vcat :do          #{"do"}
@@ -360,11 +363,11 @@
 
 
 ;;; Paths
-
-(spec/def ::proj/source-paths      (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
-(spec/def ::proj/java-source-paths (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
-(spec/def ::proj/test-paths        (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
-(spec/def ::proj/resource-paths    (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
+(spec/def ::proj/paths             (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
+(spec/def ::proj/source-paths      ::proj/paths)
+(spec/def ::proj/java-source-paths ::proj/paths)
+(spec/def ::proj/test-paths        ::proj/paths)
+(spec/def ::proj/resource-paths    ::proj/paths)
 (spec/def ::proj/target-path       ::util/non-blank-string)
 (spec/def ::proj/compile-path      ::util/non-blank-string)
 (spec/def ::proj/native-path       ::util/non-blank-string)
@@ -376,8 +379,16 @@
                                       :kind vector? :min-count 2))
                 :kind vector? :min-count 1))
 
+
+;;; Checkout Dependency Shares
+
+(spec/fdef ::checkout-deps-shares-fn
+           :args (spec/cat :project-map ::proj/project-map-non-recursive)
+           :ret  (spec/nilable (spec/or :vector ::proj/paths
+                                        :single ::proj/path)))
+
 (spec/def ::proj/checkout-deps-shares
-  ::proj/clean-targets)
+  (spec/coll-of ::checkout-deps-shares-fn :kind vector? :gen-max 1))
 
 
 ;;; Test selectors

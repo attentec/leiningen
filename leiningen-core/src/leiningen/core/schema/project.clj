@@ -290,6 +290,15 @@
    (schema/optional-key :nrepl-middleware)  (schema/cond-pre schema/Symbol
                                                              (schema/pred ifn?))})
 
+;;; Uberjar content management
+
+;; NOTE: Yet another inadequate fn schema
+(def uberjar-merge-with
+  {(schema/cond-pre schema/Str schema/Regex) [(schema/one schema/Symbol "Input-stream -> Datum")
+                                              (schema/one schema/Symbol "Datum-merger")
+                                              (schema/one schema/Symbol "Datum-printer")]})
+
+
 
 ;;; Project maps and permutations there of.
 
@@ -348,13 +357,13 @@
    (schema/optional-key :test-selectors)             test-selectors
    (schema/optional-key :monkeypatch-clojure-test)   schema/Bool
    (schema/optional-key :repl-options)               repl-options
-   ;; (schema/optional-key :jar-name)
-   ;; (schema/optional-key :uberjar-name)
-   ;; (schema/optional-key :omit-source)
-   ;; (schema/optional-key :jar-exclusions)
-   ;; (schema/optional-key :uberjar-exclusions)
-   ;; (schema/optional-key :auto-clean)
-   ;; (schema/optional-key :uberjar-merge-with)
+   (schema/optional-key :jar-name)                   util/non-blank-string
+   (schema/optional-key :uberjar-name)               util/non-blank-string
+   (schema/optional-key :omit-source)                schema/Bool
+   (schema/optional-key :jar-exclusions)             [schema/Regex]
+   (schema/optional-key :uberjar-exclusions)         [schema/Regex]
+   (schema/optional-key :auto-clean)                 schema/Bool
+   (schema/optional-key :uberjar-merge-with)         uberjar-merge-with
    ;; (schema/optional-key :filespecs)
    ;; (schema/optional-key :manifest)
    ;; (schema/optional-key :pom-location)

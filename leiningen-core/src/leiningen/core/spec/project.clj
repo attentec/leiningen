@@ -407,9 +407,9 @@
            :args (spec/+ ::util/exception)
            :ret nil?)
 (spec/def ::proj/prompt            ::ns->str)
-(spec/def ::proj/welcome           ::util/nullary-fn)
+(spec/def ::proj/welcome           seq?
 (spec/def ::proj/init-ns           ::util/namespace-symbol)
-(spec/def ::proj/init              ::util/nullary-fn)
+(spec/def ::proj/init              seq?
 (spec/def ::proj/caught            ::exception-printer)
 (spec/def ::proj/skip-default-init boolean?)
 (spec/def ::proj/host              ::util/non-blank-string)

@@ -69,7 +69,7 @@
 ;; Only matches namespaces in the currently running jvm.
 (spec/def ::namespace-symbol
   (spec/with-gen
-    #(instance? clojure.lang.Namespace (find-ns %))
+    simple-symbol?
     #(gen/fmap ns-name (gen/elements (all-ns)))))
 
 (spec/def ::exception

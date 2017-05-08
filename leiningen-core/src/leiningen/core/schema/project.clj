@@ -24,6 +24,8 @@
 (def javac-options           (schema/constrained [util/non-blank-string] not-empty))
 (def jvm-opts                (schema/constrained [util/non-blank-string] not-empty))
 (def eval-in                 (schema/enum :subprocess :leiningen :nrepl))
+(def path                    util/non-blank-string)
+(def paths                   (schema/constrained [util/non-blank-string] not-empty))
 
 
 ;;; Mailing lists
@@ -245,6 +247,50 @@
   {clojure-global-vars schema/Any})
 
 
+
+;; A path into the project map.
+(defn more-than-two-elements?
+  [v] (>= (count v) 2))
+(def project-path
+  (schema/constrained [schema/Keyword] more-than-two-elements?))
+(def clean-targets
+  [(schema/cond-pre schema/Keyword util/non-blank-string project-path)])
+
+
+;;; Checkout dependency shares
+
+;; NOTE: This is way less precise than the spec implementation.
+(def checkout-deps-shares
+  (schema/pred ifn?))
+
+
+;;; Test selectors
+
+;; NOTE: Function schema simpler than spec implementation.
+(def test-selectors
+  {schema/Keyword (schema/cond-pre schema/Keyword
+                                   (schema/pred ifn?))})
+
+;;; REPL options
+
+;; NOTE: Also simplified as there are no function definitions
+
+(def repl-options
+  {(schema/optional-key :prompt)            (schema/pred ifn?)
+   (schema/optional-key :welcome)           (schema/pred seq?)
+   (schema/optional-key :init-ns)           util/simple-symbol
+   (schema/optional-key :init)              (schema/pred seq?)
+   (schema/optional-key :caught)            (schema/pred ifn?)
+   (schema/optional-key :skip-default-init) schema/Bool
+   (schema/optional-key :host)              util/non-blank-string
+   (schema/optional-key :port)              (schema/constrained util/positive-integer
+                                                                (partial > 65535))
+   (schema/optional-key :timeout)           util/natural-number
+   (schema/optional-key :nrepl-handler)     (schema/pred seq?)
+   (schema/optional-key :nrepl-middleware)  (schema/cond-pre schema/Symbol
+                                                             (schema/pred ifn?))})
+
+
 ;;; Project maps and permutations there of.
 
 (defschema project-map
@@ -289,19 +335,19 @@
    (schema/optional-key :jvm-opts)                   jvm-opts
    (schema/optional-key :eval-in)                    eval-in
    (schema/optional-key :bootclasspath)              schema/Bool
-   ;; (schema/optional-key :source-paths)
-   ;; (schema/optional-key :java-source-paths)
-   ;; (schema/optional-key :test-paths)
-   ;; (schema/optional-key :resource-paths)
-   ;; (schema/optional-key :target-path)
-   ;; (schema/optional-key :compile-path)
-   ;; (schema/optional-key :native-path)
-   ;; (schema/optional-key :clean-targets)
-   ;; (schema/optional-key :clean-non-project-classes)
-   ;; (schema/optional-key :checkout-deps-shares)
-   ;; (schema/optional-key :test-selectors)
-   ;; (schema/optional-key :monkeypatch-clojure-test)
-   ;; (schema/optional-key :repl-options)
+   (schema/optional-key :source-paths)               paths
+   (schema/optional-key :java-source-paths)          paths
+   (schema/optional-key :test-paths)                 paths
+   (schema/optional-key :resource-paths)             paths
+   (schema/optional-key :target-path)                path
+   (schema/optional-key :compile-path)               path
+   (schema/optional-key :native-path)                path
+   (schema/optional-key :clean-targets)              clean-targets
+   (schema/optional-key :clean-non-project-classes)  schema/Bool
+   (schema/optional-key :checkout-deps-shares)       checkout-deps-shares
+   (schema/optional-key :test-selectors)             test-selectors
+   (schema/optional-key :monkeypatch-clojure-test)   schema/Bool
+   (schema/optional-key :repl-options)               repl-options
    ;; (schema/optional-key :jar-name)
    ;; (schema/optional-key :uberjar-name)
    ;; (schema/optional-key :omit-source)
@@ -324,7 +370,7 @@
    ;schema/Keyword schema/Any
    })
 
-(defschema project-map-non-recursive (dissoc project-map :filespecs :profiles))
+(defschema project-map-non-recursive (dissoc project-map :filespecs :profiles :checkout-deps-shares))
 
 
 ; (gen/generate project-argument-keys @util/generators)

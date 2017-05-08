@@ -89,3 +89,12 @@
   (let [schema (schema/pred qualified-symbol?)]
     (swap! generators assoc schema tc-gen/symbol-ns)
     schema))
+
+(schema/defschema simple-symbol
+  (schema/pred simple-symbol?))
+
+(schema/defschema positive-integer
+  (schema/constrained schema/Int pos?))
+
+(schema/defschema natural-number
+  (schema/constrained schema/Int #(not (neg? %))))

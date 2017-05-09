@@ -1,10 +1,11 @@
 (ns leiningen.core.schema.project
-  (:require [schema.core                  :as schema :refer [defschema]]
-            [schema-generators.generators :as gen]
-            [miner.strgen                 :as strgen]
-            [clojure.test.check.generators :as genn]
-            [leiningen.core.project       :as proj]
-            [leiningen.core.schema.util   :as util]))
+  (:require [schema.core                      :as schema :refer [defschema]]
+            [schema-generators.generators     :as gen]
+            [schema.experimental.abstract-map :as schema-typed-map]
+            [miner.strgen                     :as strgen]
+            [clojure.test.check.generators    :as genn]
+            [leiningen.core.project           :as proj]
+            [leiningen.core.schema.util       :as util]))
 
 
 ;;; Minor keys in project-argument-keys from top to bottom.
@@ -299,6 +300,18 @@
                                               (schema/one schema/Symbol "Datum-printer")]})
 
 
+;;; Filespecs
+
+(def filespec
+  (schema-typed-map/abstract-map-schema :type {}))
+(def filespecs
+  [filespec])
+
+(schema-typed-map/extend-schema path-filespec  filespec [:path]  {:path  path})
+(schema-typed-map/extend-schema paths-filespec filespec [:paths] {:paths paths})
+(schema-typed-map/extend-schema bytes-filespec filespec [:bytes] {:path  path :bytes util/non-blank-string})
+(schema-typed-map/extend-schema bytes-filespec filespec [:fn]    {:fn (schema/pred ifn?)})
+
 
 ;;; Project maps and permutations there of.
 
@@ -361,10 +374,11 @@
    (schema/optional-key :uberjar-name)               util/non-blank-string
    (schema/optional-key :omit-source)                schema/Bool
    (schema/optional-key :jar-exclusions)             [schema/Regex]
+   (schema/optional-key :jar-inclusions)             [schema/Regex]
    (schema/optional-key :uberjar-exclusions)         [schema/Regex]
    (schema/optional-key :auto-clean)                 schema/Bool
    (schema/optional-key :uberjar-merge-with)         uberjar-merge-with
-   ;; (schema/optional-key :filespecs)
+   (schema/optional-key :filespecs)                  filespecs
    ;; (schema/optional-key :manifest)
    ;; (schema/optional-key :pom-location)
    ;; (schema/optional-key :parent)

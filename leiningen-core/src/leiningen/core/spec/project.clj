@@ -66,6 +66,7 @@
    ::proj/uberjar-name
    ::proj/omit-source
    ::proj/jar-exclusions
+   ::proj/jar-inclusions
    ::proj/uberjar-exclusions
    ::proj/auto-clean
    ::proj/uberjar-merge-with
@@ -130,6 +131,7 @@
 (spec/def ::proj/uberjar-name         ::util/non-blank-string)
 (spec/def ::proj/omit-source          boolean?)
 (spec/def ::proj/jar-exclusions       (spec/coll-of ::util/stregex :kind vector? :min-count 1))
+(spec/def ::proj/jar-inclusions       (spec/coll-of ::util/stregex :kind vector? :min-count 1))
 (spec/def ::proj/uberjar-exclusions   (spec/coll-of ::util/stregex :kind vector? :min-count 1))
 (spec/def ::proj/auto-clean           boolean?)
 (spec/def ::proj/install-releases?    boolean?)

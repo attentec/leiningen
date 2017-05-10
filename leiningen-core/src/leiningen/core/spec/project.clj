@@ -496,8 +496,8 @@
                                                          :element  ::proj/xml-as-vec)))
     ;; TODO: Replace with a more complex generator.
     #(spec/gen (util/vcat :tag keyword?
-                                      :attributes (spec/? map?)
-                                      :content string?))))
+                          :attributes (spec/? map?)
+                          :content string?))))
 
 (spec/def :pom-plugin-options/configuration ::proj/xml-as-vec)
 (spec/def :pom-plugin-options/extensions    ::proj/xml-as-vec)

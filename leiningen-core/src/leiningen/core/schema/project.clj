@@ -27,7 +27,7 @@
 (def eval-in                 (schema/enum :subprocess :leiningen :nrepl))
 (def path                    util/non-blank-string)
 (def paths                   (schema/constrained [util/non-blank-string] not-empty))
-
+(def deploy-branches         (schema/constrained [util/non-blank-string] not-empty))
 
 ;;; Mailing lists
 
@@ -361,6 +361,20 @@
     (schema/optional pom-plugin-options "options")]])
 
 
+;;; Source control management
+
+(def scm
+  {(schema/optional-key :name) name-schema
+   (schema/optional-key :tag)  util/non-blank-string
+   (schema/optional-key :url)  url
+   (schema/optional-key :dir)  util/non-blank-string})
+
+
+;;; Classifiers
+(def classifiers
+  {schema/Keyword (schema/cond-pre schema/Keyword {schema/Any schema/Any})})
+
+
 ;;; Project maps and permutations there of.
 
 (defschema project-map
@@ -421,9 +435,9 @@
    (schema/optional-key :jar-name)                   util/non-blank-string
    (schema/optional-key :uberjar-name)               util/non-blank-string
    (schema/optional-key :omit-source)                schema/Bool
-   (schema/optional-key :jar-exclusions)             [schema/Regex]
-   (schema/optional-key :jar-inclusions)             [schema/Regex]
-   (schema/optional-key :uberjar-exclusions)         [schema/Regex]
+   (schema/optional-key :jar-exclusions)             util/non-empty-regex-list
+   (schema/optional-key :jar-inclusions)             util/non-empty-regex-list
+   (schema/optional-key :uberjar-exclusions)         util/non-empty-regex-list
    (schema/optional-key :auto-clean)                 schema/Bool
    (schema/optional-key :uberjar-merge-with)         uberjar-merge-with
    (schema/optional-key :filespecs)                  filespecs
@@ -432,11 +446,11 @@
    (schema/optional-key :parent)                     parent
    (schema/optional-key :extensions)                 [artifact]
    (schema/optional-key :pom-plugins)                pom-plugins
-   ;; (schema/optional-key :pom-addition)
-   ;; (schema/optional-key :scm)
-   ;; (schema/optional-key :install-releases?)
-   ;; (schema/optional-key :deploy-branches)
-   ;; (schema/optional-key :classifiers)
+   (schema/optional-key :pom-addition)               xml-as-vec
+   (schema/optional-key :scm)                        scm
+   (schema/optional-key :install-releases?)          schema/Bool
+   (schema/optional-key :deploy-branches)            deploy-branches
+   (schema/optional-key :classifiers)                classifiers
    ;; Make the map schema open.
    ;schema/Keyword schema/Any
    })

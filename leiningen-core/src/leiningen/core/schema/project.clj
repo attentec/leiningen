@@ -61,8 +61,10 @@
 ;;; Dependencies
 
 (def dependency-name
-  (schema/cond-pre namespaced-string util/non-blank-string
-                   util/qualified-symbol schema/Symbol))
+  (schema/cond-pre namespaced-string
+                   util/non-blank-string
+                   util/qualified-symbol
+                   schema/Symbol))
 
 (def optional      (schema/pred util/boolean?))
 (def scope         util/non-blank-string)
@@ -313,6 +315,52 @@
 (schema-typed-map/extend-schema bytes-filespec filespec [:fn]    {:fn (schema/pred ifn?)})
 
 
+;;; Maven POM stuff
+
+(def manifest
+  {(schema/cond-pre schema/Keyword util/non-blank-string) schema/Any})
+
+(defn parent-args? [kv-seq]
+  (util/key-val-seq? kv-seq {:relative-path util/non-blank-string}))
+(def parent-args
+  (schema/constrained schema/Any parent-args?))
+(defn parent-vector?
+  [dep-vec]
+  ((util/pair-rest-cat-fn artifact parent-args) dep-vec))
+(def parent
+  (schema/constrained [schema/Any] parent-vector?))
+
+
+(def terminal-or-recursions
+  [(schema/cond-pre util/non-blank-string
+                   (schema/recursive #'xml-as-vec))])
+
+(defn map-or-terminal-or-recursions?
+  [xml-vec]
+  (let [data (if (map? (first xml-vec))
+               (rest xml-vec)
+               xml-vec)]
+    (or (empty? data)
+        (nil? (schema/check terminal-or-recursions data)))))
+
+(def map-or-terminal-or-recursions
+  (schema/pred map-or-terminal-or-recursions?))
+
+(defn xml-vector? [xml-vec]
+  ((util/first-rest-cat-fn schema/Keyword map-or-terminal-or-recursions) xml-vec))
+(def xml-as-vec
+  (schema/constrained [schema/Any] xml-vector?))
+
+(def pom-plugin-options
+  {(schema/optional-key :configuration) (schema/cond-pre util/non-blank-string xml-as-vec)
+   (schema/optional-key :extensions)    (schema/cond-pre util/non-blank-string xml-as-vec)
+   (schema/optional-key :executions)    (schema/cond-pre util/non-blank-string xml-as-vec)})
+(def pom-plugins
+  [[(schema/one dependency-name "name")
+    (schema/one version "version")
+    (schema/optional pom-plugin-options "options")]])
+
+
 ;;; Project maps and permutations there of.
 
 (defschema project-map
@@ -379,11 +427,11 @@
    (schema/optional-key :auto-clean)                 schema/Bool
    (schema/optional-key :uberjar-merge-with)         uberjar-merge-with
    (schema/optional-key :filespecs)                  filespecs
-   ;; (schema/optional-key :manifest)
-   ;; (schema/optional-key :pom-location)
-   ;; (schema/optional-key :parent)
-   ;; (schema/optional-key :extensions)
-   ;; (schema/optional-key :pom-plugins)
+   (schema/optional-key :manifest)                   manifest
+   (schema/optional-key :pom-location)               util/non-blank-string
+   (schema/optional-key :parent)                     parent
+   (schema/optional-key :extensions)                 [artifact]
+   (schema/optional-key :pom-plugins)                pom-plugins
    ;; (schema/optional-key :pom-addition)
    ;; (schema/optional-key :scm)
    ;; (schema/optional-key :install-releases?)

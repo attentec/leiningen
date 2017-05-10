@@ -14,9 +14,11 @@
     </license>
   </licenses>
   <scm>
-    <tag>a441ba12ca9723d99e34da2d4aa3483cdf00331b
+    <connection>scm:git:git://github.com/technomancy/leiningen.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/technomancy/leiningen.git</developerConnection>
+    <tag>e829c12d5147ad9b5f1f50032ac1d763e20932e1
 </tag>
-    <url/>
+    <url>https://github.com/technomancy/leiningen</url>
   </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -48,7 +50,7 @@
     </repository>
     <repository>
       <id>clojars</id>
-      <url>https://repo.clojars.org/</url>
+      <url>https://clojars.org/repo/</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
@@ -72,8 +74,8 @@
       <version>0.2.8</version>
       <exclusions>
         <exclusion>
-          <artifactId>dynapath</artifactId>
           <groupId>org.tcrawley</groupId>
+          <artifactId>dynapath</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -93,12 +95,12 @@
       <version>0.3.1</version>
       <exclusions>
         <exclusion>
-          <artifactId>dynapath</artifactId>
           <groupId>org.tcrawley</groupId>
+          <artifactId>dynapath</artifactId>
         </exclusion>
         <exclusion>
-          <artifactId>plexus-utils</artifactId>
           <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-utils</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -113,8 +115,8 @@
       <version>2.12</version>
       <exclusions>
         <exclusion>
-          <artifactId>wagon-provider-api</artifactId>
           <groupId>org.apache.maven.wagon</groupId>
+          <artifactId>wagon-provider-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

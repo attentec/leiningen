@@ -17,7 +17,8 @@
                  [pedantic "0.2.0"]
                  [org.slf4j/slf4j-nop "1.7.22"] ; wagon-http uses slf4j
                  ;; we pull this in transitively but want a newer version
-                 [org.clojure/tools.macro "0.1.5"]]
+                 [org.clojure/tools.macro "0.1.5"]
+                 [com.taoensso/truss "1.5.0"]]
   :scm {:dir ".."}
   :dev-resources-path "dev-resources"
   :aliases {"bootstrap" ["with-profile" "base"

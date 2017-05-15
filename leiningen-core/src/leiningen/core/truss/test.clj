@@ -5,13 +5,13 @@
 (proj-truss/validate-map
 {:description    "A sample project"
  :url              "http://example.org/sample-clojure-project"
- ;; :mailing-list     {:name           "sample mailing list"
- ;;                    :archive        "http://example.org/sample-mailing-list-archives"
- ;;                    :other-archives ["http://example.org/sample-list-archive2"
- ;;                                     "http://example.org/sample-list-archive3"]
- ;;                    :post           "list@example.org"
- ;;                    :subscribe      "list-subscribe@example.org"
- ;;                    :unsubscribe    "list-unsubscribe@example.org"}
+ :mailing-list     {:name           "sample mailing list"
+                    :archive        "http://example.org/sample-mailing-list-archives"
+                    :other-archives ["http://example.org/sample-list-archive2"
+                                     "http://example.org/sample-list-archive3"]
+                    :post           "list@example.org"
+                    :subscribe      "list-subscribe@example.org"
+                    :unsubscribe    "list-unsubscribe@example.org"}
  ;; :license          {:name         "Eclipse Public License - v 1.0"
  ;;                    :url          "http://www.eclipse.org/legal/epl-v10.html"
  ;;                    :distribution :repo

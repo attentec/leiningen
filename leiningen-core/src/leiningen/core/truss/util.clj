@@ -19,17 +19,23 @@
   [x] (instance? Boolean x))
 
 (defn non-blank-string?
-  [string] (not (str/blank? string)))
-
-
-(defn opt-key
-  [key predicate data]
-  (println data)
-  (when (contains? data key)
-    (truss/have predicate (get data key))))
+  [string]
+  (and (string? string)
+       (not (str/blank? string))))
 
 
 ;;; Macros
+
+(defmacro opt-key
+  [key predicate data]
+  `(when (contains? ~data ~key)
+     (truss/have ~predicate (get ~data ~key)))
+  data)
+
+(defmacro req-key
+  [key predicate data]
+  `(truss/have ~predicate (get ~data ~key))
+  data)
 
 (defmacro stregex-matches?
   [string-regex string]
@@ -37,10 +43,12 @@
     (truss/have? string? ~string)
     (re-matches ~string-regex ~string)))
 
-(defmacro multi-pred
-  [predicates data]
-  (for [pred predicates]
-      `(truss/have ~pred ~data)))
+(defmacro multi-pred?
+  [data & predicates]
+  (conj
+   (for [pred predicates]
+     `(truss/have? ~pred ~data))
+   'and))
 
 
 (defmacro doto>

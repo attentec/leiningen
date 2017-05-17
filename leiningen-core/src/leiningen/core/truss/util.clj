@@ -53,16 +53,14 @@
      `(truss/have? ~pred ~data))
    'and))
 
-(defmacro doto>
-  "Evaluates x then calls all of the functions with the value of x
-  supplied at the back of the given arguments. The forms are evaluated
-  in order. Returns x."
+(defmacro >>
+  "Calls all of the functions with x supplied at the back of the given
+  arguments. The forms are evaluated in order. Returns x."
   [x & forms]
-    (let [gx (gensym)]
-      `(let [~gx ~x]
-         ~@(map (fn [f]
-                  (if (seq? f)
-                    `(~(first f) ~@(next f) ~gx)
-                    `(~f ~gx)))
-                forms)
-         ~gx)))
+  `(do
+     ~@(map (fn [f]
+              (if (seq? f)
+                `(~(first f) ~@(next f) ~x)
+                `(~f ~x)))
+            forms)
+     ~x))

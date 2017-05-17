@@ -23,6 +23,18 @@
   (and (string? string)
        (not (str/blank? string))))
 
+;; TODO: Perhaps convert to macro and put truss in it.
+(defn key-val-seq?
+  ([kv-seq]
+   (and (even? (count kv-seq))
+        (every? keyword? (take-nth 2 kv-seq))))
+  ([kv-seq validation-map]
+   (and (key-val-seq? kv-seq)
+        (every? identity
+                (for [[k v] (partition 2 kv-seq)]
+                  (when-let [pred (get validation-map k)]
+                    (pred v)))))))
+
 
 ;;; Macros
 
@@ -40,18 +52,12 @@
        ~data))
 
 (defmacro stregex-matches
+  "Constructs a form that returns the string if it matches, else a falsey value."
   [string-regex string]
   `(and
-    (truss/have? string? ~string)
-    (re-matches ~string-regex ~string)))
-
-;; If you want to split up into separate assertions.
-(defmacro multi-pred?
-  [data & predicates]
-  (conj
-   (for [pred predicates]
-     `(truss/have? ~pred ~data))
-   'and))
+    (string? ~string)
+    (re-matches ~string-regex ~string)
+    ~string))
 
 (defmacro >>
   "Calls all of the functions with x supplied at the back of the given

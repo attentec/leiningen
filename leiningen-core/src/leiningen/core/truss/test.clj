@@ -16,22 +16,22 @@
                     :url          "http://www.eclipse.org/legal/epl-v10.html"
                     :distribution :repo
                     :comments     "same as Clojure"}
- ;; :min-lein-version "2.0.0"
+ :min-lein-version "2.0.0"
 
- ;; :dependencies         [['org.clojure/clojure "1.3.0"]
- ;;                        ['org.jclouds/jclouds "1.0" :classifier "jdk15"]
- ;;                        ['net.sf.ehcache/ehcache "2.3.1" :extension "pom"]
- ;;                        ['log4j "1.2.15" :exclusions [['javax.mail/mail :extension "jar"]
- ;;                                                      ['javax.jms/jms :classifier "*"]
- ;;                                                      'com.sun.jdmk/jmxtools
- ;;                                                      'com.sun.jmx/jmxri]]
- ;;                        ["net.3scale/3scale-api" "3.0.2"]
- ;;                        ['org.lwjgl.lwjgl/lwjgl "2.8.5"]
- ;;                        ['org.lwjgl.lwjgl/lwjgl-platform "2.8.5"
- ;;                         :classifier "natives-osx"
- ;;                         :native-prefix ""]]
- ;; :managed-dependencies [['clj-time "0.12.0"]
- ;;                        ['me.raynes/fs "1.4.6"]]
+ :dependencies         [['org.clojure/clojure "1.3.0"]
+                        ['org.jclouds/jclouds "1.0" :classifier "jdk15"]
+                        ['net.sf.ehcache/ehcache "2.3.1" :extension "pom"]
+                        ['log4j "1.2.15" :exclusions [['javax.mail/mail :extension "jar"]
+                                                      ['javax.jms/jms :classifier "*"]
+                                                      'com.sun.jdmk/jmxtools
+                                                      'com.sun.jmx/jmxri]]
+                        ["net.3scale/3scale-api" "3.0.2"]
+                        ['org.lwjgl.lwjgl/lwjgl "2.8.5"]
+                        ['org.lwjgl.lwjgl/lwjgl-platform "2.8.5"
+                         :classifier "natives-osx"
+                         :native-prefix ""]]
+ :managed-dependencies [['clj-time "0.12.0"]
+                        ['me.raynes/fs "1.4.6"]]
 
  ;; :pedantic?           :abort
  ;; :exclusions          ['org.apache.poi/poi

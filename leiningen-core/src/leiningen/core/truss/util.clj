@@ -28,21 +28,24 @@
 
 (defmacro opt-key
   [key predicate data]
-  `(when (contains? ~data ~key)
-     (truss/have ~predicate (get ~data ~key)))
-  data)
+  `(do (when (contains? ~data ~key)
+         (truss/have ~predicate (get ~data ~key)))
+       ~data))
 
+;; Only exists for api-likeness to opt-key.
 (defmacro req-key
   [key predicate data]
-  `(truss/have ~predicate (get ~data ~key))
-  data)
+  `(do (truss/have [:ks>= #{~key}] ~data)
+       (truss/have ~predicate (get ~data ~key))
+       ~data))
 
-(defmacro stregex-matches?
+(defmacro stregex-matches
   [string-regex string]
   `(and
     (truss/have? string? ~string)
     (re-matches ~string-regex ~string)))
 
+;; If you want to split up into separate assertions.
 (defmacro multi-pred?
   [data & predicates]
   (conj
@@ -50,11 +53,10 @@
      `(truss/have? ~pred ~data))
    'and))
 
-
 (defmacro doto>
-  "Evaluates x then calls all of the methods and functions with the
-  value of x supplied at the back of the given arguments.  The forms
-  are evaluated in order.  Returns x."
+  "Evaluates x then calls all of the functions with the value of x
+  supplied at the back of the given arguments. The forms are evaluated
+  in order. Returns x."
   [x & forms]
     (let [gx (gensym)]
       `(let [~gx ~x]

@@ -16,6 +16,8 @@
 (defn subscribe? [string] (or (email? string) (url? string)))
 
 (defn mailing-list? [m]
+  (truss/have map? m)
+
   (util/opt-key :name           name? m)
   (util/opt-key :archive        url? m)
   (util/opt-key :other-archives other-archives? m)
@@ -24,8 +26,22 @@
   (util/opt-key :unsubscribe    subscribe? m))
 
 (defn mailing-lists? [v]
-  (util/multi-pred? v not-empty vector?)
+  (util/multi-pred? v vector? not-empty)
   (truss/have? mailing-list? :in v))
+
+
+;;; Licenses
+
+(defn distribution? [key] (truss/have? [:el #{:repo :manual}] key))
+(defn license? [m]
+  (util/opt-key :name         name-schema m)
+  (util/opt-key :url          url m)
+  (util/opt-key :distribution distribution m)
+  (util/opt-key :comments     util/non-blank-string m))
+(defn licenses? [v]
+  (util/multi-pred? v vector? not-empty)
+  (truss/have? license? :in v))
+
 
 
 
@@ -38,8 +54,8 @@
   (util/req-key :url           url? m)
   (util/req-key :mailing-list  mailing-list? m)
   (util/req-key :mailing-lists mailing-lists? m)
-  ;; (util/req-key :license m)
-  ;; (util/req-key :licenses m)
+  (util/req-key :license       licence?  m)
+  (util/req-key :licenses      licences? m)
   ;; (util/req-key :min-lein-version m)
   ;; (util/req-key :dependencies m)
   ;; (util/req-key :managed-dependencies m)

@@ -98,3 +98,6 @@
 
 (schema/defschema natural-number
   (schema/constrained schema/Int #(not (neg? %))))
+
+(schema/defschema non-empty-regex-list
+  (schema/constrained schema/Regex not-empty))

@@ -7,6 +7,8 @@
             [leiningen.core.project           :as proj]
             [leiningen.core.schema.util       :as util]))
 
+;; TODO: Constrain a bunch of sequences to only be vectors.
+
 
 ;;; Minor keys in project-argument-keys from top to bottom.
 
@@ -330,7 +332,7 @@
 (def parent
   (schema/constrained [schema/Any] parent-vector?))
 
-
+(declare xml-as-vec)
 (def terminal-or-recursions
   [(schema/cond-pre util/non-blank-string
                    (schema/recursive #'xml-as-vec))])

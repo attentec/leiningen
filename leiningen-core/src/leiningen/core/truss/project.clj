@@ -324,6 +324,68 @@
   (truss/have filespec-map :in v))
 
 
+;;; Maven POM stuff
+
+(defn manifest [m]
+  (truss/have map? m)
+  (truss/have [:or util/non-blank-string? keyword?] :in (keys m)))
+
+
+(defn parent-args? [kv-seq]
+  (util/key-val-seq? kv-seq {:relative-path util/non-blank-string?}))
+
+(defn parent [[name version & args :as all]]
+  (truss/have [:and vector? not-empty] all)
+  (truss/have artifact (vector name version))
+  (truss/have parent-args? args)
+  all)
+
+
+(defn extensions [v]
+  (truss/have [:and vector? not-empty] v)
+  (truss/have artifact :in v))
+
+
+(declare xml-vector?)
+(defn terminal-or-recursion? [s]
+  (truss/have [:or string? xml-vector?] :in s))
+
+(defn map-or-terminal-or-recursions?
+  [xml-vec]
+  (let [data (if (map? (first xml-vec))
+               (rest xml-vec)
+               xml-vec)]
+    (or (empty? data)
+        (terminal-or-recursion? data))))
+
+(defn xml-vector? [[tag & rest :as all]]
+  (truss/have [:and vector? not-empty] all)
+  (truss/have keyword? tag)
+  (truss/have map-or-terminal-or-recursions? rest)
+  all)
+
+(defn str-or-xml? [e]
+  (or (util/non-blank-string? e)
+      (xml-vector?            e)))
+
+(defn pom-plugin-options [m]
+  (util/>> m
+  (truss/have map?)
+  (util/opt-key :configuration  str-or-xml?)
+  (util/opt-key :extensions     str-or-xml?)
+  (util/opt-key :executions     str-or-xml?)))
+
+(defn pom-plugin [[name version options :as all]]
+  (truss/have [:and vector? #(>= (count %) 2)] all)
+  (truss/have artifact (vector name version))
+  (when options
+    (truss/have pom-plugin-options options))
+  all)
+
+(defn pom-plugins [v]
+  (truss/have [:and vector? not-empty] v)
+  (truss/have pom-plugin :in v))
+
 
 ;;; Whole project map
 
@@ -396,11 +458,11 @@
     (util/opt-key :auto-clean                util/boolean?)
     (util/opt-key :uberjar-merge-with        uberjar-merge-with)
     (util/opt-key :filespecs                 filespecs)
-    ;; (util/opt-key :manifest                  )
-    ;; (util/opt-key :pom-location              )
-    ;; (util/opt-key :parent                    )
-    ;; (util/opt-key :extensions                )
-    ;; (util/opt-key :pom-plugins               )
+    (util/opt-key :manifest                  manifest)
+    (util/opt-key :pom-location              util/non-blank-string?)
+    (util/opt-key :parent                    parent)
+    (util/opt-key :extensions                extensions)
+    (util/opt-key :pom-plugins               pom-plugins)
     ;; (util/opt-key :pom-addition              )
     ;; (util/opt-key :scm                       )
     ;; (util/opt-key :install-releases?         )

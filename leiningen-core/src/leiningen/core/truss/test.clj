@@ -159,25 +159,25 @@
                                        {:type  :bytes :path "git-log"
                                         :bytes (:out ('clojure.java.shell/sh
                                                       "git" "log" "-n" "1"))})}]
- ;; :manifest           {"Project-awesome-level" "super-great"
- ;;                      "Class-Path"            #(clojure.string/join
- ;;                                                 \space
- ;;                                                 (leiningen.core.classpath/get-classpath %))
- ;;                      :my-section-1           [["MyKey1" "MyValue1"] ["MyKey2" "MyValue2"]]
- ;;                      :my-section-2           {"MyKey3" "MyValue3" "MyKey4" "MyValue4"}
- ;;                      "Grunge-level"          'my.plugin/calculate-grunginess}
+ :manifest           {"Project-awesome-level" "super-great"
+                      "Class-Path"            #(clojure.string/join
+                                                 \space
+                                                 ('leiningen.core.classpath/get-classpath %))
+                      :my-section-1           [["MyKey1" "MyValue1"] ["MyKey2" "MyValue2"]]
+                      :my-section-2           {"MyKey3" "MyValue3" "MyKey4" "MyValue4"}
+                      "Grunge-level"          'my.plugin/calculate-grunginess}
 
- ;; :pom-location "target/"
- ;; :parent       ['org.example/parent "0.0.1" :relative-path "../parent/pom.xml"]
- ;; :extensions   [['org.apache.maven.wagon/wagon-webdav "1.0-beta-2"]
- ;;                ['foo/bar-baz "1.0"]]
- ;; :pom-plugins  [['com.theoryinpractise/clojure-maven-plugin "1.3.13"
- ;;                 {:configuration [:sourceDirectories [:sourceDirectory "src"]]
- ;;                  :extensions    "true"
- ;;                  :executions    [:execution [:id "echodir"]
- ;;                                  [:goals [:goal "run"]]
- ;;                                  [:phase "verify"]]}]
- ;;                ['org.apache.tomcat.maven/tomcat7-maven-plugin "2.1"]]
+ :pom-location "target/"
+ :parent       ['org.example/parent "0.0.1" :relative-path "../parent/pom.xml"]
+ :extensions   [['org.apache.maven.wagon/wagon-webdav "1.0-beta-2"]
+                ['foo/bar-baz "1.0"]]
+ :pom-plugins  [['com.theoryinpractise/clojure-maven-plugin "1.3.13"
+                 {:configuration [:sourceDirectories [:sourceDirectory "src"]]
+                  :extensions    "true"
+                  :executions    [:execution [:id "echodir"]
+                                  [:goals [:goal "run"]]
+                                  [:phase "verify"]]}]
+                ['org.apache.tomcat.maven/tomcat7-maven-plugin "2.1"]]
  ;; :scm          {:name "git"
  ;;                :tag  "098afd745bcd"
  ;;                :url  "http://127.0.0.1/git/my-project"

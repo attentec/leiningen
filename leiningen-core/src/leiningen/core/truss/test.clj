@@ -143,13 +143,13 @@
                                                                 (prn :middle args)
                                                                 (apply handler args)))]}
 
- ;; :jar-name           "sample.jar"
- ;; :uberjar-name       "sample-standalone.jar"
- ;; :omit-source        true
- ;; :jar-exclusions     [#"(?:^|/).svn/"]
- ;; :jar-inclusions     [#"\.ebextensions"]
- ;; :uberjar-exclusions [#"META-INF/DUMMY.SF"]
- ;; :auto-clean         false
+ :jar-name           "sample.jar"
+ :uberjar-name       "sample-standalone.jar"
+ :omit-source        true
+ :jar-exclusions     [#"(?:^|/).svn/"]
+ :jar-inclusions     [#"\.ebextensions"]
+ :uberjar-exclusions [#"META-INF/DUMMY.SF"]
+ :auto-clean         false
  ;; :uberjar-merge-with {#"\.properties$" ['slurp 'str 'spit]}
  ;; :filespecs          [{:type :path :path "config/base.clj"}
  ;;                      {:type :paths :paths ["config/web" "config/cli"]}

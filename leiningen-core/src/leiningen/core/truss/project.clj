@@ -27,7 +27,9 @@
 (defn paths [v]
   (truss/have [:and vector? not-empty] v)
   (truss/have util/non-blank-string? :in v))
-
+(defn non-empty-vec-of-regexes [v]
+  (truss/have [:and vector? not-empty] v)
+  (truss/have util/stregex? :in v))
 
 ;;; Mailing lists
 
@@ -357,13 +359,13 @@
     (util/opt-key :test-selectors            test-selectors)
     (util/opt-key :monkeypatch-clojure-test  util/boolean?)
     (util/opt-key :repl-options              repl-options)
-    ;; (util/opt-key :jar-name                  )
-    ;; (util/opt-key :uberjar-name              )
-    ;; (util/opt-key :omit-source               )
-    ;; (util/opt-key :jar-exclusions            )
-    ;; (util/opt-key :jar-inclusions            )
-    ;; (util/opt-key :uberjar-exclusions        )
-    ;; (util/opt-key :auto-clean                )
+    (util/opt-key :jar-name                  util/non-blank-string?)
+    (util/opt-key :uberjar-name              util/non-blank-string?)
+    (util/opt-key :omit-source               util/boolean?)
+    (util/opt-key :jar-exclusions            non-empty-vec-of-regexes)
+    (util/opt-key :jar-inclusions            non-empty-vec-of-regexes)
+    (util/opt-key :uberjar-exclusions        non-empty-vec-of-regexes)
+    (util/opt-key :auto-clean                util/boolean?)
     ;; (util/opt-key :uberjar-merge-with        )
     ;; (util/opt-key :filespecs                 )
     ;; (util/opt-key :manifest                  )

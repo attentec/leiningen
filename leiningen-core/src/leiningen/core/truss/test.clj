@@ -66,28 +66,28 @@
                        ["snapshots" "http://blueant.com/archiva/internal/snapshots"]]
  :signing             {:gpg-key "root@eruditorum.org"}
  :certificates        ["blueant.pem"]
- ;; :profiles            {:debug   {;:debug      true
- ;;                                 :injections [(prn (into {} (System/getProperties)))]
- ;;                                 }
- ;;                       :1.4     {:dependencies [['org.clojure/clojure "1.4.0"]]}
- ;;                       :1.5     {:dependencies [['org.clojure/clojure "1.5.0"]]}
- ;;                       :dev     {; :resource-paths ["dummy-data"]
- ;;                                 :dependencies   [['clj-stacktrace "0.2.4"]]}
- ;;                       :uberjar {;:aot :all
- ;;                                 }
- ;;                       :repl    {:plugins [['cider/cider-nrepl "0.7.1"]]}}
- ;; :hooks               ['leiningen.hooks.difftest]
- ;; :middleware          ['lein-xml.plugin/middleware]
- ;; :implicit-middleware false
- ;; :implicit-hooks      false
+ :profiles            {:debug   {;:debug      true
+                                 :injections [(prn (into {} (System/getProperties)))]
+                                 }
+                       :1.4     {:dependencies [['org.clojure/clojure "1.4.0"]]}
+                       :1.5     {:dependencies [['org.clojure/clojure "1.5.0"]]}
+                       :dev     {; :resource-paths ["dummy-data"]
+                                 :dependencies   [['clj-stacktrace "0.2.4"]]}
+                       :uberjar {;:aot :all
+                                 }
+                       :repl    {:plugins [['cider/cider-nrepl "0.7.1"]]}}
+ :hooks               ['leiningen.hooks.difftest]
+ :middleware          ['lein-xml.plugin/middleware]
+ :implicit-middleware false
+ :implicit-hooks      false
 
- ;; :main    'my.service.runner
- ;; :aliases {"launch"         ["run" "-m" "myproject.main"]
- ;;           "launch-version" ["run" "-m" "myproject.main" :project/version]
- ;;           "dumbrepl"       ["trampoline" "run" "-m" "clojure.main/main"]
- ;;           "go"             ^:pass-through-help ["run" "-m"]
- ;;           "deploy!"        ^{:doc "Recompile sources, then deploy if tests succeed."}
- ;;           ["do" "clean" ["test" ":integration"] ["deploy" "clojars"]]}
+ :main    'my.service.runner
+ :aliases {"launch"         ["run" "-m" "myproject.main"]
+           "launch-version" ["run" "-m" "myproject.main" :project/version]
+           "dumbrepl"       ["trampoline" "run" "-m" "clojure.main/main"]
+           "go"             ^:pass-through-help ["run" "-m"]
+           "deploy!"        ^{:doc "Recompile sources, then deploy if tests succeed."}
+           ["do" "clean" ["test" ":integration"] ["deploy" "clojars"]]}
 
  ;; :release-tasks [["vcs" "assert-committed"]
  ;;                 ["change" "version"

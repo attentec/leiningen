@@ -30,7 +30,7 @@
 (def path                    util/non-blank-string)
 (def paths                   (schema/constrained [util/non-blank-string] not-empty))
 (def deploy-branches         (schema/constrained [util/non-blank-string] not-empty))
-
+(def non-empty-vec-of-regexes (schema/constrained schema/Regex not-empty))
 ;;; Mailing lists
 
 (def name-schema    util/non-blank-string)
@@ -255,7 +255,7 @@
   {clojure-global-vars schema/Any})
 
 
-
+;;; Clean-targets
 ;; A path into the project map.
 (defn more-than-two-elements?
   [v] (>= (count v) 2))
@@ -440,9 +440,9 @@
    (schema/optional-key :jar-name)                   util/non-blank-string
    (schema/optional-key :uberjar-name)               util/non-blank-string
    (schema/optional-key :omit-source)                schema/Bool
-   (schema/optional-key :jar-exclusions)             util/non-empty-regex-list
-   (schema/optional-key :jar-inclusions)             util/non-empty-regex-list
-   (schema/optional-key :uberjar-exclusions)         util/non-empty-regex-list
+   (schema/optional-key :jar-exclusions)             non-empty-vec-of-regexes
+   (schema/optional-key :jar-inclusions)             non-empty-vec-of-regexes
+   (schema/optional-key :uberjar-exclusions)         non-empty-vec-of-regexes
    (schema/optional-key :auto-clean)                 schema/Bool
    (schema/optional-key :uberjar-merge-with)         uberjar-merge-with
    (schema/optional-key :filespecs)                  filespecs

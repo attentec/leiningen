@@ -109,13 +109,13 @@
  :eval-in            :leiningen
  :bootclasspath      true
 
- ;; :source-paths              ["src" "src/main/clojure"]
- ;; :java-source-paths         ["src/main/java"]     ; Java source is stored separately.
- ;; :test-paths                ["test" "src/test/clojure"]
- ;; :resource-paths            ["src/main/resource"] ; Non-code files included in classpath/jar.
- ;; :target-path               "target/%s/"
- ;; :compile-path              "%s/classy-files"
- ;; :native-path               "%s/bits-n-stuff"
+ :source-paths              ["src" "src/main/clojure"]
+ :java-source-paths         ["src/main/java"]     ; Java source is stored separately.
+ :test-paths                ["test" "src/test/clojure"]
+ :resource-paths            ["src/main/resource"] ; Non-code files included in classpath/jar.
+ :target-path               "target/%s/"
+ :compile-path              "%s/classy-files"
+ :native-path               "%s/bits-n-stuff"
  ;; :clean-targets             [:target-path :compile-path :foobar-paths
  ;;                             [:baz-config :qux-path] "out"]
  ;; :clean-non-project-classes true

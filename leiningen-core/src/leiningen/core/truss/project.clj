@@ -23,6 +23,10 @@
   (truss/have [:and vector? not-empty] v)
   (truss/have util/non-blank-string? :in v))
 (defn eval-in [kw] (truss/have [:el #{:subprocess :leiningen :nrepl}]))
+(def path util/non-blank-string?)
+(defn paths [v]
+  (truss/have [:and vector? not-empty] v)
+  (truss/have util/non-blank-string? :in v))
 
 
 ;;; Mailing lists
@@ -301,13 +305,13 @@
     (util/opt-key :jvm-opts                  jvm-opts)
     (util/opt-key :eval-in                   eval-in)
     (util/opt-key :bootclasspath             util/boolean?)
-    ;; (util/opt-key :source-paths              )
-    ;; (util/opt-key :java-source-paths         )
-    ;; (util/opt-key :test-paths                )
-    ;; (util/opt-key :resource-paths            )
-    ;; (util/opt-key :target-path               )
-    ;; (util/opt-key :compile-path              )
-    ;; (util/opt-key :native-path               )
+    (util/opt-key :source-paths              paths)
+    (util/opt-key :java-source-paths         paths)
+    (util/opt-key :test-paths                paths)
+    (util/opt-key :resource-paths            paths)
+    (util/opt-key :target-path               path)
+    (util/opt-key :compile-path              path)
+    (util/opt-key :native-path               path)
     ;; (util/opt-key :clean-targets             )
     ;; (util/opt-key :clean-non-project-classes )
     ;; (util/opt-key :checkout-deps-shares      )

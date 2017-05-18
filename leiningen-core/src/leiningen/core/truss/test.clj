@@ -150,7 +150,7 @@
  :jar-inclusions     [#"\.ebextensions"]
  :uberjar-exclusions [#"META-INF/DUMMY.SF"]
  :auto-clean         false
- ;; :uberjar-merge-with {#"\.properties$" ['slurp 'str 'spit]}
+ :uberjar-merge-with {#"\.properties$" ['slurp 'str 'spit]}
  ;; :filespecs          [{:type :path :path "config/base.clj"}
  ;;                      {:type :paths :paths ["config/web" "config/cli"]}
  ;;                      {:type  :bytes :path "project.clj"

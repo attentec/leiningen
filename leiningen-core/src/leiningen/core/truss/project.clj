@@ -282,8 +282,8 @@
 ;;; REPL options
 
 (defn repl-options [m]
-  (truss/have map? m)
   (util/>> m
+    (truss/have map?)
     (util/opt-key :prompt             ifn?)
     (util/opt-key :welcome            seq?)
     (util/opt-key :init-ns            util/simple-symbol?)
@@ -295,6 +295,18 @@
     (util/opt-key :timeout            (every-pred integer? #(not (neg? %))))
     (util/opt-key :nrepl-handler      seq?)
     (util/opt-key :nrepl-middleware   #(or (symbol? %) (ifn? %)))))
+
+
+;;; Uberjar content management
+
+(defn uberjar-merger-fns [v]
+  (truss/have [:and vector? #(= (count %) 3)] v)
+  (truss/have symbol? :in v))
+
+(defn uberjar-merge-with [m]
+  (truss/have map? m)
+  (truss/have util/stregex? :in (keys m))
+  (truss/have uberjar-merger-fns :in (vals m)))
 
 
 ;;; Whole project map
@@ -366,7 +378,7 @@
     (util/opt-key :jar-inclusions            non-empty-vec-of-regexes)
     (util/opt-key :uberjar-exclusions        non-empty-vec-of-regexes)
     (util/opt-key :auto-clean                util/boolean?)
-    ;; (util/opt-key :uberjar-merge-with        )
+    (util/opt-key :uberjar-merge-with        uberjar-merge-with)
     ;; (util/opt-key :filespecs                 )
     ;; (util/opt-key :manifest                  )
     ;; (util/opt-key :pom-location              )

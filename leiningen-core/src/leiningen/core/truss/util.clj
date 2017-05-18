@@ -23,6 +23,12 @@
   (and (string? string)
        (not (str/blank? string))))
 
+(defn stregex?
+  [x] (instance? java.util.regex.Pattern x))
+
+
+;;; Functions
+
 ;; TODO: Perhaps convert to macro and put truss in it.
 (defn key-val-seq?
   ([kv-seq]
@@ -52,7 +58,8 @@
        ~data))
 
 (defmacro stregex-matches
-  "Constructs a form that returns the string if it matches, else a falsey value."
+  "Constructs a form that returns the string if it matches, else a
+  falsey value."
   [string-regex string]
   `(and
     (string? ~string)

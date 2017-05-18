@@ -98,16 +98,16 @@
 
  :prep-tasks         [["protobuf" "compile"] "javac" "compile"]
  :aot                ['org.example.sample]
- ;; :injections         ['(require 'clojure.pprint)]
- ;; :java-agents        [['nodisassemble "0.1.1" :options "extra"]]
- ;; :javac-options      ["-target" "1.6" "-source" "1.6" "-Xlint:-options"]
- ;; :warn-on-reflection true
- ;; :global-vars        {'*warn-on-reflection* true
- ;;                      '*assert*             false}
- ;; :java-cmd           "/home/phil/bin/java1.7"
- ;; :jvm-opts           ["-Xmx1g"]
- ;; :eval-in            :leiningen
- ;; :bootclasspath      true
+ :injections         ['(require 'clojure.pprint)]
+ :java-agents        [['nodisassemble "0.1.1" :options "extra"]]
+ :javac-options      ["-target" "1.6" "-source" "1.6" "-Xlint:-options"]
+ :warn-on-reflection true
+ :global-vars        {'*warn-on-reflection* true
+                      '*assert*             false}
+ :java-cmd           "/home/phil/bin/java1.7"
+ :jvm-opts           ["-Xmx1g"]
+ :eval-in            :leiningen
+ :bootclasspath      true
 
  ;; :source-paths              ["src" "src/main/clojure"]
  ;; :java-source-paths         ["src/main/java"]     ; Java source is stored separately.

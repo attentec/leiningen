@@ -15,6 +15,14 @@
 (defn hooks [v]
   (truss/have [:and vector? not-empty] v)
   (truss/have symbol? :in v))
+(defn injections [v] (truss/have [:and vector? not-empty] v))
+(defn javac-options [v]
+  (truss/have [:and vector? not-empty] v)
+  (truss/have util/non-blank-string? :in v))
+(defn jvm-opts [v]
+  (truss/have [:and vector? not-empty] v)
+  (truss/have util/non-blank-string? :in v))
+(defn eval-in [kw] (truss/have [:el #{:subprocess :leiningen :nrepl}]))
 
 
 ;;; Mailing lists
@@ -211,6 +219,42 @@
     (truss/have [:el #{:all}] something)))
 
 
+;;; Java Agents
+
+(defn java-agent-args? [kv-seq]
+  (util/key-val-seq? kv-seq {:classifier classifier
+                             :options    util/non-blank-string?}))
+
+(defn java-agent-vector [[name version & args :as all]]
+  (truss/have [:and vector? not-empty] all)
+  (truss/have artifact (vector name version))
+  (truss/have java-agent-args? args)
+  all)
+
+(defn java-agents [v]
+  (truss/have [:and vector? not-empty] v)
+  (truss/have java-agent-vector :in v))
+
+
+;;; Global vars
+;; See http://stackoverflow.com/questions/43452079
+(defn clojure-global-var? [sym]
+  (truss/have [:el #{
+   '*print-namespace-maps* '*source-path* '*command-line-args*
+   '*read-eval* '*verbose-defrecords* '*print-level* '*suppress-read*
+    '*print-length* '*file* '*use-context-classloader* '*err*
+    '*default-data-reader-fn* '*allow-unresolved-vars* '*print-meta*
+    '*compile-files* '*math-context* '*data-readers* '*clojure-version*
+    '*unchecked-math* '*out* '*warn-on-reflection* '*compile-path*
+    '*in* '*ns* '*assert* '*print-readably* '*flush-on-newline*
+    '*agent* '*fn-loader* '*compiler-options* '*print-dup*}] sym))
+
+(defn global-vars [m]
+  (truss/have map? m)
+  (truss/have clojure-global-var? :in (keys m)))
+
+
+
 (defn validate-map
   "Validate that m is a valid Leiningen project map."
   [m]
@@ -248,15 +292,15 @@
     (util/opt-key :release-tasks             release-tasks)
     (util/opt-key :prep-tasks                release-tasks)
     (util/opt-key :aot                       aot)
-    ;; (util/opt-key :injections                )
-    ;; (util/opt-key :java-agents               )
-    ;; (util/opt-key :javac-options             )
-    ;; (util/opt-key :warn-on-reflection        )
-    ;; (util/opt-key :global-vars               )
-    ;; (util/opt-key :java-cmd                  )
-    ;; (util/opt-key :jvm-opts                  )
-    ;; (util/opt-key :eval-in                   )
-    ;; (util/opt-key :bootclasspath             )
+    (util/opt-key :injections                injections)
+    (util/opt-key :java-agents               java-agents)
+    (util/opt-key :javac-options             javac-options)
+    (util/opt-key :warn-on-reflection        util/boolean?)
+    (util/opt-key :global-vars               global-vars)
+    (util/opt-key :java-cmd                  util/non-blank-string?)
+    (util/opt-key :jvm-opts                  jvm-opts)
+    (util/opt-key :eval-in                   eval-in)
+    (util/opt-key :bootclasspath             util/boolean?)
     ;; (util/opt-key :source-paths              )
     ;; (util/opt-key :java-source-paths         )
     ;; (util/opt-key :test-paths                )

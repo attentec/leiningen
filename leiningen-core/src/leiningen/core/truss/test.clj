@@ -33,25 +33,25 @@
  :managed-dependencies [['clj-time "0.12.0"]
                         ['me.raynes/fs "1.4.6"]]
 
- ;; :pedantic?           :abort
- ;; :exclusions          ['org.apache.poi/poi
- ;;                       'org.apache.poi/poi-ooxml]
- ;; :plugins             [['lein-pprint "1.1.1"]
- ;;                       ['lein-assoc "0.1.0"]
- ;;                       ['s3-wagon-private "1.1.1"]
- ;;                       ['lein-foo "0.0.1" :hooks false]
- ;;                       ['lein-bar "0.0.1" :middleware false]]
- ;; :repositories        [["java.net" "http://download.java.net/maven/2"]
- ;;                       ["sonatype" {:url           "http://oss.sonatype.org/content/repositories/releases"
- ;;                                    :snapshots     false
- ;;                                    :sign-releases false
- ;;                                    :checksum      :fail
- ;;                                    :update        :always
- ;;                                    :releases      {:checksum :fail :update :always}}]
- ;;                       ["snapshots" "http://blueant.com/archiva/snapshots"]
- ;;                       ["releases" {:url      "http://blueant.com/archiva/internal"
- ;;                                    :username "milgrim" :password :env}]]
- ;; :plugin-repositories [["internal-plugin-repo" "http://example.org/repo"]]
+ :pedantic?           :abort
+ :exclusions          ['org.apache.poi/poi
+                       'org.apache.poi/poi-ooxml]
+ :plugins             [['lein-pprint "1.1.1"]
+                       ['lein-assoc "0.1.0"]
+                       ['s3-wagon-private "1.1.1"]
+                       ['lein-foo "0.0.1" :hooks false]
+                       ['lein-bar "0.0.1" :middleware false]]
+ :repositories        [["java.net" "http://download.java.net/maven/2"]
+                       ["sonatype" {:url           "http://oss.sonatype.org/content/repositories/releases"
+                                    :snapshots     false
+                                    :sign-releases false
+                                    :checksum      :fail
+                                    :update        :always
+                                    :releases      {:checksum :fail :update :always}}]
+                       ["snapshots" "http://blueant.com/archiva/snapshots"]
+                       ["releases" {:url      "http://blueant.com/archiva/internal"
+                                    :username "milgrim" :password :env}]]
+ :plugin-repositories [["internal-plugin-repo" "http://example.org/repo"]]
  ;; :mirrors             {"central"  {:name "central"
  ;;                                   :url  "http://mirrors.ibiblio.org/pub/mirrors/maven2"}
  ;;                       #"clojars" {:name         "Internal nexus"

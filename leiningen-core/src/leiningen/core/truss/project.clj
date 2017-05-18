@@ -196,6 +196,20 @@
   (truss/have [:or do-command command-vector] :in (vals m)))
 
 
+;;; Release tasks
+
+(defn release-tasks [v]
+  (truss/have [:and vector? not-empty] v)
+  (truss/have [:or util/non-blank-string? command-vector] :in v))
+
+
+;;; AOT
+
+(defn aot [something]
+  (if (vector? something)
+    (truss/have [:or symbol? util/stregex?] :in something)
+    (truss/have [:el #{:all}] something)))
+
 
 (defn validate-map
   "Validate that m is a valid Leiningen project map."
@@ -231,9 +245,9 @@
     (util/opt-key :implicit-hooks            util/boolean?)
     (util/opt-key :main                      symbol?)
     (util/opt-key :aliases                   aliases)
-    ;; (util/opt-key :release-tasks             )
-    ;; (util/opt-key :prep-tasks                )
-    ;; (util/opt-key :aot                       )
+    (util/opt-key :release-tasks             release-tasks)
+    (util/opt-key :prep-tasks                release-tasks)
+    (util/opt-key :aot                       aot)
     ;; (util/opt-key :injections                )
     ;; (util/opt-key :java-agents               )
     ;; (util/opt-key :javac-options             )

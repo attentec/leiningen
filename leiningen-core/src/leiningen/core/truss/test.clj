@@ -89,15 +89,15 @@
            "deploy!"        ^{:doc "Recompile sources, then deploy if tests succeed."}
            ["do" "clean" ["test" ":integration"] ["deploy" "clojars"]]}
 
- ;; :release-tasks [["vcs" "assert-committed"]
- ;;                 ["change" "version"
- ;;                  "leiningen.release/bump-version" "release"]
- ;;                 ["vcs" "commit"]
- ;;                 ["vcs" "tag"]
- ;;                 ["deploy"]]
+ :release-tasks [["vcs" "assert-committed"]
+                 ["change" "version"
+                  "leiningen.release/bump-version" "release"]
+                 ["vcs" "commit"]
+                 ["vcs" "tag"]
+                 ["deploy"]]
 
- ;; :prep-tasks         [["protobuf" "compile"] "javac" "compile"]
- ;; :aot                ['org.example.sample]
+ :prep-tasks         [["protobuf" "compile"] "javac" "compile"]
+ :aot                ['org.example.sample]
  ;; :injections         ['(require 'clojure.pprint)]
  ;; :java-agents        [['nodisassemble "0.1.1" :options "extra"]]
  ;; :javac-options      ["-target" "1.6" "-source" "1.6" "-Xlint:-options"]

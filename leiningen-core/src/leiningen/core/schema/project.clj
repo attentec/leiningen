@@ -187,7 +187,7 @@
 ;;; Mirrors
 
 (def mirrors
-  {(schema/cond-pre schema/Str schema/Regex) {(schema/optional-key :name)          name-schema
+  {(schema/cond-pre util/non-blank-string schema/Regex) {(schema/optional-key :name)          name-schema
                                               (schema/optional-key :url)           url
                                               (schema/optional-key :repo-manager) schema/Bool}})
 
@@ -201,19 +201,22 @@
 
 (def do-command
   [(schema/one (schema/enum "do") "do")
-   (schema/cond-pre schema/Str command-vector)])
+   (schema/cond-pre util/non-blank-string command-vector)])
 
 (def aliases
   {util/non-blank-string (schema/conditional
                           #(= (first %) "do") do-command
                           :else               command-vector)})
 
+;;; Release tasks
 
 (def release-tasks
   (schema/constrained
-   [(schema/cond-pre schema/Str command-vector)]
+   [(schema/cond-pre util/non-blank-string command-vector)]
    not-empty))
 
+
+;;; AOT
 
 (def aot
   (schema/cond-pre (schema/enum :all)
@@ -224,7 +227,7 @@
 
 (defn java-agent-args? [kv-seq]
   (util/key-val-seq? kv-seq {:classifier classifier
-                             :options    schema/Str}))
+                             :options    util/non-blank-string}))
 (def java-agent-args
   (schema/constrained schema/Any java-agent-args?))
 
@@ -299,7 +302,7 @@
 
 ;; NOTE: Yet another inadequate fn schema
 (def uberjar-merge-with
-  {(schema/cond-pre schema/Str schema/Regex) [(schema/one schema/Symbol "Input-stream -> Datum")
+  {(schema/cond-pre util/non-blank-string schema/Regex) [(schema/one schema/Symbol "Input-stream -> Datum")
                                               (schema/one schema/Symbol "Datum-merger")
                                               (schema/one schema/Symbol "Datum-printer")]})
 

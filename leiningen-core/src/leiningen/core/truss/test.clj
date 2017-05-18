@@ -116,32 +116,32 @@
  :target-path               "target/%s/"
  :compile-path              "%s/classy-files"
  :native-path               "%s/bits-n-stuff"
- ;; :clean-targets             [:target-path :compile-path :foobar-paths
- ;;                             [:baz-config :qux-path] "out"]
- ;; :clean-non-project-classes true
- ;; :checkout-deps-shares      [:source-paths :test-paths
- ;;                             '(fn [p] (str (:root p) "/lib/dev/*"))]
+ :clean-targets             [:target-path :compile-path :foobar-paths
+                             [:baz-config :qux-path] "out"]
+ :clean-non-project-classes true
+ :checkout-deps-shares      [:source-paths :test-paths
+                             '(fn [p] (str (:root p) "/lib/dev/*"))]
 
- ;; :test-selectors           {:default     (fn [m] (not (or (:integration m) (:regression m))))
- ;;                            :integration :integration
- ;;                            :regression  :regression}
- ;; :monkeypatch-clojure-test false
+ :test-selectors           {:default     (fn [m] (not (or (:integration m) (:regression m))))
+                            :integration :integration
+                            :regression  :regression}
+ :monkeypatch-clojure-test false
 
- ;; :repl-options {:prompt (fn [ns] (str "your command for <" ns ">, master? " ))
- ;;                :welcome                                   '(println "Welcome to the magical world of the repl!")
- ;;                :init-ns                                   'foo.bar
- ;;                :init                                      '(println "here we are in" *ns*)
- ;;                :caught                                    'clj-stacktrace.repl/pst+
- ;;                :skip-default-init                         false
- ;;                :host                                      "0.0.0.0"
- ;;                :port                                      4001
- ;;                :timeout                                   40000
- ;;                :nrepl-handler                             '(clojure.tools.nrepl.server/default-handler)
- ;;                :nrepl-middleware                          ['my.nrepl.thing/wrap-amazingness
- ;;                                                            (fn [handler]
- ;;                                                              (fn [& args]
- ;;                                                                (prn :middle args)
- ;;                                                                (apply handler args)))]}
+ :repl-options {:prompt (fn [ns] (str "your command for <" ns ">, master? " ))
+                :welcome                                   '(println "Welcome to the magical world of the repl!")
+                :init-ns                                   'foo.bar
+                :init                                      '(println "here we are in" *ns*)
+                :caught                                    'clj-stacktrace.repl/pst+
+                :skip-default-init                         false
+                :host                                      "0.0.0.0"
+                :port                                      4001
+                :timeout                                   40000
+                :nrepl-handler                             '(clojure.tools.nrepl.server/default-handler)
+                :nrepl-middleware                          ['my.nrepl.thing/wrap-amazingness
+                                                            (fn [handler]
+                                                              (fn [& args]
+                                                                (prn :middle args)
+                                                                (apply handler args)))]}
 
  ;; :jar-name           "sample.jar"
  ;; :uberjar-name       "sample-standalone.jar"

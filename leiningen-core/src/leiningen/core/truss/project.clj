@@ -258,6 +258,44 @@
   (truss/have clojure-global-var? :in (keys m)))
 
 
+;;; Clean-targets
+
+(defn project-path [kws]
+  (truss/have [:and vector? #(>= (count %) 2)] kws)
+  (truss/have keyword? :in kws))
+
+(defn clean-targets [v]
+  (truss/have [:and vector? not-empty] v)
+  (truss/have [:or keyword? util/non-blank-string? project-path] :in v))
+
+
+;;; Test selectors
+
+;; NOTE: Function schema simpler than spec implementation.
+(defn test-selectors [m]
+  (truss/have map? m)
+  (truss/have keyword? :in (keys m))
+  (truss/have [:or keyword? ifn?] :in (vals m)))
+
+;;; REPL options
+
+(defn repl-options [m]
+  (truss/have map? m)
+  (util/>> m
+    (util/opt-key :prompt             ifn?)
+    (util/opt-key :welcome            seq?)
+    (util/opt-key :init-ns            util/simple-symbol?)
+    (util/opt-key :init               seq?)
+    (util/opt-key :caught             ifn?)
+    (util/opt-key :skip-default-init  util/boolean?)
+    (util/opt-key :host               util/non-blank-string?)
+    (util/opt-key :port               (every-pred integer? pos? (partial > 65535)))
+    (util/opt-key :timeout            (every-pred integer? #(not (neg? %))))
+    (util/opt-key :nrepl-handler      seq?)
+    (util/opt-key :nrepl-middleware   #(or (symbol? %) (ifn? %)))))
+
+
+;;; Whole project map
 
 (defn validate-map
   "Validate that m is a valid Leiningen project map."
@@ -312,12 +350,13 @@
     (util/opt-key :target-path               path)
     (util/opt-key :compile-path              path)
     (util/opt-key :native-path               path)
-    ;; (util/opt-key :clean-targets             )
-    ;; (util/opt-key :clean-non-project-classes )
-    ;; (util/opt-key :checkout-deps-shares      )
-    ;; (util/opt-key :test-selectors            )
-    ;; (util/opt-key :monkeypatch-clojure-test  )
-    ;; (util/opt-key :repl-options              )
+    (util/opt-key :clean-targets             clean-targets)
+    (util/opt-key :clean-non-project-classes util/boolean?)
+    ;; NOTE: Equally imprecise as the schema impl. Goes for all mentions.
+    (util/opt-key :checkout-deps-shares      ifn?)
+    (util/opt-key :test-selectors            test-selectors)
+    (util/opt-key :monkeypatch-clojure-test  util/boolean?)
+    (util/opt-key :repl-options              repl-options)
     ;; (util/opt-key :jar-name                  )
     ;; (util/opt-key :uberjar-name              )
     ;; (util/opt-key :omit-source               )

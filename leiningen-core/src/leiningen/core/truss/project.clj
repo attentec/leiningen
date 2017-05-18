@@ -30,6 +30,10 @@
 (defn non-empty-vec-of-regexes [v]
   (truss/have [:and vector? not-empty] v)
   (truss/have util/stregex? :in v))
+(defn deploy-branches [v]
+  (truss/have [:and vector? not-empty] v)
+  (truss/have util/non-blank-string? :in v))
+
 
 ;;; Mailing lists
 
@@ -346,9 +350,9 @@
   (truss/have artifact :in v))
 
 
-(declare xml-vector?)
+(declare xml-vector)
 (defn terminal-or-recursion? [s]
-  (truss/have [:or string? xml-vector?] :in s))
+  (truss/have [:or string? xml-vector] :in s))
 
 (defn map-or-terminal-or-recursions?
   [xml-vec]
@@ -358,7 +362,7 @@
     (or (empty? data)
         (terminal-or-recursion? data))))
 
-(defn xml-vector? [[tag & rest :as all]]
+(defn xml-vector [[tag & rest :as all]]
   (truss/have [:and vector? not-empty] all)
   (truss/have keyword? tag)
   (truss/have map-or-terminal-or-recursions? rest)
@@ -366,7 +370,7 @@
 
 (defn str-or-xml? [e]
   (or (util/non-blank-string? e)
-      (xml-vector?            e)))
+      (xml-vector             e)))
 
 (defn pom-plugin-options [m]
   (util/>> m
@@ -385,6 +389,25 @@
 (defn pom-plugins [v]
   (truss/have [:and vector? not-empty] v)
   (truss/have pom-plugin :in v))
+
+
+;;; Source control management
+
+(defn scm [m]
+  (util/>> m
+    (truss/have map?)
+    (util/opt-key :name  name?)
+    (util/opt-key :tag   util/non-blank-string?)
+    (util/opt-key :url   url?)
+    (util/opt-key :dir   util/non-blank-string?)))
+
+
+;;; Classifiers
+
+(defn classifiers [m]
+  (truss/have map? m)
+  (truss/have keyword? :in (keys m))
+  (truss/have [:or keyword? map?] :in (vals m)))
 
 
 ;;; Whole project map
@@ -463,9 +486,9 @@
     (util/opt-key :parent                    parent)
     (util/opt-key :extensions                extensions)
     (util/opt-key :pom-plugins               pom-plugins)
-    ;; (util/opt-key :pom-addition              )
-    ;; (util/opt-key :scm                       )
-    ;; (util/opt-key :install-releases?         )
-    ;; (util/opt-key :deploy-branches           )
-    ;; (util/opt-key :classifiers               )
+    (util/opt-key :pom-addition              xml-vector)
+    (util/opt-key :scm                       scm)
+    (util/opt-key :install-releases?         util/boolean?)
+    (util/opt-key :deploy-branches           deploy-branches)
+    (util/opt-key :classifiers               classifiers)
     ))

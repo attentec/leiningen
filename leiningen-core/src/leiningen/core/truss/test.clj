@@ -178,17 +178,17 @@
                                   [:goals [:goal "run"]]
                                   [:phase "verify"]]}]
                 ['org.apache.tomcat.maven/tomcat7-maven-plugin "2.1"]]
- ;; :scm          {:name "git"
- ;;                :tag  "098afd745bcd"
- ;;                :url  "http://127.0.0.1/git/my-project"
- ;;                :dir  ".."}
- ;; :pom-addition [:developers [:developer {:id "benbit"}
- ;;                             [:name "Ben Bitdiddle"]
- ;;                             [:url "http://www.example.com/benjamin"]]]
+ :scm          {:name "git"
+                :tag  "098afd745bcd"
+                :url  "http://127.0.0.1/git/my-project"
+                :dir  ".."}
+ :pom-addition [:developers [:developer {:id "benbit"}
+                             [:name "Ben Bitdiddle"]
+                             [:url "http://www.example.com/benjamin"]]]
 
- ;; :install-releases? false
- ;; :deploy-branches   ["master"]
+ :install-releases? false
+ :deploy-branches   ["master"]
 
- ;; :classifiers {:tests {:source-paths ^:replace ["test"]}
- ;;               :classy                :my-profile}
+ :classifiers {:tests {:source-paths ^:replace ["test"]}
+               :classy                :my-profile}
  })

@@ -52,20 +52,20 @@
                        ["releases" {:url      "http://blueant.com/archiva/internal"
                                     :username "milgrim" :password :env}]]
  :plugin-repositories [["internal-plugin-repo" "http://example.org/repo"]]
- ;; :mirrors             {"central"  {:name "central"
- ;;                                   :url  "http://mirrors.ibiblio.org/pub/mirrors/maven2"}
- ;;                       #"clojars" {:name         "Internal nexus"
- ;;                                   :url          "http://mvn.local/nexus/releases"
- ;;                                   :repo-manager true}}
- ;; :local-repo          "local-m2"
- ;; :update              :always
- ;; :checksum            :fail
- ;; :offline?            true
- ;; :deploy-repositories [["releases" {:url     "http://blueant.com/archiva/internal/releases"
- ;;                                    :signing {:gpg-key "0xAB123456"}}]
- ;;                       ["snapshots" "http://blueant.com/archiva/internal/snapshots"]]
- ;; :signing             {:gpg-key "root@eruditorum.org"}
- ;; :certificates        ["blueant.pem"]
+ :mirrors             {"central"  {:name "central"
+                                   :url  "http://mirrors.ibiblio.org/pub/mirrors/maven2"}
+                       #"clojars" {:name         "Internal nexus"
+                                   :url          "http://mvn.local/nexus/releases"
+                                   :repo-manager true}}
+ :local-repo          "local-m2"
+ :update              :always
+ :checksum            :fail
+ :offline?            true
+ :deploy-repositories [["releases" {:url     "http://blueant.com/archiva/internal/releases"
+                                    :signing {:gpg-key "0xAB123456"}}]
+                       ["snapshots" "http://blueant.com/archiva/internal/snapshots"]]
+ :signing             {:gpg-key "root@eruditorum.org"}
+ :certificates        ["blueant.pem"]
  ;; :profiles            {:debug   {;:debug      true
  ;;                                 :injections [(prn (into {} (System/getProperties)))]
  ;;                                 }

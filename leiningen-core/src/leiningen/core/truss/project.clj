@@ -9,6 +9,7 @@
 (defn namespaced-string?       [string] (util/stregex-matches #"[^\s/]+/[^\s/]+" string))
 (defn pedantic                 [val]    (truss/have [:el #{:abort :warn :ranges true false}]))
 (defn signing                  [m]      (util/req-key :gpg-key util/non-blank-string? m))
+(defn certificates             [v]      (truss/have util/non-blank-string? :in v))
 
 ;;; Mailing lists
 
@@ -153,6 +154,17 @@
   (truss/have repository :in repo-vec))
 
 
+;;; Mirrors
+
+(defn mirrors [m]
+  (util/>> m
+    (truss/have map?)
+    (util/opt-key :name         name?)
+    (util/opt-key :url          url?)
+    (util/opt-key :repo-manager util/boolean?)))
+
+
+
 (defn validate-map
   "Validate that m is a valid Leiningen project map."
   [m]
@@ -172,15 +184,15 @@
     (util/req-key :plugins                   plugins)
     (util/req-key :repositories              repositories)
     (util/req-key :plugin-repositories       repositories)
-    ;; (util/req-key :mirrors                   )
-    ;; (util/req-key :local-repo                )
-    ;; (util/req-key :update                    )
-    ;; (util/req-key :checksum                  )
-    ;; (util/req-key :offline?                  )
-    ;; (util/req-key :deploy-repositories       )
-    ;; (util/req-key :signing                   )
-    ;; (util/req-key :certificates              )
-    ;; (util/req-key :profiles                  )
+    (util/req-key :mirrors                   mirrors)
+    (util/req-key :local-repo                util/non-blank-string?)
+    (util/req-key :update                    update-enum)
+    (util/req-key :checksum                  checksum)
+    (util/req-key :offline?                  util/boolean?)
+    (util/req-key :deploy-repositories       repositories)
+    (util/req-key :signing                   signing)
+    (util/req-key :certificates              certificates)
+    ;;(util/req-key :profiles                  profiles)
     ;; (util/req-key :hooks                     )
     ;; (util/req-key :middleware                )
     ;; (util/req-key :implicit-middleware       )

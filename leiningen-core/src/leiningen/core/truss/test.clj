@@ -151,14 +151,14 @@
  :uberjar-exclusions [#"META-INF/DUMMY.SF"]
  :auto-clean         false
  :uberjar-merge-with {#"\.properties$" ['slurp 'str 'spit]}
- ;; :filespecs          [{:type :path :path "config/base.clj"}
- ;;                      {:type :paths :paths ["config/web" "config/cli"]}
- ;;                      {:type  :bytes :path "project.clj"
- ;;                       :bytes (slurp "project.clj")}
- ;;                      {:type :fn :fn (fn [p]
- ;;                                       {:type  :bytes :path "git-log"
- ;;                                        :bytes (:out ('clojure.java.shell/sh
- ;;                                                      "git" "log" "-n" "1"))})}]
+ :filespecs          [{:type :path :path "config/base.clj"}
+                      {:type :paths :paths ["config/web" "config/cli"]}
+                      {:type  :bytes :path "project.clj"
+                       :bytes (slurp "project.clj")}
+                      {:type :fn :fn (fn [p]
+                                       {:type  :bytes :path "git-log"
+                                        :bytes (:out ('clojure.java.shell/sh
+                                                      "git" "log" "-n" "1"))})}]
  ;; :manifest           {"Project-awesome-level" "super-great"
  ;;                      "Class-Path"            #(clojure.string/join
  ;;                                                 \space

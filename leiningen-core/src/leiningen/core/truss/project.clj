@@ -309,6 +309,22 @@
   (truss/have uberjar-merger-fns :in (vals m)))
 
 
+;;; Filespecs
+
+(defmulti  filespec-map :type)
+(defmethod filespec-map :path  [m] (util/req-key :path  path  m))
+(defmethod filespec-map :paths [m] (util/req-key :paths paths m))
+(defmethod filespec-map :fn    [m] (util/req-key :fn    ifn?  m))
+(defmethod filespec-map :bytes [m]
+  (util/req-key :path  path  m)
+  (util/req-key :bytes util/non-blank-string? m))
+
+(defn filespecs [v]
+  (truss/have [:and vector? not-empty] v)
+  (truss/have filespec-map :in v))
+
+
+
 ;;; Whole project map
 
 (defn validate-map
@@ -379,7 +395,7 @@
     (util/opt-key :uberjar-exclusions        non-empty-vec-of-regexes)
     (util/opt-key :auto-clean                util/boolean?)
     (util/opt-key :uberjar-merge-with        uberjar-merge-with)
-    ;; (util/opt-key :filespecs                 )
+    (util/opt-key :filespecs                 filespecs)
     ;; (util/opt-key :manifest                  )
     ;; (util/opt-key :pom-location              )
     ;; (util/opt-key :parent                    )

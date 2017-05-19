@@ -118,7 +118,7 @@
 (spec/def ::proj/implicit-middleware  boolean?)
 (spec/def ::proj/main                 symbol?)
 ;; TODO: Injections spec is too simple.
-(spec/def ::proj/injections           (spec/coll-of any? :kind vector? :gen-max 3))
+(spec/def ::proj/injections           (spec/coll-of any? :kind vector? :gen-max 3 :min-count 1))
 (spec/def ::proj/javac-options        (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
 (spec/def ::proj/warn-on-reflection   boolean?)
 (spec/def ::proj/java-cmd             ::util/non-blank-string)
@@ -142,7 +142,7 @@
 
 (spec/def ::proj/name           ::util/non-blank-string)
 (spec/def ::proj/archive        ::proj/url)
-(spec/def ::proj/other-archives (spec/coll-of ::proj/url :min-count 1 :gen-max 3))
+(spec/def ::proj/other-archives (spec/coll-of ::proj/url :kind vector? :min-count 1 :gen-max 3))
 (spec/def ::proj/post           ::proj/email)
 (spec/def ::proj/subscribe      (spec/or ::proj/email ::proj/url))
 (spec/def ::proj/unsubscribe    (spec/or ::proj/email ::proj/url))
@@ -151,7 +151,7 @@
   (spec/keys :opt-un [::proj/name ::proj/archive ::proj/other-archives
                       ::proj/post ::proj/subscribe ::proj/unsubscribe]))
 
-(spec/def ::proj/mailing-lists (spec/coll-of ::proj/mailing-list :min-count 1 :gen-max 3))
+(spec/def ::proj/mailing-lists (spec/coll-of ::proj/mailing-list :kind vector? :min-count 1 :gen-max 3))
 
 
 ;;; Licenses

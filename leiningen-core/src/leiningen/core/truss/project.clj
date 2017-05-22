@@ -55,7 +55,7 @@
 
 (defn mailing-lists [v]
   (truss/have [:and vector? not-empty] v)
-  (truss/have mailing-list? :in v))
+  (truss/have mailing-list :in v))
 
 
 ;;; Licenses
@@ -70,7 +70,7 @@
     (util/opt-key :comments     util/non-blank-string?)))
 (defn licenses [license-vec]
   (truss/have [:and vector? not-empty] license-vec)
-  (truss/have license? :in license-vec))#'leiningen.core.truss.project/licenses
+  (truss/have license :in license-vec))#'leiningen.core.truss.project/licenses
 
 
 ;;; Dependencies

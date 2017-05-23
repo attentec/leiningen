@@ -390,13 +390,8 @@
 
 ;;; Checkout Dependency Shares
 
-(spec/fdef ::checkout-deps-shares-fn
-           :args (spec/cat :project-map ::proj/project-map-non-recursive)
-           :ret  (spec/nilable (spec/or :vector ::proj/paths
-                                        :single ::proj/path)))
-
 (spec/def ::proj/checkout-deps-shares
-  (spec/coll-of ::checkout-deps-shares-fn :kind vector? :gen-max 1))
+  (spec/coll-of ifn? :kind vector? :gen-max 1))
 
 
 ;;; Test selectors
@@ -407,23 +402,17 @@
 
 ;;; REPL options
 
-(spec/fdef ::ns->str
-           :args (spec/cat :arg ::util/namespace)
-           :ret  string?)
-(spec/fdef ::exception-printer
-           :args (spec/+ ::util/exception)
-           :ret nil?)
-(spec/def ::proj/prompt            ::ns->str)
+(spec/def ::proj/prompt            ifn?)
 (spec/def ::proj/welcome           seq?)
 (spec/def ::proj/init-ns           ::util/namespace-symbol)
 (spec/def ::proj/init              seq?)
-(spec/def ::proj/caught            ::exception-printer)
+(spec/def ::proj/caught            ifn?)
 (spec/def ::proj/skip-default-init boolean?)
 (spec/def ::proj/host              ::util/non-blank-string)
 (spec/def ::proj/port              (spec/and ::util/positive-integer (partial > 65535)))
 (spec/def ::proj/timeout           nat-int?)
-(spec/def ::proj/nrepl-handler     ::util/nullary-fn)
-(spec/def ::proj/nrepl-middleware  (spec/or :fn  ::util/unary-fn
+(spec/def ::proj/nrepl-handler     seq?)
+(spec/def ::proj/nrepl-middleware  (spec/or :fn  ifn?
                                             :sym qualified-symbol?))
 
 (spec/def ::proj/repl-options
@@ -443,26 +432,10 @@
 
 ;;; Filespecs
 
-;; The below repetition exists to avoid infinite loops in spec
-(spec/def :filespec-no-fn/type  #{:path :paths :bytes})
-
-(defmulti  filespec-type-no-fn :type)
-(defmethod filespec-type-no-fn :path  [_] (spec/keys :req-un [:filespec-no-fn/type ::proj/path]))
-(defmethod filespec-type-no-fn :paths [_] (spec/keys :req-un [:filespec-no-fn/type ::proj/paths]))
-(defmethod filespec-type-no-fn :bytes [_] (spec/keys :req-un [:filespec-no-fn/type ::proj/path ::proj/bytes]))
-
-(spec/def :filespec-no-fn/filespec (spec/multi-spec filespec-type-no-fn :type))
-
-;; Non-duplicate code below, as it were
-
-(spec/fdef ::filespec-fn
-           :args (spec/cat :project-map ::proj/project-map-non-recursive)
-           :ret  :filespec-no-fn/filespec)
-
 (spec/def ::proj/path    ::util/non-blank-string)
 (spec/def ::proj/paths   (spec/coll-of ::util/non-blank-string :kind vector? :min-count 1))
 (spec/def ::proj/bytes   ::util/non-blank-string)
-(spec/def :filespec/fn   ::filespec-fn)
+(spec/def :filespec/fn   ifn?)
 (spec/def :filespec/type #{:path :paths :bytes :fn})
 
 (defmulti  filespec-type :type)

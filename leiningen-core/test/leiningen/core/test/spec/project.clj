@@ -147,29 +147,29 @@
     :clean-targets             [:target-path :compile-path :foobar-paths
                                 [:baz-config :qux-path] "out"]
     :clean-non-project-classes true
-    ;; :checkout-deps-shares      [:source-paths :test-paths
-    ;;                             '(fn [p] (str (:root p) "/lib/dev/*"))]
+    :checkout-deps-shares      [:source-paths :test-paths
+                                (fn [p] (str (:root p) "/lib/dev/*"))]
 
-    ;; :test-selectors           {:default     (fn [m] (not (or (:integration m) (:regression m))))
-    ;;                            :integration :integration
-    ;;                            :regression  :regression}
+    :test-selectors           {:default     (fn [m] (not (or (:integration m) (:regression m))))
+                               :integration :integration
+                               :regression  :regression}
     :monkeypatch-clojure-test false
 
-    ;; :repl-options {:prompt            (fn [ns] (str "your command for <" ns ">, master? " ))
-    ;;                :welcome           '(println "Welcome to the magical world of the repl!")
-    ;;                :init-ns           'foo.bar
-    ;;                :init              '(println "here we are in" *ns*)
-    ;;                :caught            'clj-stacktrace.repl/pst+
-    ;;                :skip-default-init false
-    ;;                :host              "0.0.0.0"
-    ;;                :port              4001
-    ;;                :timeout           40000
-    ;;                :nrepl-handler     '(clojure.tools.nrepl.server/default-handler)
-    ;;                :nrepl-middleware  ['my.nrepl.thing/wrap-amazingness
-    ;;                                    (fn [handler]
-    ;;                                      (fn [& args]
-    ;;                                        (prn :middle args)
-    ;;                                        (apply handler args)))]}
+    :repl-options {:prompt            (fn [ns] (str "your command for <" ns ">, master? " ))
+                   :welcome           '(println "Welcome to the magical world of the repl!")
+                   :init-ns           'foo.bar
+                   :init              '(println "here we are in" *ns*)
+                   :caught            'clj-stacktrace.repl/pst+
+                   :skip-default-init false
+                   :host              "0.0.0.0"
+                   :port              4001
+                   :timeout           40000
+                   :nrepl-handler     '(clojure.tools.nrepl.server/default-handler)
+                   :nrepl-middleware  ['my.nrepl.thing/wrap-amazingness
+                                       (fn [handler]
+                                         (fn [& args]
+                                           (prn :middle args)
+                                           (apply handler args)))]}
 
     :jar-name           "sample.jar"
     :uberjar-name       "sample-standalone.jar"
@@ -179,14 +179,14 @@
     :uberjar-exclusions [#"META-INF/DUMMY.SF"]
     :auto-clean         false
     :uberjar-merge-with {#"\.properties$" ['slurp 'str 'spit]}
-    ;; :filespecs          [{:type :path :path "config/base.clj"}
-    ;;                      {:type :paths :paths ["config/web" "config/cli"]}
-    ;;                      {:type  :bytes :path "project.clj"
-    ;;                       :bytes (slurp "project.clj")}
-    ;;                      {:type :fn :fn (fn [p]
-    ;;                                       {:type  :bytes :path "git-log"
-    ;;                                        :bytes (:out ('clojure.java.shell/sh
-    ;;                                                      "git" "log" "-n" "1"))})}]
+    :filespecs          [{:type :path :path "config/base.clj"}
+                         {:type :paths :paths ["config/web" "config/cli"]}
+                         {:type  :bytes :path "project.clj"
+                          :bytes (slurp "project.clj")}
+                         {:type :fn :fn (fn [p]
+                                          {:type  :bytes :path "git-log"
+                                           :bytes (:out ('clojure.java.shell/sh
+                                                         "git" "log" "-n" "1"))})}]
     :manifest           {"Project-awesome-level" "super-great"
                          "Class-Path"            #(clojure.string/join
                                                    \space

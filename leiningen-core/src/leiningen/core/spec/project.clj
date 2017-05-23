@@ -505,17 +505,24 @@
                           :attributes (spec/? map?)
                           :content string?))))
 
-(spec/def :pom-plugin-options/configuration ::proj/xml-as-vec)
-(spec/def :pom-plugin-options/extensions    ::proj/xml-as-vec)
-(spec/def :pom-plugin-options/executions    ::proj/xml-as-vec)
+(spec/def :pom-plugin-options/configuration
+  (spec/or :str ::util/non-blank-string
+           :xml ::proj/xml-as-vec))
+(spec/def :pom-plugin-options/extensions
+  (spec/or :str ::util/non-blank-string
+           :xml ::proj/xml-as-vec))
+(spec/def :pom-plugin-options/executions
+  (spec/or :str ::util/non-blank-string
+           :xml ::proj/xml-as-vec))
 
 (spec/def ::proj/pom-plugin-options
-  (spec/keys :opt-un [:pom-plugin-options/configuration :pom-plugin-options/extensions
+  (spec/keys :opt-un [:pom-plugin-options/configuration
+                      :pom-plugin-options/extensions
                       :pom-plugin-options/executions]))
 
 (spec/def ::proj/pom-plugin
   (util/vcat :artifact ::proj/artifact
-             :options  ::proj/pom-plugin-options))
+             :options  (spec/? ::proj/pom-plugin-options)))
 (spec/def ::proj/pom-plugins (spec/coll-of ::proj/pom-plugin))
 
 (spec/def ::proj/pom-addition ::proj/xml-as-vec)

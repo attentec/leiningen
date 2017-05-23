@@ -1,6 +1,6 @@
 (ns leiningen.core.spec.benchmark
-  (:require [clojure.spec                :as spec]
-            [clojure.spec.gen            :as gen]
+  (:require [clojure.spec.alpha          :as spec]
+            [clojure.spec.gen.alpha      :as gen]
             [leiningen.core.project      :as proj]))
 
 (defmacro time'

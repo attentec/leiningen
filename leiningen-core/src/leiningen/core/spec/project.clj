@@ -1,7 +1,5 @@
 (ns leiningen.core.spec.project
-  (:require [clojure.spec             :as spec]
-            [clojure.spec.gen         :as gen]
-            [clojure.spec.test        :as test]
+  (:require [clojure.spec.alpha       :as spec]
             [clojure.string           :as str]
             [leiningen.core.project   :as proj]
             [leiningen.core.spec.util :as util]))
@@ -268,7 +266,7 @@
 (spec/def ::proj/releases      (spec/keys :opt-un [::proj/checksum
                                                    ::proj/update]))
 (spec/def ::proj/username      ::util/non-blank-string)
-(spec/def ::proj/password      (spec/or ::util/non-blank-string #{:env}))
+(spec/def ::proj/password      (spec/or ::util/non-blank-string keyword?))
 (spec/def ::proj/creds         #{:gpg})
 
 (spec/def ::proj/repository-info-map
@@ -409,9 +407,9 @@
            :args (spec/+ ::util/exception)
            :ret nil?)
 (spec/def ::proj/prompt            ::ns->str)
-(spec/def ::proj/welcome           seq?
+(spec/def ::proj/welcome           seq?)
 (spec/def ::proj/init-ns           ::util/namespace-symbol)
-(spec/def ::proj/init              seq?
+(spec/def ::proj/init              seq?)
 (spec/def ::proj/caught            ::exception-printer)
 (spec/def ::proj/skip-default-init boolean?)
 (spec/def ::proj/host              ::util/non-blank-string)
@@ -567,6 +565,3 @@
                           :version      ::proj/version
                           :arguments    ::proj/project-args)
           :ret symbol?)
-
-; (leiningen.core.spec.benchmark/benchmark-generation project-argument-keys 100)
-;; (spec/exercise-fn `proj/defproject)

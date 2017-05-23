@@ -1,7 +1,7 @@
 (ns leiningen.core.spec.util
   (:require
-   [clojure.spec           :as spec]
-   [clojure.spec.gen       :as gen]
+   [clojure.spec.alpha     :as spec]
+   [clojure.spec.gen.alpha :as gen]
    [clojure.string         :as str]
    [miner.strgen           :as strgen]))
 

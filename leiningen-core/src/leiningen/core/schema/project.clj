@@ -21,7 +21,7 @@
 (def signing                 {:gpg-key util/non-blank-string})
 (def certificates            (schema/constrained [util/non-blank-string] not-empty))
 (declare project-map-non-recursive)
-(def profiles                {schema/Keyword project-map-non-recursive})
+(def profiles                {schema/Keyword (schema/recursive #'project-map-non-recursive)})
 (def hooks                   (schema/constrained [schema/Symbol] not-empty))
 (def middleware              (schema/constrained [schema/Symbol] not-empty))
 (def javac-options           (schema/constrained [util/non-blank-string] not-empty))
@@ -161,8 +161,7 @@
 (def update-enum (schema/enum :always :daily :never))
 (def releases    {(schema/optional-key :checksum) checksum
                   (schema/optional-key :update)   update-enum})
-(def password    (schema/cond-pre util/non-blank-string
-                                  (schema/enum :env)))
+(def password    (schema/cond-pre util/non-blank-string schema/Keyword))
 (def creds       (schema/enum :gpg))
 
 (def repository-info-map
@@ -376,6 +375,7 @@
 
 
 ;;; Classifiers
+
 (def classifiers
   {schema/Keyword (schema/cond-pre schema/Keyword {schema/Any schema/Any})})
 
@@ -457,7 +457,7 @@
    (schema/optional-key :deploy-branches)            deploy-branches
    (schema/optional-key :classifiers)                classifiers
    ;; Make the map schema open.
-   ;schema/Keyword schema/Any
+   schema/Keyword schema/Any
    })
 
 (defschema project-map-non-recursive (dissoc project-map :filespecs :profiles :checkout-deps-shares))

@@ -1,7 +1,7 @@
 (ns leiningen.core.test.spec.util
-  (:require [clojure.pprint    :as pprint]
-            [clojure.spec.test :as test]
-            [clojure.test      :refer [is]]))
+  (:require [clojure.pprint          :as pprint]
+            [clojure.spec.test.alpha :as test]
+            [clojure.test            :refer [is]]))
 
 ;;; Helper functions
 

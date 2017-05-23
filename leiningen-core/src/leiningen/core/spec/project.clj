@@ -142,8 +142,10 @@
 (spec/def ::proj/archive        ::proj/url)
 (spec/def ::proj/other-archives (spec/coll-of ::proj/url :kind vector? :min-count 1 :gen-max 3))
 (spec/def ::proj/post           ::proj/email)
-(spec/def ::proj/subscribe      (spec/or ::proj/email ::proj/url))
-(spec/def ::proj/unsubscribe    (spec/or ::proj/email ::proj/url))
+(spec/def ::proj/subscribe      (spec/or :mail ::proj/email
+                                         :url  ::proj/url))
+(spec/def ::proj/unsubscribe    (spec/or :mail ::proj/email
+                                         :url  ::proj/url))
 
 (spec/def ::proj/mailing-list
   (spec/keys :opt-un [::proj/name ::proj/archive ::proj/other-archives
@@ -175,7 +177,7 @@
 ;;; Dependencies
 
 (spec/def ::proj/dependency-name
-  (spec/alt
+  (spec/or
    :namespaced-string ::util/namespaced-string
    :bare-string       ::util/non-blank-string
    :namespaced-symbol qualified-symbol?
@@ -194,6 +196,8 @@
 (spec/def ::proj/exclusion-vector
   (util/vcat :dep-name  ::proj/dependency-name
              :arguments ::proj/exclusion-args))
+
+(spec/valid? ::proj/exclusion 'a)
 
 (spec/def ::proj/optional      boolean?)
 (spec/def ::proj/scope         ::util/non-blank-string)
@@ -266,7 +270,8 @@
 (spec/def ::proj/releases      (spec/keys :opt-un [::proj/checksum
                                                    ::proj/update]))
 (spec/def ::proj/username      ::util/non-blank-string)
-(spec/def ::proj/password      (spec/or ::util/non-blank-string keyword?))
+(spec/def ::proj/password      (spec/or :string ::util/non-blank-string
+                                        :env-kw keyword?))
 (spec/def ::proj/creds         #{:gpg})
 
 (spec/def ::proj/repository-info-map
@@ -318,7 +323,9 @@
 ;;; Tasks
 
 (spec/def ::proj/release-tasks
-  (spec/coll-of ::proj/command-vector :kind vector? :min-count 1 :gen-max 3))
+  (spec/coll-of (spec/or :cmd-vec ::proj/command-vector
+                         :string  ::util/non-blank-string)
+                :kind vector? :min-count 1 :gen-max 3))
 
 (spec/def ::proj/prep-tasks ::proj/release-tasks)
 
@@ -373,10 +380,11 @@
 (spec/def ::proj/native-path       ::util/non-blank-string)
 
 (spec/def ::proj/clean-targets
-  (spec/coll-of (spec/alt :proj-key  keyword?
-                          :path      ::util/non-blank-string
-                          :proj-path (spec/coll-of keyword?
-                                      :kind vector? :min-count 2))
+  (spec/coll-of (spec/or :proj-key  keyword?
+                         :path      ::util/non-blank-string
+                         :proj-path (spec/coll-of keyword?
+                                                  :kind vector?
+                                                  :min-count 2))
                 :kind vector? :min-count 1))
 
 
@@ -397,7 +405,6 @@
   (spec/map-of keyword? (spec/or :keyword keyword?
                                  :code    ::util/predicate)))
 
-
 ;;; REPL options
 
 (spec/fdef ::ns->str
@@ -416,7 +423,8 @@
 (spec/def ::proj/port              (spec/and ::util/positive-integer (partial > 65535)))
 (spec/def ::proj/timeout           nat-int?)
 (spec/def ::proj/nrepl-handler     ::util/nullary-fn)
-(spec/def ::proj/nrepl-middleware  (spec/or ::util/unary-fn qualified-symbol?))
+(spec/def ::proj/nrepl-middleware  (spec/or :fn  ::util/unary-fn
+                                            :sym qualified-symbol?))
 
 (spec/def ::proj/repl-options
   (spec/keys :opt-un [::proj/prompt ::proj/welcome ::proj/init-ns

@@ -152,7 +152,7 @@
   (truss/have map? m)
   (util/opt-key :checksum checksum    m)
   (util/opt-key :update   update-enum m))
-(defn password    [e] (truss/have [:or util/non-blank-string? [:el #{:env}]] e))
+(defn password    [e] (truss/have [:or util/non-blank-string? keyword?] e))
 (defn creds       [e] (truss/have [:el #{:gpg}]))
 
 (defn repository-info-map
@@ -190,6 +190,7 @@
 
 ;;; Profiles
 
+(declare validate-map)
 (defn profiles [m]
   (truss/have map? m)
   (truss/have keyword? :in (keys m))
@@ -232,7 +233,7 @@
 ;;; Java Agents
 
 (defn java-agent-args? [kv-seq]
-  (util/key-val-seq? kv-seq {:classifier classifier
+  (util/key-val-seq? kv-seq {:classifier classifier?
                              :options    util/non-blank-string?}))
 
 (defn java-agent-vector [[name version & args :as all]]
@@ -492,3 +493,11 @@
     (util/opt-key :deploy-branches           deploy-branches)
     (util/opt-key :classifiers               classifiers)
     ))
+
+(defn validate-map-noexcept
+  [m]
+  (try
+    (when (validate-map m)
+      nil)
+    (catch clojure.lang.ExceptionInfo e
+      (.getMessage e))))

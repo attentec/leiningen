@@ -30,7 +30,7 @@
 (def path                    util/non-blank-string)
 (def paths                   (schema/constrained [util/non-blank-string] not-empty))
 (def deploy-branches         (schema/constrained [util/non-blank-string] not-empty))
-(def non-empty-vec-of-regexes (schema/constrained schema/Regex not-empty))
+(def non-empty-vec-of-regexes (schema/constrained [schema/Regex] not-empty))
 ;;; Mailing lists
 
 (def name-schema    util/non-blank-string)
@@ -268,7 +268,7 @@
 
 ;; NOTE: This is way less precise than the spec implementation.
 (def checkout-deps-shares
-  (schema/pred ifn?))
+  [(schema/pred ifn?)])
 
 
 ;;; Test selectors

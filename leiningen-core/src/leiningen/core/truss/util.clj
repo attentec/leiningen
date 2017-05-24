@@ -38,8 +38,9 @@
    (and (key-val-seq? kv-seq)
         (every? identity
                 (for [[k v] (partition 2 kv-seq)]
-                  (when-let [pred (get validation-map k)]
-                    (pred v)))))))
+                  (if-let [pred (get validation-map k)]
+                    (pred v)
+                    true)))))) ; Change to false for closed map type.
 
 
 ;;; Macros

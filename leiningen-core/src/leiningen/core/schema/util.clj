@@ -49,7 +49,7 @@
                 (for [[k v] (partition 2 kv-seq)]
                   (if-let [schema (get validation-map k)]
                     (schema/check schema v)
-                    :schema/invalid))))))
+                    nil)))))) ; Change nil -> true for a closed map type.
 
 (defn non-blank-string? [string]
   (not (str/blank? string)))

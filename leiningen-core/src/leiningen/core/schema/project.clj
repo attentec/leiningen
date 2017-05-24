@@ -43,7 +43,8 @@
    (schema/optional-key :other-archives) other-archives
    (schema/optional-key :post)           email
    (schema/optional-key :subscribe)      subscribe
-   (schema/optional-key :unsubscribe)    unsubscribe})
+   (schema/optional-key :unsubscribe)    unsubscribe
+   schema/Keyword                        schema/Any})
 (def mailing-lists
   (schema/constrained [mailing-list] not-empty))
 
@@ -55,7 +56,8 @@
   {(schema/optional-key :name)         name-schema
    (schema/optional-key :url)          url
    (schema/optional-key :distribution) distribution
-   (schema/optional-key :comments)     util/non-blank-string})
+   (schema/optional-key :comments)     util/non-blank-string
+   schema/Keyword                      schema/Any})
 (def licenses
   (schema/constrained [license] not-empty))
 
@@ -160,7 +162,8 @@
 (def checksum    (schema/enum :fail :warn :ignore))
 (def update-enum (schema/enum :always :daily :never))
 (def releases    {(schema/optional-key :checksum) checksum
-                  (schema/optional-key :update)   update-enum})
+                  (schema/optional-key :update)   update-enum
+                  schema/Keyword                  schema/Any})
 (def password    (schema/cond-pre util/non-blank-string schema/Keyword))
 (def creds       (schema/enum :gpg))
 
@@ -174,7 +177,8 @@
    (schema/optional-key :username)      util/non-blank-string
    (schema/optional-key :password)      password
    (schema/optional-key :creds)         creds
-   (schema/optional-key :signing)       signing})
+   (schema/optional-key :signing)       signing
+   schema/Keyword                       schema/Any})
 
 (def repository
   [(schema/one util/non-blank-string "name")
@@ -186,9 +190,9 @@
 ;;; Mirrors
 
 (def mirrors
-  {(schema/cond-pre util/non-blank-string schema/Regex) {(schema/optional-key :name)          name-schema
-                                              (schema/optional-key :url)           url
-                                              (schema/optional-key :repo-manager) schema/Bool}})
+  {(schema/cond-pre util/non-blank-string schema/Regex) {(schema/optional-key :name)         name-schema
+                                                         (schema/optional-key :url)          url
+                                                         (schema/optional-key :repo-manager) schema/Bool}})
 
 
 ;;; Aliases
@@ -243,12 +247,12 @@
   (schema/enum
    '*print-namespace-maps* '*source-path* '*command-line-args*
    '*read-eval* '*verbose-defrecords* '*print-level* '*suppress-read*
-    '*print-length* '*file* '*use-context-classloader* '*err*
-    '*default-data-reader-fn* '*allow-unresolved-vars* '*print-meta*
-    '*compile-files* '*math-context* '*data-readers* '*clojure-version*
-    '*unchecked-math* '*out* '*warn-on-reflection* '*compile-path*
-    '*in* '*ns* '*assert* '*print-readably* '*flush-on-newline*
-    '*agent* '*fn-loader* '*compiler-options* '*print-dup*))
+   '*print-length* '*file* '*use-context-classloader* '*err*
+   '*default-data-reader-fn* '*allow-unresolved-vars* '*print-meta*
+   '*compile-files* '*math-context* '*data-readers* '*clojure-version*
+   '*unchecked-math* '*out* '*warn-on-reflection* '*compile-path*
+   '*in* '*ns* '*assert* '*print-readably* '*flush-on-newline*
+   '*agent* '*fn-loader* '*compiler-options* '*print-dup*))
 
 (def global-vars
   {clojure-global-vars schema/Any})
@@ -295,15 +299,15 @@
    (schema/optional-key :timeout)           util/natural-number
    (schema/optional-key :nrepl-handler)     (schema/pred seq?)
    (schema/optional-key :nrepl-middleware)  (schema/cond-pre schema/Symbol
-                                                             (schema/pred ifn?))})
+                                                             (schema/pred ifn?))
+   schema/Keyword                           schema/Any})
 
 ;;; Uberjar content management
-
 ;; NOTE: Yet another inadequate fn schema
 (def uberjar-merge-with
   {(schema/cond-pre util/non-blank-string schema/Regex) [(schema/one schema/Symbol "Input-stream -> Datum")
-                                              (schema/one schema/Symbol "Datum-merger")
-                                              (schema/one schema/Symbol "Datum-printer")]})
+                                                         (schema/one schema/Symbol "Datum-merger")
+                                                         (schema/one schema/Symbol "Datum-printer")]})
 
 
 ;;; Filespecs
@@ -313,9 +317,9 @@
 (def filespecs
   [filespec])
 
-(schema-typed-map/extend-schema path-filespec  filespec [:path]  {:path  path})
+(schema-typed-map/extend-schema path-filespec  filespec [:path]  {:path path})
 (schema-typed-map/extend-schema paths-filespec filespec [:paths] {:paths paths})
-(schema-typed-map/extend-schema bytes-filespec filespec [:bytes] {:path  path :bytes util/non-blank-string})
+(schema-typed-map/extend-schema bytes-filespec filespec [:bytes] {:path path :bytes util/non-blank-string})
 (schema-typed-map/extend-schema bytes-filespec filespec [:fn]    {:fn (schema/pred ifn?)})
 
 
@@ -337,7 +341,7 @@
 (declare xml-as-vec)
 (def terminal-or-recursions
   [(schema/cond-pre util/non-blank-string
-                   (schema/recursive #'xml-as-vec))])
+                    (schema/recursive #'xml-as-vec))])
 
 (defn map-or-terminal-or-recursions?
   [xml-vec]
@@ -358,7 +362,8 @@
 (def pom-plugin-options
   {(schema/optional-key :configuration) (schema/cond-pre util/non-blank-string xml-as-vec)
    (schema/optional-key :extensions)    (schema/cond-pre util/non-blank-string xml-as-vec)
-   (schema/optional-key :executions)    (schema/cond-pre util/non-blank-string xml-as-vec)})
+   (schema/optional-key :executions)    (schema/cond-pre util/non-blank-string xml-as-vec)
+   schema/Keyword                       schema/Any})
 (def pom-plugins
   [[(schema/one dependency-name "name")
     (schema/one version "version")
@@ -371,7 +376,8 @@
   {(schema/optional-key :name) name-schema
    (schema/optional-key :tag)  util/non-blank-string
    (schema/optional-key :url)  url
-   (schema/optional-key :dir)  util/non-blank-string})
+   (schema/optional-key :dir)  util/non-blank-string
+   schema/Keyword              schema/Any})
 
 
 ;;; Classifiers
@@ -383,84 +389,84 @@
 ;;; Project maps and permutations there of.
 
 (defschema project-map
-  {(schema/optional-key :description)                util/non-blank-string
-   (schema/optional-key :url)                        url
-   (schema/optional-key :mailing-list)               mailing-list
-   (schema/optional-key :mailing-lists)              mailing-lists
-   (schema/optional-key :license)                    license
-   (schema/optional-key :licenses)                   licenses
-   (schema/optional-key :min-lein-version)           semantic-version-string
-   (schema/optional-key :dependencies)               dependencies
-   (schema/optional-key :managed-dependencies)       dependencies
-   (schema/optional-key :pedantic?)                  pedantic?
-   (schema/optional-key :exclusions)                 exclusions
-   (schema/optional-key :plugins)                    plugins
-   (schema/optional-key :repositories)               repositories
-   (schema/optional-key :plugin-repositories)        repositories
-   (schema/optional-key :mirrors)                    mirrors
-   (schema/optional-key :local-repo)                 util/non-blank-string
-   (schema/optional-key :update)                     update-enum
-   (schema/optional-key :checksum)                   checksum
-   (schema/optional-key :offline?)                   schema/Bool
-   (schema/optional-key :deploy-repositories)        repositories
-   (schema/optional-key :signing)                    signing
-   (schema/optional-key :certificates)               certificates
-   (schema/optional-key :profiles)                   profiles
-   (schema/optional-key :hooks)                      hooks
-   (schema/optional-key :middleware)                 middleware
-   (schema/optional-key :implicit-middleware)        schema/Bool
-   (schema/optional-key :implicit-hooks)             schema/Bool
-   (schema/optional-key :main)                       schema/Symbol
-   (schema/optional-key :aliases)                    aliases
-   (schema/optional-key :release-tasks)              release-tasks
-   (schema/optional-key :prep-tasks)                 release-tasks
-   (schema/optional-key :aot)                        aot
-   (schema/optional-key :injections)                 [schema/Any] ; TODO: Too lax
-   (schema/optional-key :java-agents)                java-agents
-   (schema/optional-key :javac-options)              javac-options
-   (schema/optional-key :warn-on-reflection)         schema/Bool
-   (schema/optional-key :global-vars)                global-vars
-   (schema/optional-key :java-cmd)                   util/non-blank-string
-   (schema/optional-key :jvm-opts)                   jvm-opts
-   (schema/optional-key :eval-in)                    eval-in
-   (schema/optional-key :bootclasspath)              schema/Bool
-   (schema/optional-key :source-paths)               paths
-   (schema/optional-key :java-source-paths)          paths
-   (schema/optional-key :test-paths)                 paths
-   (schema/optional-key :resource-paths)             paths
-   (schema/optional-key :target-path)                path
-   (schema/optional-key :compile-path)               path
-   (schema/optional-key :native-path)                path
-   (schema/optional-key :clean-targets)              clean-targets
-   (schema/optional-key :clean-non-project-classes)  schema/Bool
-   (schema/optional-key :checkout-deps-shares)       checkout-deps-shares
-   (schema/optional-key :test-selectors)             test-selectors
-   (schema/optional-key :monkeypatch-clojure-test)   schema/Bool
-   (schema/optional-key :repl-options)               repl-options
-   (schema/optional-key :jar-name)                   util/non-blank-string
-   (schema/optional-key :uberjar-name)               util/non-blank-string
-   (schema/optional-key :omit-source)                schema/Bool
-   (schema/optional-key :jar-exclusions)             non-empty-vec-of-regexes
-   (schema/optional-key :jar-inclusions)             non-empty-vec-of-regexes
-   (schema/optional-key :uberjar-exclusions)         non-empty-vec-of-regexes
-   (schema/optional-key :auto-clean)                 schema/Bool
-   (schema/optional-key :uberjar-merge-with)         uberjar-merge-with
-   (schema/optional-key :filespecs)                  filespecs
-   (schema/optional-key :manifest)                   manifest
-   (schema/optional-key :pom-location)               util/non-blank-string
-   (schema/optional-key :parent)                     parent
-   (schema/optional-key :extensions)                 [artifact]
-   (schema/optional-key :pom-plugins)                pom-plugins
-   (schema/optional-key :pom-addition)               xml-as-vec
-   (schema/optional-key :scm)                        scm
-   (schema/optional-key :install-releases?)          schema/Bool
-   (schema/optional-key :deploy-branches)            deploy-branches
-   (schema/optional-key :classifiers)                classifiers
+  {(schema/optional-key :description)               util/non-blank-string
+   (schema/optional-key :url)                       url
+   (schema/optional-key :mailing-list)              mailing-list
+   (schema/optional-key :mailing-lists)             mailing-lists
+   (schema/optional-key :license)                   license
+   (schema/optional-key :licenses)                  licenses
+   (schema/optional-key :min-lein-version)          semantic-version-string
+   (schema/optional-key :dependencies)              dependencies
+   (schema/optional-key :managed-dependencies)      dependencies
+   (schema/optional-key :pedantic?)                 pedantic?
+   (schema/optional-key :exclusions)                exclusions
+   (schema/optional-key :plugins)                   plugins
+   (schema/optional-key :repositories)              repositories
+   (schema/optional-key :plugin-repositories)       repositories
+   (schema/optional-key :mirrors)                   mirrors
+   (schema/optional-key :local-repo)                util/non-blank-string
+   (schema/optional-key :update)                    update-enum
+   (schema/optional-key :checksum)                  checksum
+   (schema/optional-key :offline?)                  schema/Bool
+   (schema/optional-key :deploy-repositories)       repositories
+   (schema/optional-key :signing)                   signing
+   (schema/optional-key :certificates)              certificates
+   (schema/optional-key :profiles)                  profiles
+   (schema/optional-key :hooks)                     hooks
+   (schema/optional-key :middleware)                middleware
+   (schema/optional-key :implicit-middleware)       schema/Bool
+   (schema/optional-key :implicit-hooks)            schema/Bool
+   (schema/optional-key :main)                      schema/Symbol
+   (schema/optional-key :aliases)                   aliases
+   (schema/optional-key :release-tasks)             release-tasks
+   (schema/optional-key :prep-tasks)                release-tasks
+   (schema/optional-key :aot)                       aot
+   (schema/optional-key :injections)                [schema/Any] ; TODO: Too lax
+   (schema/optional-key :java-agents)               java-agents
+   (schema/optional-key :javac-options)             javac-options
+   (schema/optional-key :warn-on-reflection)        schema/Bool
+   (schema/optional-key :global-vars)               global-vars
+   (schema/optional-key :java-cmd)                  util/non-blank-string
+   (schema/optional-key :jvm-opts)                  jvm-opts
+   (schema/optional-key :eval-in)                   eval-in
+   (schema/optional-key :bootclasspath)             schema/Bool
+   (schema/optional-key :source-paths)              paths
+   (schema/optional-key :java-source-paths)         paths
+   (schema/optional-key :test-paths)                paths
+   (schema/optional-key :resource-paths)            paths
+   (schema/optional-key :target-path)               path
+   (schema/optional-key :compile-path)              path
+   (schema/optional-key :native-path)               path
+   (schema/optional-key :clean-targets)             clean-targets
+   (schema/optional-key :clean-non-project-classes) schema/Bool
+   (schema/optional-key :checkout-deps-shares)      checkout-deps-shares
+   (schema/optional-key :test-selectors)            test-selectors
+   (schema/optional-key :monkeypatch-clojure-test)  schema/Bool
+   (schema/optional-key :repl-options)              repl-options
+   (schema/optional-key :jar-name)                  util/non-blank-string
+   (schema/optional-key :uberjar-name)              util/non-blank-string
+   (schema/optional-key :omit-source)               schema/Bool
+   (schema/optional-key :jar-exclusions)            non-empty-vec-of-regexes
+   (schema/optional-key :jar-inclusions)            non-empty-vec-of-regexes
+   (schema/optional-key :uberjar-exclusions)        non-empty-vec-of-regexes
+   (schema/optional-key :auto-clean)                schema/Bool
+   (schema/optional-key :uberjar-merge-with)        uberjar-merge-with
+   (schema/optional-key :filespecs)                 filespecs
+   (schema/optional-key :manifest)                  manifest
+   (schema/optional-key :pom-location)              util/non-blank-string
+   (schema/optional-key :parent)                    parent
+   (schema/optional-key :extensions)                [artifact]
+   (schema/optional-key :pom-plugins)               pom-plugins
+   (schema/optional-key :pom-addition)              xml-as-vec
+   (schema/optional-key :scm)                       scm
+   (schema/optional-key :install-releases?)         schema/Bool
+   (schema/optional-key :deploy-branches)           deploy-branches
+   (schema/optional-key :classifiers)               classifiers
    ;; Make the map schema open.
-   schema/Keyword schema/Any
+   schema/Keyword                                   schema/Any
    })
 
 (defschema project-map-non-recursive (dissoc project-map :filespecs :profiles :checkout-deps-shares))
 
 
-; (gen/generate project-argument-keys @util/generators)
+                                        ; (gen/generate project-argument-keys @util/generators)

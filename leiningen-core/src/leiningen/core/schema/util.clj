@@ -51,8 +51,11 @@
                     (schema/check schema v)
                     :schema/invalid))))))
 
-(defn non-blank-string?
-  [string] (not (str/blank? string)))
+(defn non-blank-string? [string]
+  (not (str/blank? string)))
+
+(defn non-empty-vec? [v]
+  (and (vector? v) (not-empty v)))
 
 
 ;;; Regex replacements

@@ -19,18 +19,19 @@
 (def namespaced-string       (util/stregex! #"[^\s/]+/[^\s/]+"))
 (def pedantic?               (schema/enum :abort :warn :ranges true false))
 (def signing                 {:gpg-key util/non-blank-string})
-(def certificates            (schema/constrained [util/non-blank-string] not-empty))
+(def certificates            (schema/constrained [util/non-blank-string] util/non-empty-vec?))
 (declare project-map-non-recursive)
 (def profiles                {schema/Keyword (schema/recursive #'project-map-non-recursive)})
-(def hooks                   (schema/constrained [schema/Symbol] not-empty))
-(def middleware              (schema/constrained [schema/Symbol] not-empty))
-(def javac-options           (schema/constrained [util/non-blank-string] not-empty))
-(def jvm-opts                (schema/constrained [util/non-blank-string] not-empty))
+(def hooks                   (schema/constrained [schema/Symbol] util/non-empty-vec?))
+(def middleware              (schema/constrained [schema/Symbol] util/non-empty-vec?))
+(def javac-options           (schema/constrained [util/non-blank-string] util/non-empty-vec?))
+(def jvm-opts                (schema/constrained [util/non-blank-string] util/non-empty-vec?))
 (def eval-in                 (schema/enum :subprocess :leiningen :nrepl))
 (def path                    util/non-blank-string)
-(def paths                   (schema/constrained [util/non-blank-string] not-empty))
-(def deploy-branches         (schema/constrained [util/non-blank-string] not-empty))
-(def non-empty-vec-of-regexes (schema/constrained [schema/Regex] not-empty))
+(def paths                   (schema/constrained [util/non-blank-string] util/non-empty-vec?))
+(def deploy-branches         (schema/constrained [util/non-blank-string] util/non-empty-vec?))
+(def non-empty-vec-of-regexes (schema/constrained [schema/Regex] util/non-empty-vec?))
+
 ;;; Mailing lists
 
 (def name-schema    util/non-blank-string)
@@ -46,7 +47,7 @@
    (schema/optional-key :unsubscribe)    unsubscribe
    schema/Keyword                        schema/Any})
 (def mailing-lists
-  (schema/constrained [mailing-list] not-empty))
+  (schema/constrained [mailing-list] util/non-empty-vec?))
 
 
 ;;; Licenses
@@ -59,7 +60,7 @@
    (schema/optional-key :comments)     util/non-blank-string
    schema/Keyword                      schema/Any})
 (def licenses
-  (schema/constrained [license] not-empty))
+  (schema/constrained [license] util/non-empty-vec?))
 
 
 ;;; Dependencies
@@ -97,7 +98,7 @@
 (def exclusion
   (schema/cond-pre dependency-name exclusion-vector))
 (def exclusions
-  (schema/constrained [exclusion] not-empty))
+  (schema/constrained [exclusion] util/non-empty-vec?))
 
 (def dependency-name-map
   {:artifact-id artifact-id
@@ -133,10 +134,10 @@
   {:artifact-id artifact-id :group-id group-id})
 
 (def dependencies
-  (schema/constrained [dependency-vector] not-empty))
+  (schema/constrained [dependency-vector] util/non-empty-vec?))
 
 (def managed-dependencies
-  (schema/constrained [dependency-vector] not-empty))
+  (schema/constrained [dependency-vector] util/non-empty-vec?))
 
 
 ;;; Plugins
@@ -154,7 +155,7 @@
   (schema/constrained [schema/Any] plugin-vector?))
 
 (def plugins
-  (schema/constrained [plugin-vector] not-empty))
+  (schema/constrained [plugin-vector] util/non-empty-vec?))
 
 
 ;;; Repositories
@@ -184,7 +185,7 @@
   [(schema/one util/non-blank-string "name")
    (schema/one (schema/cond-pre url repository-info-map) "url or info-map")])
 (def repositories
-  [repository])
+  (schema/constrained [repository] util/non-empty-vec?))
 
 
 ;;; Mirrors
@@ -200,7 +201,7 @@
 (def command-vector
   (schema/constrained
    [(schema/cond-pre util/non-blank-string schema/Keyword)]
-   not-empty))
+   util/non-empty-vec?))
 
 (def do-command
   [(schema/one (schema/enum "do") "do")
@@ -216,7 +217,7 @@
 (def release-tasks
   (schema/constrained
    [(schema/cond-pre util/non-blank-string command-vector)]
-   not-empty))
+   util/non-empty-vec?))
 
 
 ;;; AOT
@@ -239,7 +240,7 @@
 (def java-agents
   (schema/constrained
    [(schema/constrained [schema/Any] java-agent-vector?)]
-   not-empty))
+   util/non-empty-vec?))
 
 ;;; Global vars
 ;; See http://stackoverflow.com/questions/43452079
@@ -272,7 +273,7 @@
 
 ;; NOTE: This is way less precise than the spec implementation.
 (def checkout-deps-shares
-  [(schema/pred ifn?)])
+  (schema/constrained [(schema/pred ifn?)] util/non-empty-vec?))
 
 
 ;;; Test selectors
@@ -315,7 +316,7 @@
 (def filespec
   (schema-typed-map/abstract-map-schema :type {}))
 (def filespecs
-  [filespec])
+  (schema/constrained [filespec] util/non-empty-vec?))
 
 (schema-typed-map/extend-schema path-filespec  filespec [:path]  {:path path})
 (schema-typed-map/extend-schema paths-filespec filespec [:paths] {:paths paths})

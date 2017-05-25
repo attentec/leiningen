@@ -7,7 +7,7 @@
 (defn email?                   [string] (util/stregex-matches #"\S+@\S+\.?\S+"                          string))
 (defn semantic-version-string? [string] (util/stregex-matches #"(\d+)\.(\d+)\.(\d+)(-\w+)?(-SNAPSHOT)?" string))
 (defn namespaced-string?       [string] (util/stregex-matches #"[^\s/]+/[^\s/]+" string))
-(defn pedantic                 [val]    (truss/have [:el #{:abort :warn :ranges true false}]))
+(defn pedantic                 [val]    (truss/have [:el #{:abort :warn :ranges true false}] val))
 (defn signing                  [m]      (util/req-key :gpg-key util/non-blank-string? m))
 (defn certificates [v]
   (truss/have [:and vector? not-empty] v)
@@ -22,7 +22,7 @@
 (defn jvm-opts [v]
   (truss/have [:and vector? not-empty] v)
   (truss/have util/non-blank-string? :in v))
-(defn eval-in [kw] (truss/have [:el #{:subprocess :leiningen :nrepl}]))
+(defn eval-in [kw] (truss/have [:el #{:subprocess :leiningen :nrepl}] kw))
 (def path util/non-blank-string?)
 (defn paths [v]
   (truss/have [:and vector? not-empty] v)
@@ -94,7 +94,7 @@
                              :extension     extension?}))
 
 (defn exclusion-vector? [excl-vec]
-  (truss/have? [:and vector? not-empty]    excl-vec)
+  (truss/have? [:and vector? not-empty #(= (count %) 2)] excl-vec)
   (truss/have? dependency-name?     (first excl-vec))
   (truss/have? exclusion-arguments? (rest  excl-vec)))
 
@@ -113,6 +113,7 @@
 
 
 (defn artifact [[name version :as all]]
+  (truss/have #(= (count %) 2) all)
   (truss/have dependency-name? name
   (truss/have version?         version))
   all)
@@ -135,7 +136,7 @@
                                     :hooks      util/boolean?})))
 
 (defn plugin-vector [[name version & args :as all]]
-  (truss/have [:and vector? not-empty] all)
+  (truss/have [:and vector? not-empty #(= (count %) 2)] all)
   (truss/have artifact (vector name version))
   (truss/have plugin-args? args)
   all)
@@ -153,7 +154,7 @@
   (util/opt-key :checksum checksum    m)
   (util/opt-key :update   update-enum m))
 (defn password    [e] (truss/have [:or util/non-blank-string? keyword?] e))
-(defn creds       [e] (truss/have [:el #{:gpg}]))
+(defn creds       [e] (truss/have [:el #{:gpg}] e))
 
 (defn repository-info-map
   [m]
@@ -170,7 +171,7 @@
     (util/opt-key :signing       signing)))
 
 (defn repository [[name repo-info :as all]]
-  (truss/have [:and vector? not-empty] all)
+  (truss/have [:and vector? not-empty #(= (count %) 2)] all)
   (truss/have util/non-blank-string? name)
   (truss/have [:or url? repository-info-map] repo-info))
 (defn repositories [repo-vec]

@@ -348,9 +348,9 @@
        (every? artifact? v)))
 
 
-(declare xml-vector)
+(declare xml-vector?)
 (defn terminal-or-recursion? [s]
-  (every? (some-fn string? xml-vector) s))
+  (every? (some-fn string? xml-vector?) s))
 
 (defn map-or-terminal-or-recursions?
   [xml-vec]

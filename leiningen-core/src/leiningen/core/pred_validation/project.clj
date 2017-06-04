@@ -135,7 +135,7 @@
                                     :hooks      util/boolean?})))
 
 (defn plugin-vector? [[name version & args :as all]]
-  (and ((every-pred vector? not-empty #(= (count %) 2)) all)
+  (and ((every-pred vector? not-empty) all)
        (artifact? (vector name version))
        (plugin-args? args)))
 (defn plugins? [plugin-vec]

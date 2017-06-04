@@ -197,7 +197,6 @@
   (util/vcat :dep-name  ::proj/dependency-name
              :arguments ::proj/exclusion-args))
 
-(spec/valid? ::proj/exclusion 'a)
 
 (spec/def ::proj/optional      boolean?)
 (spec/def ::proj/scope         ::util/non-blank-string)

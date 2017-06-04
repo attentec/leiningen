@@ -1,6 +1,5 @@
-(ns leiningen.core.truss.util
-  (:require [taoensso.truss :as truss]
-            [clojure.string :as str]))
+(ns leiningen.core.pred-validation.util
+  (:require [clojure.string :as str]))
 
 
 
@@ -29,7 +28,6 @@
 
 ;;; Functions
 
-;; TODO: Perhaps convert to macro and put truss in it.
 (defn key-val-seq?
   ([kv-seq]
    (and (even? (count kv-seq))
@@ -42,21 +40,19 @@
                     (pred v)
                     true)))))) ; Change to false for closed map type.
 
-
-;;; Macros
-
-(defmacro opt-key
+(defn opt-key?
   [key predicate data]
-  `(do (when (contains? ~data ~key)
-         (truss/have ~predicate (get ~data ~key)))
-       ~data))
+  (if (contains? data key)
+    (predicate (get data key))
+    true))
 
 ;; Only exists for api-likeness to opt-key.
-(defmacro req-key
+(defn req-key?
   [key predicate data]
-  `(do (truss/have [:ks>= #{~key}] ~data)
-       (truss/have ~predicate (get ~data ~key))
-       ~data))
+  (predicate (get data key)))
+
+
+;;; Macros
 
 (defmacro stregex-matches
   "Constructs a form that returns the string if it matches, else a
@@ -67,14 +63,12 @@
     (re-matches ~string-regex ~string)
     ~string))
 
-(defmacro >>
-  "Calls all of the functions with x supplied at the back of the given
-  arguments. The forms are evaluated in order. Returns x."
+(defmacro and>>
+  "Returns a form where x is inserted at the end of every given form
+  and the whole sequence of forms are surrounded by an and-statement."
   [x & forms]
-  `(do
-     ~@(map (fn [f]
+  `(and ~@(map (fn [f]
               (if (seq? f)
                 `(~(first f) ~@(next f) ~x)
                 `(~f ~x)))
-            forms)
-     ~x))
+            forms)))

@@ -104,7 +104,7 @@
 ;; https://github.com/SparkFund/useful-specs/
 (spec/def ::proj/url                  (util/stregex #"^(https?|ftp)://[^\s/$.?#]+\.?[^\s]*$"))
 (spec/def ::proj/email                (util/stregex #"\S+@\S+\.?\S+"))
-(spec/def ::proj/pedantic?            #{:abort :warn :ranges true false})
+(spec/def ::proj/pedantic?            #(contains? #{:abort :warn :ranges true false} %))
 (spec/def ::proj/local-repo           ::util/non-blank-string)
 (spec/def ::proj/offline?             boolean?)
 (spec/def ::proj/signing              (spec/map-of #{:gpg-key} ::util/non-blank-string))

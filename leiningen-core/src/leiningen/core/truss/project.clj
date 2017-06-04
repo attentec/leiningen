@@ -94,7 +94,7 @@
                              :extension     extension?}))
 
 (defn exclusion-vector? [excl-vec]
-  (truss/have? [:and vector? not-empty #(= (count %) 2)] excl-vec)
+  (truss/have? [:and vector? not-empty] excl-vec)
   (truss/have? dependency-name?     (first excl-vec))
   (truss/have? exclusion-arguments? (rest  excl-vec)))
 

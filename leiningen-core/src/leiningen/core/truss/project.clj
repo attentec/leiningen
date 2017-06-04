@@ -114,8 +114,8 @@
 
 (defn artifact [[name version :as all]]
   (truss/have #(= (count %) 2) all)
-  (truss/have dependency-name? name
-  (truss/have version?         version))
+  (truss/have dependency-name? name)
+  (truss/have version?         version)
   all)
 
 (defn dependency-vector [[name version & args :as all]]
@@ -154,7 +154,7 @@
   (util/opt-key :checksum checksum    m)
   (util/opt-key :update   update-enum m))
 (defn password    [e] (truss/have [:or util/non-blank-string? keyword?] e))
-(defn creds       [e] (truss/have [:el #{:gpg}] e))
+(defn creds       [k] (truss/have [:el #{:gpg}] k))
 
 (defn repository-info-map
   [m]

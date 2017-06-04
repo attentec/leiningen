@@ -136,7 +136,7 @@
                                     :hooks      util/boolean?})))
 
 (defn plugin-vector [[name version & args :as all]]
-  (truss/have [:and vector? not-empty #(= (count %) 2)] all)
+  (truss/have [:and vector? not-empty] all)
   (truss/have artifact (vector name version))
   (truss/have plugin-args? args)
   all)

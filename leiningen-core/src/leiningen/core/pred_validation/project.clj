@@ -96,7 +96,7 @@
                              :extension     extension?}))
 
 (defn exclusion-vector? [excl-vec]
-  (and ((every-pred vector? not-empty #(= (count %) 2)) excl-vec)
+  (and ((every-pred vector? not-empty) excl-vec)
        (dependency-name?     (first excl-vec))
        (exclusion-arguments? (rest  excl-vec))))
 

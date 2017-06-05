@@ -29,7 +29,7 @@
   (util/check (test/check `project/defproject)))
 
 (deftest test-spec
-  (spec/explain-str
+  (spec/valid?
    ::project/project-map
    {:description      "A sample project"
     :url              "http://example.org/sample-clojure-project"

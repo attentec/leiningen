@@ -7,8 +7,6 @@
             [leiningen.core.project           :as proj]
             [leiningen.core.schema.util       :as util]))
 
-;; TODO: Constrain a bunch of sequences to only be vectors.
-
 
 ;;; Minor keys in project-argument-keys from top to bottom.
 
@@ -470,4 +468,44 @@
 (defschema project-map-non-recursive (dissoc project-map :filespecs :profiles :checkout-deps-shares))
 
 
-                                        ; (gen/generate project-argument-keys @util/generators)
+
+;; The below declarations exist to have a 1-1
+;; symbol-in-project-map to keyword relation in this ns. They don't
+;; have to exist in order for schema to work.
+(def description               util/non-blank-string)
+(def min-lein-version          semantic-version-string)
+(def managed-dependencies      dependencies)
+(def plugin-repositories       repositories)
+(def local-repo                util/non-blank-string)
+(def update                    update-enum)
+(def offline?                  schema/Bool)
+(def deploy-repositories       repositories)
+(def implicit-middleware       schema/Bool)
+(def implicit-hooks            schema/Bool)
+(def main                      schema/Symbol)
+(def prep-tasks                release-tasks)
+(def aot                       aot)
+(def injections                [schema/Any])
+(def warn-on-reflection        schema/Bool)
+(def java-cmd                  util/non-blank-string)
+(def bootclasspath             schema/Bool)
+(def source-paths              paths)
+(def java-source-paths         paths)
+(def test-paths                paths)
+(def resource-paths            paths)
+(def target-path               path)
+(def compile-path              path)
+(def native-path               path)
+(def clean-non-project-classes schema/Bool)
+(def monkeypatch-clojure-test  schema/Bool)
+(def jar-name                  util/non-blank-string)
+(def uberjar-name              util/non-blank-string)
+(def omit-source               schema/Bool)
+(def jar-exclusions            non-empty-vec-of-regexes)
+(def jar-inclusions            non-empty-vec-of-regexes)
+(def uberjar-exclusions        non-empty-vec-of-regexes)
+(def auto-clean                schema/Bool)
+(def pom-location              util/non-blank-string)
+(def extensions                [artifact])
+(def pom-addition              xml-as-vec)
+(def install-releases?         schema/Bool)

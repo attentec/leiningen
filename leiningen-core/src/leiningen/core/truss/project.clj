@@ -1,6 +1,7 @@
 (ns leiningen.core.truss.project
   (:require [taoensso.truss            :as truss]
-            [leiningen.core.truss.util :as util]))
+            [leiningen.core.truss.util :as util])
+  (:refer-clojure :exclude [update]))
 
 
 (defn url?                     [string] (util/stregex-matches #"^(https?|ftp)://[^\s/$.?#]+\.?[^\s]*$"  string))
@@ -495,10 +496,61 @@
     (util/opt-key :classifiers               classifiers)
     ))
 
-(defn validate-map-noexcept
+;; The below declarations exist to have a 1-1
+;; symbol-in-project-map to keyword relation in this ns. They don't
+;; have to exist in order for truss to work.
+
+(def description               util/non-blank-string?)
+(def url                       url?)
+(def min-lein-version          semantic-version-string?)
+(def managed-dependencies      dependencies)
+(def pedantic?                 pedantic)
+(def plugin-repositories       repositories)
+(def local-repo                util/non-blank-string?)
+(def update                    update-enum)
+(def offline?                  util/boolean?)
+(def deploy-repositories       repositories)
+(def middleware                hooks)
+(def implicit-middleware       util/boolean?)
+(def implicit-hooks            util/boolean?)
+(def main                      symbol?)
+(def prep-tasks                release-tasks)
+(def warn-on-reflection        util/boolean?)
+(def java-cmd                  util/non-blank-string?)
+(def bootclasspath             util/boolean?)
+(def source-paths              paths)
+(def java-source-paths         paths)
+(def test-paths                paths)
+(def resource-paths            paths)
+(def target-path               path)
+(def compile-path              path)
+(def native-path               path)
+(def clean-non-project-classes util/boolean?)
+(def checkout-deps-shares      ifn?)
+(def monkeypatch-clojure-test  util/boolean?)
+(def jar-name                  util/non-blank-string?)
+(def uberjar-name              util/non-blank-string?)
+(def omit-source               util/boolean?)
+(def jar-exclusions            non-empty-vec-of-regexes)
+(def jar-inclusions            non-empty-vec-of-regexes)
+(def uberjar-exclusions        non-empty-vec-of-regexes)
+(def auto-clean                util/boolean?)
+(def pom-location              util/non-blank-string?)
+(def pom-addition              xml-vector)
+(def install-releases?         util/boolean?)
+
+(defn validate-map-schema-like
   [m]
   (try
     (when (validate-map m)
       nil)
     (catch clojure.lang.ExceptionInfo e
       (.getMessage e))))
+
+(defn validate-map-spec-like
+  [m]
+  (try (if (validate-map m)
+         true
+         false)
+       (catch clojure.lang.ExceptionInfo e
+         nil)))

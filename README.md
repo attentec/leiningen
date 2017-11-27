@@ -1,3 +1,7 @@
+The reason why this code exists under the Attentec umbrella is the master thises written in 2017 by yours truly. The code related to that work can be found in the branches spec, schema and truss.
+
+The main piece of code used to connect and benchmark these three branches is located in a project called [lein-validation-benchmark](https://github.com/attentec/leiningen-validation-benchmark).
+
 # Leiningen
 
 <img src="http://leiningen.org/img/leiningen.jpg"
